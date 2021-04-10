@@ -24,7 +24,10 @@ namespace Services
 
         public Stock GetOrCreateStock(string name, string isin, string currency)
         {
-            var stock = db.Stocks.Include(s => s.Currency).FirstOrDefault(s => s.Isin == isin);
+            var stock = db.Stocks
+                .Include(s => s.Currency)
+                .Include(s => s.LastKnownStockValue.StockValue)
+                .FirstOrDefault(s => s.Isin == isin);
 
             if (stock == null)
             {
@@ -54,16 +57,11 @@ namespace Services
 
             ValidateEnoughToSell();
 
+            var pitStockValue = CreatePitStockValue();
             var trans = new Transaction
             {
                 Stock = stock,
-                StockValue = new PitStockValue
-                {
-                    Stock = stock,
-                    TimeStamp = dto.TimeStamp,
-                    NativePrice = dto.Price,
-                    UserPrice = dto.Price.ToUserCurrency(dto.CurrencyRatio, dto.Currency),
-                },
+                StockValue = pitStockValue,
                 Created = DateTime.Now,
                 Quantity = dto.Quantity,
                 UserCosts = dto.Costs.ToUserCurrency(dto.CurrencyRatio, dto.Currency),
@@ -73,6 +71,11 @@ namespace Services
             db.Transactions.Add(trans);
             db.SaveChanges(); // we need to save each transition because a later one can be the sell
 
+            if (stock.LastKnownStockValue == null)
+                stock.LastKnownStockValue = new LastKnownStockValue {StockValue = pitStockValue};
+            else if (stock.LastKnownStockValue.StockValue.TimeStamp < dto.TimeStamp)
+                stock.LastKnownStockValue.StockValue = pitStockValue;
+
             void ValidateEnoughToSell()
             {
                 if (dto.Quantity < 0)
@@ -81,6 +84,17 @@ namespace Services
                     var stockTotal = transactions.Sum(t => t.Quantity);
                     if (stockTotal + dto.Quantity < 0) throw new Exception($"Not enough {stock} to sell. Trans.Ref: {dto.Guid}");
                 }
+            }
+
+            PitStockValue CreatePitStockValue()
+            {
+                return new PitStockValue
+                {
+                    Stock = stock,
+                    TimeStamp = dto.TimeStamp,
+                    NativePrice = dto.Price,
+                    UserPrice = dto.Price.ToUserCurrency(dto.CurrencyRatio, dto.Currency),
+                };
             }
         }
 
