@@ -22,16 +22,33 @@ namespace Dashboard
         {
             InitializeComponent();
             SetWindowRoundCorners();
-            SetNavPanel(btnMainOverview);
+            HandleMenuButtonClick(btnMainOverview, new frmOverview());
 
             void SetWindowRoundCorners() => Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 25, 25));
         }
 
-        private void btnMainOverview_Click(object sender, EventArgs e) => SetNavPanel((Button)sender);
-        private void btnTransactions_Click(object sender, EventArgs e) => SetNavPanel((Button)sender);
+        private void btnMainOverview_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, new frmOverview());
+        private void btnTransactions_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, null);
 
         private void btnMainOverview_Leave(object sender, EventArgs e) => SetDefaultButtonBackColor((Button)sender);
         private void btnTransactions_Leave(object sender, EventArgs e) => SetDefaultButtonBackColor((Button)sender);
+
+        private void HandleMenuButtonClick(Button button, Form formToShow)
+        {
+            SetNavPanel(button);
+            LoadForm(button.Text, formToShow);
+        }
+
+        private void LoadForm(string viewName, Form form)
+        {
+            lblViewName.Text = viewName;
+            form.Dock = DockStyle.Fill;
+            form.TopLevel = false;
+            form.TopMost = true;
+            pnlFormLoader.Controls.Clear();
+            pnlFormLoader.Controls.Add(form);
+            form.Show();
+        }
 
         private void SetNavPanel(Button button)
         {
