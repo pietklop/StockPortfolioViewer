@@ -11,6 +11,7 @@ namespace DAL
         public DbSet<Area> Areas { get; set; }
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<Dividend> Dividends { get; set; }
+        public DbSet<PitStockValue> PitStockValues { get; set; }
         public DbSet<Sector> Sectors { get; set; }
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<Transaction> Transactions { get; set; }

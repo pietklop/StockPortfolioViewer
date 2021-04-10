@@ -57,11 +57,15 @@ namespace Services
             var trans = new Transaction
             {
                 Stock = stock,
+                StockValue = new PitStockValue
+                {
+                    Stock = stock,
+                    TimeStamp = dto.TimeStamp,
+                    NativePrice = dto.Price,
+                    UserPrice = dto.Price.ToUserCurrency(dto.CurrencyRatio, dto.Currency),
+                },
                 Created = DateTime.Now,
-                TimeStamp = dto.TimeStamp,
                 Quantity = dto.Quantity,
-                NativePrice = dto.Price,
-                UserPrice = dto.Price.ToUserCurrency(dto.CurrencyRatio, dto.Currency),
                 UserCosts = dto.Costs.ToUserCurrency(dto.CurrencyRatio, dto.Currency),
                 ExtRef = dto.Guid,
             };

@@ -11,6 +11,7 @@ namespace DAL.Entities
 
         public ICollection<Transaction> Transactions { get; set; }
         public ICollection<Dividend> Dividends { get; set; }
+        public ICollection<PitStockValue> StockValues { get; set; }
         public ICollection<SectorShare> SectorShares { get; set; }
         public ICollection<AreaShare> AreaShares { get; set; }
 
