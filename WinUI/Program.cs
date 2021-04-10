@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
-using Dashboard;
+using Dashboard.DI;
+using log4net.Config;
 
-namespace WinUI
+namespace Dashboard
 {
     static class Program
     {
@@ -18,7 +17,14 @@ namespace WinUI
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmMain());
+
+            XmlConfigurator.Configure(new FileInfo(@"log4net.config"));
+
+            var container = CastleContainer.Instance;
+            container.AddFacilities().Install(DependencyInstaller.CreateInstaller());
+
+            var mainForm = CastleContainer.Resolve<frmMain>();
+            Application.Run(mainForm);
         }
     }
 }

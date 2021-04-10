@@ -2,11 +2,15 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Dashboard.DI;
+using log4net;
 
 namespace Dashboard
 {
     public partial class frmMain : Form
     {
+        private readonly ILog log;
+
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn
         (
@@ -18,16 +22,17 @@ namespace Dashboard
             int nHeightEllipse
         );
 
-        public frmMain()
+        public frmMain(ILog log)
         {
+            this.log = log;
             InitializeComponent();
-            SetWindowRoundCorners();
-            HandleMenuButtonClick(btnMainOverview, new frmOverview());
+            SetWindowRoundCorners(25);
+            HandleMenuButtonClick(btnMainOverview, CastleContainer.Resolve<frmOverview>());
 
-            void SetWindowRoundCorners() => Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 25, 25));
+            void SetWindowRoundCorners(int radius) => Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, radius, radius));
         }
 
-        private void btnMainOverview_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, new frmOverview());
+        private void btnMainOverview_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmOverview>());
         private void btnTransactions_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, null);
 
         private void btnMainOverview_Leave(object sender, EventArgs e) => SetDefaultButtonBackColor((Button)sender);
