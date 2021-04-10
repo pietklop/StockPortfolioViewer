@@ -13,11 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestConsole", "TestConsole\TestConsole.csproj", "{1143C2CD-8E48-430E-82C7-FC3A5A72959B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinUI", "WinUI\WinUI.csproj", "{25B2782A-7DB7-4FF8-8E05-176B2B7AF79B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dashboard", "WinUI\Dashboard.csproj", "{25B2782A-7DB7-4FF8-8E05-176B2B7AF79B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imports", "Imports\Imports.csproj", "{DA70CF8F-BD0A-41BF-AE9F-AF65A1B1A7DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messages", "Messages\Messages.csproj", "{39AC6E99-4A39-41D8-A301-5A1B7D98F785}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messages", "Messages\Messages.csproj", "{39AC6E99-4A39-41D8-A301-5A1B7D98F785}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
