@@ -24,11 +24,8 @@ namespace Imports.DeGiro
             var dividends = new List<DividendDto>();
             var currConversions = new List<CurrencyConvert>();
 
-            int i = 5;
             foreach (var line in lines.Skip(1))
             {
-                if (line.StartsWith("18-02-2021,20:50,18-02-2021,JOHNSON & JOHNSON COMM,US4781601046"))
-                    i++;
                 var fields = line.SmartSplit(',');
                 var lineType = GetLineType(fields[actionColIndex]);
                 switch (lineType)
