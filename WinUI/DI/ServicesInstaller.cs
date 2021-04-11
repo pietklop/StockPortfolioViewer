@@ -1,6 +1,7 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using Services.Ui;
 
 namespace Dashboard.DI
 {
@@ -10,6 +11,8 @@ namespace Dashboard.DI
         {
             container.Register(Component.For<frmMain>().LifestyleSingleton());
             container.Register(Component.For<frmOverview>().LifestyleTransient());
+
+            container.Register(Component.For<StockOverviewService>().LifestyleTransient());
         }
     }
 }
