@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Castle.MicroKernel;
 using Dashboard.DI;
 using log4net;
 
@@ -27,10 +28,13 @@ namespace Dashboard
             this.log = log;
             InitializeComponent();
             SetWindowRoundCorners(25);
-            HandleMenuButtonClick(btnMainOverview, CastleContainer.Resolve<frmOverview>());
+            HandleMenuButtonClick(btnMainOverview, CastleContainer.Instance.Resolve<frmOverview>(new Arguments { { nameof(frmMain), this } }));
 
             void SetWindowRoundCorners(int radius) => Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, radius, radius));
         }
+
+        public void ShowStockDetails(string stockName, string isin) => 
+            LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockDetail>(new Arguments{{"stockIsin", isin}}));
 
         private void btnMainOverview_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmOverview>());
         private void btnTransactions_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, null);

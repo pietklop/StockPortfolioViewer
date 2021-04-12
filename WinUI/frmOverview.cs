@@ -10,10 +10,12 @@ namespace Dashboard
 {
     public partial class frmOverview : Form
     {
+        private readonly frmMain frmMain;
         private readonly StockOverviewService stockOverviewService;
 
-        public frmOverview(StockOverviewService stockOverviewService)
+        public frmOverview(frmMain frmMain, StockOverviewService stockOverviewService)
         {
+            this.frmMain = frmMain;
             this.stockOverviewService = stockOverviewService;
             InitializeComponent();
         }
@@ -33,15 +35,14 @@ namespace Dashboard
             dgvStockList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             var nameColumn = dgvStockList.GetColumn(nameof(StockViewModel.Name));
             nameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            var isinColumn = dgvStockList.GetColumn(nameof(StockViewModel.Isin));
+            isinColumn.Visible = false;
 
             dgvStockList.SetReadOnly();
             dgvStockList.SetVisualStyling();
         }
 
-        private void dgvStockList_SelectionChanged(object sender, EventArgs e)
-        {
-            dgvStockList.ClearSelection();
-        }
+        private void dgvStockList_SelectionChanged(object sender, EventArgs e) => dgvStockList.ClearSelection();
 
         private void dgvStockList_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
@@ -53,6 +54,19 @@ namespace Dashboard
             
             if (redGreenColumnIndexes.Contains(e.ColumnIndex))
                 e.CellStyle.ForeColor = (double) e.Value < 0 ? Color.Red : Color.LawnGreen;
+        }
+
+        private void dgvStockList_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+            var isinColumn = dgvStockList.GetColumn(nameof(StockViewModel.Isin));
+            var isin = dgvStockList[isinColumn.Index, e.RowIndex].Value.ToString();
+            var nameColumn = dgvStockList.GetColumn(nameof(StockViewModel.Name));
+            var name = dgvStockList[nameColumn.Index, e.RowIndex].Value.ToString();
+
+            Close();
+
+            frmMain.ShowStockDetails(name, isin);
         }
     }
 }

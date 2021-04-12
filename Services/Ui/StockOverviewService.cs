@@ -41,6 +41,7 @@ namespace Services.Ui
                 list.Add(new StockViewModel
                 {
                     Name = stock.Name,
+                    Isin = stock.Isin,
                     Value = currentValue,
                     Profit = profit,
                     ProfitFraction = profit / virtualBuyValue, 
