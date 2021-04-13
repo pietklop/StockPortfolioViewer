@@ -55,6 +55,11 @@ namespace Services
             if (stock.Currency.Key != dto.Currency) 
                 throw new Exception($"Stock currency ('{stock.Currency.Key}') should be equal to transaction currency ('{dto.Currency}')");
 
+            if (DuplicateTransaction(dto))
+            {
+                log.Debug($"Transaction ({dto.Guid}) does already exist => skip");
+                return;
+            }
             ValidateEnoughToSell();
 
             var pitStockValue = CreatePitStockValue();
@@ -97,6 +102,9 @@ namespace Services
                 };
             }
         }
+
+        private bool DuplicateTransaction(TransactionDto dto) =>
+            db.Transactions.Any(t => t.ExtRef == dto.Guid && t.Stock.Isin == dto.Isin && t.StockValue.TimeStamp.Date == dto.TimeStamp.Date);
 
         public void AddDividend(DividendDto dto)
         {
