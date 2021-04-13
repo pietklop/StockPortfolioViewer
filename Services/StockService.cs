@@ -108,8 +108,16 @@ namespace Services
 
         public void AddDividend(DividendDto dto)
         {
-            var stock = db.Stocks.SingleOrDefault(s => s.Isin == dto.Isin) ?? throw new Exception($"Can not find stock {dto.Isin} to book dividend");
+            var stock = db.Stocks
+                            .Include(s => s.Dividends)
+                            .SingleOrDefault(s => s.Isin == dto.Isin) ?? throw new Exception($"Can not find stock {dto.Isin} to book dividend");
             log.Info($"Create dividend for {stock} Value: {dto.Value} on {dto.TimeStamp.ToShortDateString()}");
+
+            if (DuplicateDividend(stock, dto.TimeStamp))
+            {
+                log.Debug($"Dividend already exists for {stock} on {dto.TimeStamp.ToShortDateString()} => skip");
+                return;
+            }
 
             var div = new Dividend
             {
@@ -124,5 +132,8 @@ namespace Services
 
             db.Dividends.Add(div);
         }
+
+        private bool DuplicateDividend(Stock stock, DateTime dtoTimeStamp) =>
+            stock.Dividends.Any(d => d.TimeStamp.Date == dtoTimeStamp.Date);
     }
 }
