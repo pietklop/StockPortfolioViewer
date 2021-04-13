@@ -48,17 +48,17 @@ namespace Services
             return stock;
         }
 
-        public void AddTransaction(TransactionDto dto)
+        public bool AddTransaction(TransactionDto dto)
         {
             log.Info($"Create transaction: {dto.Name} Quantity: {dto.Quantity} on {dto.TimeStamp.ToShortDateString()}");
             var stock = GetOrCreateStock(dto.Name, dto.Isin, dto.Currency);
             if (stock.Currency.Key != dto.Currency) 
-                throw new Exception($"Stock currency ('{stock.Currency.Key}') should be equal to transaction currency ('{dto.Currency}')");
+                throw new Exception($"Stock ({stock}) currency ('{stock.Currency.Key}') should be equal to transaction currency ('{dto.Currency}')");
 
             if (DuplicateTransaction(dto))
             {
                 log.Debug($"Transaction ({dto.Guid}) does already exist => skip");
-                return;
+                return false;
             }
             ValidateEnoughToSell();
 
@@ -80,6 +80,8 @@ namespace Services
                 stock.LastKnownStockValue = new LastKnownStockValue {StockValue = pitStockValue};
             else if (stock.LastKnownStockValue.StockValue.TimeStamp < dto.TimeStamp)
                 stock.LastKnownStockValue.StockValue = pitStockValue;
+
+            return true;
 
             void ValidateEnoughToSell()
             {
@@ -106,17 +108,17 @@ namespace Services
         private bool DuplicateTransaction(TransactionDto dto) =>
             db.Transactions.Any(t => t.ExtRef == dto.Guid && t.Stock.Isin == dto.Isin && t.StockValue.TimeStamp.Date == dto.TimeStamp.Date);
 
-        public void AddDividend(DividendDto dto)
+        public bool AddDividend(DividendDto dto)
         {
             var stock = db.Stocks
                             .Include(s => s.Dividends)
-                            .SingleOrDefault(s => s.Isin == dto.Isin) ?? throw new Exception($"Can not find stock {dto.Isin} to book dividend");
+                            .SingleOrDefault(s => s.Isin == dto.Isin) ?? throw new Exception($"Can not find stock {dto.Isin} to book dividend from {dto.TimeStamp.ToShortDateString()}");
             log.Info($"Create dividend for {stock} Value: {dto.Value} on {dto.TimeStamp.ToShortDateString()}");
 
             if (DuplicateDividend(stock, dto.TimeStamp))
             {
                 log.Debug($"Dividend already exists for {stock} on {dto.TimeStamp.ToShortDateString()} => skip");
-                return;
+                return false;
             }
 
             var div = new Dividend
@@ -131,6 +133,8 @@ namespace Services
             };
 
             db.Dividends.Add(div);
+
+            return true;
         }
 
         private bool DuplicateDividend(Stock stock, DateTime dtoTimeStamp) =>

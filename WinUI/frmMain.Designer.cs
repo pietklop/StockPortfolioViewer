@@ -37,6 +37,7 @@ namespace Dashboard
             this.btnClose = new System.Windows.Forms.Button();
             this.pnlFormLoader = new System.Windows.Forms.Panel();
             this.lblViewName = new System.Windows.Forms.Label();
+            this.btnImport = new System.Windows.Forms.Button();
             this.pnlMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -44,6 +45,7 @@ namespace Dashboard
             // 
             this.pnlMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
             this.pnlMenu.Controls.Add(this.pnlNav);
+            this.pnlMenu.Controls.Add(this.btnImport);
             this.pnlMenu.Controls.Add(this.btnTransactions);
             this.pnlMenu.Controls.Add(this.btnMainOverview);
             this.pnlMenu.Controls.Add(this.panel2);
@@ -134,6 +136,21 @@ namespace Dashboard
             this.lblViewName.TabIndex = 3;
             this.lblViewName.Text = "View name";
             // 
+            // btnImport
+            // 
+            this.btnImport.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.btnImport.FlatAppearance.BorderSize = 0;
+            this.btnImport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnImport.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btnImport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
+            this.btnImport.Location = new System.Drawing.Point(0, 737);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(186, 40);
+            this.btnImport.TabIndex = 1;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -165,6 +182,7 @@ namespace Dashboard
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Panel pnlFormLoader;
         private System.Windows.Forms.Label lblViewName;
+        private System.Windows.Forms.Button btnImport;
     }
 }
 
