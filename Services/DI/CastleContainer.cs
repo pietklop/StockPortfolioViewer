@@ -1,6 +1,6 @@
 ﻿using Castle.Windsor;
 
-namespace Dashboard.DI
+namespace Services.DI
 {
     public static class CastleContainer
     {

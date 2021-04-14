@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj" />
+    <ProjectReference Include="..\Imports\Imports.csproj" />
     <ProjectReference Include="..\Messages\Messages.csproj" />
   </ItemGroup>
 

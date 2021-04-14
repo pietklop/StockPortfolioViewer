@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 using Dashboard.DI;
 using log4net.Config;
+using Services.DI;
 
 namespace Dashboard
 {
@@ -21,7 +22,8 @@ namespace Dashboard
             XmlConfigurator.Configure(new FileInfo(@"log4net.config"));
 
             var container = CastleContainer.Instance;
-            container.AddFacilities().Install(DependencyInstaller.CreateInstaller());
+            var installer = DependencyInstaller.CreateInstaller(new FormInstaller());
+            container.AddFacilities().Install(installer);
 
             var mainForm = CastleContainer.Resolve<frmMain>();
             Application.Run(mainForm);

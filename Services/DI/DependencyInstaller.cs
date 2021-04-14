@@ -1,22 +1,30 @@
-﻿using Castle.MicroKernel.Registration;
-using Castle.MicroKernel.SubSystems.Configuration;
+﻿using Castle.Facilities.TypedFactory;
+using Castle.MicroKernel.Registration;
 using Castle.Windsor;
-using Microsoft.EntityFrameworkCore;
+using Castle.Windsor.Installer;
 
 namespace Services.DI
 {
-    public class DependencyInstaller : IWindsorInstaller
+    public static class DependencyInstaller
     {
-        private readonly DbContextOptions dbContextOptions;
-
-        public DependencyInstaller(DbContextOptions dbContextOptions)
+        public static IWindsorInstaller CreateInstaller(params IWindsorInstaller[] externalInstallers)
         {
-            this.dbContextOptions = dbContextOptions;
+            var compositeInstaller = new CompositeInstaller();
+
+            foreach (var externalInstaller in externalInstallers)
+                compositeInstaller.Add(externalInstaller);
+
+            compositeInstaller.Add(new StockDbInstaller());
+            compositeInstaller.Add(new ServicesInstaller());
+
+            return compositeInstaller;
         }
 
-        public void Install(IWindsorContainer container, IConfigurationStore store)
+        public static IWindsorContainer AddFacilities(this IWindsorContainer container)
         {
-
+            return container.AddFacility<TypedFactoryFacility>()
+                .AddFacility<LogFacility>();
         }
+
     }
 }

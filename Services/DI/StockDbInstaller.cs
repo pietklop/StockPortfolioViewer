@@ -3,7 +3,7 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using DAL;
 
-namespace Dashboard.DI
+namespace Services.DI
 {
     public class StockDbInstaller : IWindsorInstaller
     {

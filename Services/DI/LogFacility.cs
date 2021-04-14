@@ -4,7 +4,7 @@ using Castle.MicroKernel.Context;
 using Castle.MicroKernel.Facilities;
 using log4net;
 
-namespace Dashboard.DI
+namespace Services.DI
 {
     public class LogFacility : AbstractFacility
     {
