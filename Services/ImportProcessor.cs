@@ -8,11 +8,13 @@ namespace Services
     public class ImportProcessor
     {
         private readonly ILog log;
+        private readonly StockDbContext db;
         private readonly StockService stockService;
 
-        public ImportProcessor(ILog log, StockService stockService)
+        public ImportProcessor(ILog log, StockDbContext db, StockService stockService)
         {
             this.log = log;
+            this.db = db;
             this.stockService = stockService;
         }
 
@@ -24,6 +26,8 @@ namespace Services
                 if (stockService.AddTransaction(t)) nAddedTransactions++;
             foreach (var importDividend in import.Dividends)
                 if (stockService.AddDividend(importDividend)) nAddedDividends++;
+
+            db.SaveChanges();
 
             log.Debug($"Successful imported {nAddedTransactions} transactions and {nAddedDividends} dividends");
 
