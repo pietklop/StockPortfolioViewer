@@ -8,8 +8,17 @@ namespace Services.DI
 {
     public class ServicesInstaller : IWindsorInstaller
     {
+        private readonly Settings settings;
+
+        public ServicesInstaller(Settings settings)
+        {
+            this.settings = settings;
+        }
+
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
+            container.Register(Component.For<Settings>().Instance(settings));
+
             container.Register(Component.For<Importer>().LifestyleTransient());
             container.Register(Component.For<ImportProcessor>().LifestyleTransient());
             container.Register(Component.For<StockDetailService>().LifestyleTransient());
