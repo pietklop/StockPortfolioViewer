@@ -8,6 +8,7 @@ namespace DAL.Entities
     {
         [Required] public string Name { get; set; }
         [Required] public string Isin { get; set; }
+        public string Symbol { get; set; }
         [Required] public Currency Currency { get; set; }
 
         public LastKnownStockValue LastKnownStockValue { get; set; }
@@ -30,6 +31,6 @@ namespace DAL.Entities
         /// This timestamp differs from <see cref="PitStockValue.TimeStamp"/> when the
         /// synchronization is done while the market was closed
         /// </summary>
-        public DateTime LastUpdate { get; set; }
+        [Required] public DateTime LastUpdate { get; set; }
     }
 }
