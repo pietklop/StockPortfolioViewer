@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace DAL.Entities
@@ -23,6 +24,12 @@ namespace DAL.Entities
 
     public class LastKnownStockValue : Entity
     {
+        public int StockValueId { get; set; }
         public PitStockValue StockValue { get; set; }
+        /// <summary>
+        /// This timestamp differs from <see cref="PitStockValue.TimeStamp"/> when the
+        /// synchronization is done while the market was closed
+        /// </summary>
+        public DateTime LastUpdate { get; set; }
     }
 }

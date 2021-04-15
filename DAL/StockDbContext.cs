@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL
 {
-    // Add-Migration Init -p DAL -s TestConsole
+    // Add-Migration Migration_Name -p DAL -s TestConsole
     // update-database -p DAL -s TestConsole
     public class StockDbContext : DbContext
     {

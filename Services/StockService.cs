@@ -77,9 +77,12 @@ namespace Services
             db.SaveChanges(); // we need to save each transition because a later one can be the sell
 
             if (stock.LastKnownStockValue == null)
-                stock.LastKnownStockValue = new LastKnownStockValue {StockValue = pitStockValue};
+                stock.LastKnownStockValue = new LastKnownStockValue {StockValue = pitStockValue, LastUpdate = dto.TimeStamp};
             else if (stock.LastKnownStockValue.StockValue.TimeStamp < dto.TimeStamp)
+            {
                 stock.LastKnownStockValue.StockValue = pitStockValue;
+                stock.LastKnownStockValue.LastUpdate = dto.TimeStamp;
+            }
 
             return true;
 
