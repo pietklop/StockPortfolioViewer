@@ -1,8 +1,11 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using Core;
 using Imports.DeGiro;
 using Services.Ui;
+using StockDataApi.AlphaVantage;
+using StockDataApi.IexCloud;
 
 namespace Services.DI
 {
@@ -19,6 +22,8 @@ namespace Services.DI
         {
             container.Register(Component.For<Settings>().Instance(settings));
 
+            container.Register(Component.For<AvDataRetriever>().LifestyleTransient());
+            container.Register(Component.For<IexDataRetriever>().LifestyleTransient());
             container.Register(Component.For<Importer>().LifestyleTransient());
             container.Register(Component.For<ImportProcessor>().LifestyleTransient());
             container.Register(Component.For<StockDetailService>().LifestyleTransient());

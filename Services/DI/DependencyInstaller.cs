@@ -3,6 +3,7 @@ using Castle.Facilities.TypedFactory;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
+using Core;
 using Microsoft.Extensions.Configuration;
 
 namespace Services.DI
