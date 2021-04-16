@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Linq;
 using Core;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Entities
 {
     public static class CurrencyHelper
     {
-        public static Currency GetUserCurrency(this StockDbContext db)
-            => db.Currencies.Single(c => c.Key == Constants.UserCurrency);
+        public static Currency GetUser(this DbSet<Currency> currencies)
+            => currencies.Get(Constants.UserCurrency);
+
+        public static Currency Get(this DbSet<Currency> currencies, string key)
+            => currencies.Single(c => c.Key == key);
 
         public static double ToUserCurrency(this double value, double ratio, string otherCurrency)
         {
