@@ -8,6 +8,7 @@ using Imports;
 using log4net;
 using Messages.Dtos;
 using Microsoft.EntityFrameworkCore;
+using Services.Ui;
 
 namespace Services
 {
@@ -46,6 +47,46 @@ namespace Services
             }
 
             return stock;
+        }
+
+        public Stock UpdateStockPrice(string isin, double nativePrice)
+        {
+            var stock = db.Stocks
+                .Include(s => s.Currency)
+                .Include(s => s.LastKnownStockValue.StockValue)
+                .FirstOrDefault(s => s.Isin == isin) ?? throw new Exception($"Could not find stock with isin: {isin}");
+            log.Info($"Set latest stock price: {stock} to: {stock.Currency.Symbol}{nativePrice}");
+
+            var now = DateTime.Now;
+
+            double userPrice;
+            if (stock.IsUserCurrency()) userPrice = nativePrice;
+            else
+            {
+                var curr = db.Currencies.Get(stock.Currency.Key);
+                if ((now - curr.LastUpdate).TotalDays >= 5)
+                    throw new Exception($"Currency '{curr}' ratio has expired.");
+                userPrice = nativePrice.ToUserCurrency(curr.Ratio);
+            }
+
+            stock.LastKnownStockValue = new LastKnownStockValue
+            {
+                LastUpdate = now,
+                StockValue = CreatePitStockValue(),
+            };
+
+            return stock;
+
+            PitStockValue CreatePitStockValue()
+            {
+                return new PitStockValue
+                {
+                    Stock = stock,
+                    TimeStamp = now,
+                    NativePrice = nativePrice,
+                    UserPrice = userPrice,
+                };
+            }
         }
 
         public bool AddTransaction(TransactionDto dto)

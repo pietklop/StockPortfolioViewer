@@ -35,9 +35,10 @@ namespace Services.Ui
 
             return new List<StockPropertyViewModel>
             {
-                new StockPropertyViewModel{Name = "Isin", Value = stock.Isin},
+                new StockPropertyViewModel{Name = StockDetailProperties.Name, Value = stock.Name},
+                new StockPropertyViewModel{Name = StockDetailProperties.Symbol, Value = stock.Symbol},
                 new StockPropertyViewModel{Name = "Avg buy price", Value = FormatCurrency(stock.Transactions.DetermineAvgBuyNativePrice())},
-                new StockPropertyViewModel{Name = "Current price", Value = FormatCurrency(stock.LastKnownStockValue.StockValue.NativePrice)},
+                new StockPropertyViewModel{Name = StockDetailProperties.CurrentPrice, Value = FormatCurrency(stock.LastKnownStockValue.StockValue.NativePrice)},
                 new StockPropertyViewModel{Name = "Last price update", Value = LastUpdateSince()},
                 new StockPropertyViewModel{Name = "Currency", Value = stock.Currency.Key},
                 new StockPropertyViewModel{Name = "Area", Value = FirstOrMultiple(stock.AreaShares.Select(a => a.Area.Name).ToArray())},
