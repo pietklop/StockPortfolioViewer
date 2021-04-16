@@ -29,6 +29,15 @@ namespace StockDataApi.AlphaVantage
             return new StockQuoteDto(symbol, double.Parse(price.Value, CultureInfo.InvariantCulture), DateTime.Parse(date.Value));
         }
 
+        public double GetCurrencyRate(string foreignCurrency)
+        {
+            string response = Get($"function=CURRENCY_EXCHANGE_RATE&from_currency={Constants.UserCurrency}&to_currency={foreignCurrency}");
+            dynamic data = JObject.Parse(response);
+            var child = data["Realtime Currency Exchange Rate"];
+            var price = child["8. Bid Price"];
+            return double.Parse(price.Value, CultureInfo.InvariantCulture);
+        }
+
         /// <summary>
         /// Results are a bit disappointing because first result is not always the most common stock
         /// </summary>
