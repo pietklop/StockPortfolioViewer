@@ -1,0 +1,10 @@
+﻿Used styling:
+# FORM #
+FormBorderStyle: None
+BackColor: 46,51,73 (dark)
+Header font fc: Gainsboro (beige/white)
+Controls bgc: ControlDark
+
+# PANEL #
+panel bgc: 24,30,54 (darker)
+panel button font fc: 0,126,249 (light blue)

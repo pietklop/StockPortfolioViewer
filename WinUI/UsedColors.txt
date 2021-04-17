@@ -1,5 +1,0 @@
-﻿Used colors:
-form bgc: 46,51,73 (dark)
-form header font fc: Gainsboro (beige/white)
-panel bgc: 24,30,54 (darker)
-panel button font fc: 0,126,249 (light blue)
