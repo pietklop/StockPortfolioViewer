@@ -3,6 +3,7 @@
     public enum InputType
     {
         None,
+        Confirmation,
         String,
         PositiveDouble,
     }

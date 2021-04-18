@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Dashboard.Input
@@ -13,12 +14,19 @@ namespace Dashboard.Input
             InitializeComponent();
             lblInputT.Text = caption;
             this.inputType = inputType;
+            if (inputType == InputType.Confirmation)
+            {
+                txtInput.Visible = false;
+                lblInputT.MaximumSize = new Size(txtInput.Width, 150);
+            }
         }
 
         private void btnOk_Click(object sender, EventArgs e)
         {
             switch (inputType)
             {
+                case InputType.Confirmation:
+                    break;
                 case InputType.String:
                     if (string.IsNullOrEmpty(txtInput.Text))
                     {

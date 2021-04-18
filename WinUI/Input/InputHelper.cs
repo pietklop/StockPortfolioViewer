@@ -5,6 +5,12 @@ namespace Dashboard.Input
 {
     public static class InputHelper
     {
+        public static bool GetConfirmation(string caption)
+        {
+            using (frmInput form = new frmInput(caption, InputType.Confirmation))
+                return form.ShowDialog() == DialogResult.OK;
+        }
+
         public static string GetString(string caption)
         {
             string input = null;
