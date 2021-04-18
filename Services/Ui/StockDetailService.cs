@@ -39,7 +39,7 @@ namespace Services.Ui
                 new StockPropertyViewModel{Name = StockDetailProperties.Symbol, Value = stock.Symbol},
                 new StockPropertyViewModel{Name = "Avg buy price", Value = FormatCurrency(stock.Transactions.DetermineAvgBuyNativePrice())},
                 new StockPropertyViewModel{Name = StockDetailProperties.CurrentPrice, Value = FormatCurrency(stock.LastKnownStockValue.StockValue.NativePrice)},
-                new StockPropertyViewModel{Name = "Last price update", Value = LastUpdateSince()},
+                new StockPropertyViewModel{Name = StockDetailProperties.LastPriceUpdate, Value = LastUpdateSince()},
                 new StockPropertyViewModel{Name = "Currency", Value = stock.Currency.Key},
                 new StockPropertyViewModel{Name = "Area", Value = FirstOrMultiple(stock.AreaShares.Select(a => a.Area.Name).ToArray())},
                 new StockPropertyViewModel{Name = "Sector", Value = FirstOrMultiple(stock.SectorShares.Select(a => a.Sector.Name).ToArray())},

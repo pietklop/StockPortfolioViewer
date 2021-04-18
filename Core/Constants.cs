@@ -12,6 +12,7 @@
         public const string Name = "Name";
         public const string Symbol = "Symbol";
         public const string CurrentPrice = "Current price";
+        public const string LastPriceUpdate = "Last price update";
     }
 
 }

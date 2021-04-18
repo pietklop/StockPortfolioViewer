@@ -28,6 +28,7 @@ namespace StockDataApi.IexCloud
         public override StockQuoteDto GetStockQuote(string symbol)
         {
             var response = Get($"stock/{symbol}/quote");
+            if (response == null) throw new Exception($"ServiceHost could not find symbol '{symbol}'");
             dynamic data = JObject.Parse(response);
             var price = (double)data["latestPrice"].Value;
             long epochMsec = (long)data["latestUpdate"].Value;
