@@ -31,6 +31,8 @@ namespace DAL.Entities
         public string LastResponseData { get; set; }
 
         public ICollection<StockRetrieverCompatibility> StockRetrieverCompatibilities { get; set; }
+
+        public override string ToString() => Name;
     }
 
     /// <summary>
