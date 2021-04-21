@@ -56,7 +56,7 @@ namespace Dashboard
                 e.CellStyle.ForeColor = (double) e.Value < 0 ? Color.Red : Color.LawnGreen;
         }
 
-        private void dgvStockList_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void dgvStockList_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
             var isinColumn = dgvStockList.GetColumn(nameof(StockViewModel.Isin));

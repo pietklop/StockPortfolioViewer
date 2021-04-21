@@ -44,7 +44,7 @@ namespace Dashboard
             this.dgvStockList.RowTemplate.Height = 25;
             this.dgvStockList.Size = new System.Drawing.Size(741, 305);
             this.dgvStockList.TabIndex = 0;
-            this.dgvStockList.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvStockList_CellDoubleClick);
+            this.dgvStockList.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvStockList_CellClick);
             this.dgvStockList.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvStockList_CellFormatting);
             this.dgvStockList.SelectionChanged += new System.EventHandler(this.dgvStockList_SelectionChanged);
             // 
