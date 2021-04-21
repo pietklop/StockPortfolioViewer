@@ -8,7 +8,6 @@ using Imports;
 using log4net;
 using Messages.Dtos;
 using Microsoft.EntityFrameworkCore;
-using Services.Ui;
 
 namespace Services
 {
@@ -16,11 +15,13 @@ namespace Services
     {
         private readonly ILog log;
         private readonly StockDbContext db;
+        private readonly Settings settings;
 
-        public StockService(ILog log, StockDbContext db)
+        public StockService(ILog log, StockDbContext db, Settings settings)
         {
             this.log = log;
             this.db = db;
+            this.settings = settings;
         }
 
         public Stock GetOrCreateStock(string name, string isin, string currency)
@@ -64,7 +65,7 @@ namespace Services
             else
             {
                 var curr = db.Currencies.Get(stock.Currency.Key);
-                if ((now - curr.LastUpdate).TotalDays >= 5)
+                if ((now - curr.LastUpdate).TotalDays >= settings.CurrencyRatioExpiresAfterDays)
                     throw new Exception($"Currency '{curr}' ratio has expired.");
                 userPrice = nativePrice.ToUserCurrency(curr.Ratio);
             }
