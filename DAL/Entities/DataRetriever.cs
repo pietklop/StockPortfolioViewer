@@ -42,15 +42,22 @@ namespace DAL.Entities
     {
         public int StockId { get; set; }
         public Stock Stock { get; set; }
-        /// <summary>
-        /// This will only be null when <see cref="IsCompatible"/> is false
-        /// </summary>
         public string StockRef { get; set; }
         public int DataRetrieverId { get; set; }
         public DataRetriever DataRetriever { get; set; }
         /// <summary>
         /// True in case this stock can be retrieved with this retriever
         /// </summary>
-        public bool IsCompatible { get; set; }
+        public RetrieverCompatibility Compatibility { get; set; }
+    }
+
+    public enum RetrieverCompatibility
+    {
+        /// <summary>
+        /// Not tested yet
+        /// </summary>
+        Unknown,
+        True,
+        False,
     }
 }

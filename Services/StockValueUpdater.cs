@@ -2,6 +2,7 @@
 using System.Linq;
 using Core;
 using DAL;
+using DAL.Entities;
 using log4net;
 using Services.DI;
 using StockDataApi.IexCloud;
@@ -40,7 +41,7 @@ namespace Services
             var dr = CastleContainer.Resolve<IexDataRetriever>();
 
             var stocks = db.Stocks
-                .Where(s => s.StockRetrieverCompatibilities.Any(sc => sc.DataRetriever.Name == IexDataRetriever.Name && sc.IsCompatible))
+                .Where(s => s.StockRetrieverCompatibilities.Any(sc => sc.DataRetriever.Name == IexDataRetriever.Name && sc.Compatibility == RetrieverCompatibility.True))
                 .Select(s => new
                 {
                     name = s.Name,

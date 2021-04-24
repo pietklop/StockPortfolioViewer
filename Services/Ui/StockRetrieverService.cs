@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using DAL;
+using DAL.Entities;
 using log4net;
 using Messages.UI.Overview;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +30,7 @@ namespace Services.Ui
                 .Select(r => new StockRetrieverViewModel
                 {
                     RetrieverName = r.DataRetriever.Name,
-                    Compatible = r.IsCompatible ? "V" : "X",
+                    Compatible = r.Compatibility == RetrieverCompatibility.Unknown ? "?" : (r.Compatibility == RetrieverCompatibility.True ? "V" : "X"),
                     StockRef = r.StockRef,
                     Key = r.DataRetriever.Key.MaxLength(keyMaxLength),
                 }).ToList();

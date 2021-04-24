@@ -80,23 +80,25 @@ namespace Dashboard
 
             void TryRetrieveValue()
             {
+                var stk = db.Stocks.Include(s => s.StockRetrieverCompatibilities).Include(s => s.Currency).Single(s => s.Isin == stock.Isin);
+                var sr = GetOrCreateRetriever(stk, stock.Symbol);
                 try
                 {
-                    var stk = db.Stocks.Include(s => s.StockRetrieverCompatibilities).Include(s => s.Currency).Single(s => s.Isin == stock.Isin);
-                    var sr = GetOrCreateRetriever(stk, stock.Symbol);
                     var dre = db.DataRetrievers.SingleOrDefault(d => d.Name == retrieverName) ?? throw new Exception($"Could not find retriever '{retrieverName}'");
                     var dr = CastleContainer.Instance.Resolve<DataRetrieverBase>(dre.Type);
                     var priceDto = dr.GetStockQuote(sr.StockRef);
                     if (priceDto == null) throw new Exception($"Failed to retrieve stockValue of {stk} using {dre}");
                     stockService.UpdateStockPrice(stock.Isin, priceDto.Price);
-                    sr.IsCompatible = true;
+                    sr.Compatibility = RetrieverCompatibility.True;
                     db.SaveChanges();
                     MessageBox.Show($"{stk.Currency.Symbol}{priceDto.Price:F2} of {priceDto.LastPriceUpdate.ToShortDateString()} {priceDto.LastPriceUpdate.ToShortTimeString()}");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Something went wrong. Msg: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     log.Error($"Error during StockPrice data request", ex);
+                    sr.Compatibility = RetrieverCompatibility.False;
+                    db.SaveChanges();
+                    MessageBox.Show($"Something went wrong. Msg: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
 
@@ -117,10 +119,10 @@ namespace Dashboard
                     sr = new StockRetrieverCompatibility {DataRetriever = dr, Stock = stk, StockRef = newStockRef ?? defaultStockRef};
                     stk.StockRetrieverCompatibilities.Add(sr);
                 }
-                else
+                else if (newStockRef != null)
                 {
-                    if (newStockRef != null) sr.StockRef = newStockRef;
-                    sr.IsCompatible = false;
+                    sr.StockRef = newStockRef;
+                    sr.Compatibility = RetrieverCompatibility.Unknown;
                 }
                 db.SaveChanges();
                 PopulateRetrieverGrid();
