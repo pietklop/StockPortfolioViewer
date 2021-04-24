@@ -46,6 +46,7 @@ namespace Dashboard
             dgvRetrieverList.DataSource = srList;
 
             // column configuration
+            dgvRetrieverList.ApplyColumnDisplayFormatAttributes();
             dgvRetrieverList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             var retrieverColumn = dgvRetrieverList.GetColumn(nameof(StockRetrieverViewModel.RetrieverName));
             retrieverColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
