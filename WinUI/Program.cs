@@ -1,7 +1,9 @@
 using System;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using Dashboard.DI;
+using log4net;
 using log4net.Config;
 using Services;
 using Services.DI;
@@ -10,6 +12,8 @@ namespace Dashboard
 {
     static class Program
     {
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
@@ -34,8 +38,18 @@ namespace Dashboard
 
         private static void DoStartupActions()
         {
-            var curUpdater = CastleContainer.Resolve<CurrencyUpdater>();
-            curUpdater.Run();
+            try
+            {
+                var curUpdater = CastleContainer.Resolve<CurrencyUpdater>();
+                curUpdater.Run();
+
+                var stockUpdater = CastleContainer.Resolve<StockValueUpdater>();
+                stockUpdater.Run();
+            }
+            catch (Exception ex)
+            {
+                log.Error($"Error during {nameof(DoStartupActions)}", ex);
+            }
         }
     }
 }

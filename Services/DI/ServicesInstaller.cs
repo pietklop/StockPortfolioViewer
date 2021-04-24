@@ -31,6 +31,7 @@ namespace Services.DI
             container.Register(Component.For<StockService>().LifestyleTransient());
             container.Register(Component.For<StockOverviewService>().LifestyleTransient());
             container.Register(Component.For<StockRetrieverService>().LifestyleTransient());
+            container.Register(Component.For<StockValueUpdater>().LifestyleTransient());
         }
 
         private static void RegisterDataRetrievers(IWindsorContainer container)

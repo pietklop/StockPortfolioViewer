@@ -50,7 +50,7 @@ namespace Services
             return stock;
         }
 
-        public Stock UpdateStockPrice(string isin, double nativePrice)
+        public Stock UpdateStockPrice(string isin, double nativePrice, DateTime? lastPriceUpdate = null)
         {
             var stock = db.Stocks
                 .Include(s => s.Currency)
@@ -83,7 +83,7 @@ namespace Services
                 return new PitStockValue
                 {
                     Stock = stock,
-                    TimeStamp = now,
+                    TimeStamp = lastPriceUpdate ?? now,
                     NativePrice = nativePrice,
                     UserPrice = userPrice,
                 };

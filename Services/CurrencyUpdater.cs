@@ -23,6 +23,7 @@ namespace Services
 
         public void Run()
         {
+            log.Debug($"Run {nameof(CurrencyUpdater)}");
             var currencies = db.Currencies.Where(c => c.Key != Constants.UserCurrency).ToList();
 
             var dr = CastleContainer.Resolve<AvDataRetriever>();
