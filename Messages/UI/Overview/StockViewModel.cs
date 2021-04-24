@@ -16,6 +16,10 @@ namespace Messages.UI.Overview
         public double ProfitFraction { get; set; }
         [DisplayName("Portf. weight")]
         [DisplayFormat("P1")]
+        [Description("Percentage of the complete portfolio value")]
         public double PortFolioFraction { get; set; }
+        [DisplayName("Last update")]
+        [Description("Last update of the stock price")]
+        public string LastPriceUpdate { get; set; }
     }
 }

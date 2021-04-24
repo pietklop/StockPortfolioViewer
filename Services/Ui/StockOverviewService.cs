@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DAL;
 using DAL.Entities;
 using log4net;
 using Messages.UI.Overview;
 using Microsoft.EntityFrameworkCore;
+using Services.Helpers;
 
 namespace Services.Ui
 {
@@ -44,7 +46,8 @@ namespace Services.Ui
                     Isin = stock.Isin,
                     Value = currentValue,
                     Profit = profit,
-                    ProfitFraction = profit / virtualBuyValue, 
+                    ProfitFraction = profit / virtualBuyValue,
+                    LastPriceUpdate = LastUpdateSince(stock),
                 });
             }
 
@@ -53,6 +56,8 @@ namespace Services.Ui
                 stockItem.PortFolioFraction = stockItem.Value / totalValue;
 
             return list;
+
+            string LastUpdateSince(Stock stock) => (DateTime.Now - stock.LastKnownStockValue.StockValue.TimeStamp).TimeAgo();
         }
     }
 }
