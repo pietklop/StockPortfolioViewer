@@ -8,6 +8,7 @@ using StockDataApi.General;
 namespace StockDataApi.IexCloud
 {
     /// <summary>
+    /// USA stocks and ETFs only
     /// Limits are more complex for this service.
     /// Calls have a different weighing.
     /// Simple <see cref="GetStockSymbol"/> costs one credit
@@ -20,6 +21,12 @@ namespace StockDataApi.IexCloud
         public IexDataRetriever(ILog log, Settings settings) : base(log, settings.IexCloudBaseUrl, settings.IexCloudApiKey)
         {
         }
+
+        /// <summary>
+        /// Gets all available symbols
+        /// Expensive call in credits and data
+        /// </summary>
+        public string GetAllSymbols() => Get($"ref-data/symbols");
 
         private string GetStockSymbol(string isin)
         {
