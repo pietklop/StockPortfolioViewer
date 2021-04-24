@@ -105,26 +105,25 @@ namespace Dashboard
                 var newName = InputHelper.GetString("Enter ref");
                 if (newName == null) return;
                 var stk = db.Stocks.Include(s => s.StockRetrieverCompatibilities).Single(s => s.Isin == stock.Isin);
-                GetOrCreateRetriever(stk, newName);
+                GetOrCreateRetriever(stk, null, newName);
             }
 
-            StockRetrieverCompatibility GetOrCreateRetriever(Stock stk, string newName)
+            StockRetrieverCompatibility GetOrCreateRetriever(Stock stk, string defaultStockRef, string newStockRef = null)
             {
                 var sr = stk.StockRetrieverCompatibilities.FirstOrDefault(s => s.DataRetriever.Name == retrieverName);
                 if (sr == null)
                 {
                     var dr = db.DataRetrievers.SingleOrDefault(d => d.Name == retrieverName) ?? throw new Exception($"Could not find retriever '{retrieverName}'");
-                    sr = new StockRetrieverCompatibility {DataRetriever = dr, Stock = stk, StockRef = newName};
+                    sr = new StockRetrieverCompatibility {DataRetriever = dr, Stock = stk, StockRef = newStockRef ?? defaultStockRef};
                     stk.StockRetrieverCompatibilities.Add(sr);
-                    db.SaveChanges();
-                    PopulateRetrieverGrid();
                 }
                 else
                 {
-                    sr.StockRef = newName;
+                    if (newStockRef != null) sr.StockRef = newStockRef;
                     sr.IsCompatible = false;
-                    db.SaveChanges();
                 }
+                db.SaveChanges();
+                PopulateRetrieverGrid();
 
                 return sr;
             }
