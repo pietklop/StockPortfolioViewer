@@ -52,11 +52,11 @@ namespace Dashboard
             this.dgvRetrieverList.AllowUserToDeleteRows = false;
             this.dgvRetrieverList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvRetrieverList.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.dgvRetrieverList.Location = new System.Drawing.Point(0, 79);
+            this.dgvRetrieverList.Location = new System.Drawing.Point(0, 74);
             this.dgvRetrieverList.Name = "dgvRetrieverList";
             this.dgvRetrieverList.ReadOnly = true;
             this.dgvRetrieverList.RowTemplate.Height = 25;
-            this.dgvRetrieverList.Size = new System.Drawing.Size(459, 127);
+            this.dgvRetrieverList.Size = new System.Drawing.Size(459, 73);
             this.dgvRetrieverList.TabIndex = 5;
             this.dgvRetrieverList.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvRetrieverList_CellClick);
             this.dgvRetrieverList.SelectionChanged += new System.EventHandler(this.dgvRetrieverList_SelectionChanged);
@@ -79,14 +79,14 @@ namespace Dashboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(51)))), ((int)(((byte)(73)))));
-            this.ClientSize = new System.Drawing.Size(459, 206);
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
+            this.ClientSize = new System.Drawing.Size(459, 147);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.dgvRetrieverList);
             this.Controls.Add(this.lblStockName);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "frmStockRetriever";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "frmStockRetriever";
             this.Load += new System.EventHandler(this.frmStockRetriever_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvRetrieverList)).EndInit();
