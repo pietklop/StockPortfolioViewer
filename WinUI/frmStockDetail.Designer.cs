@@ -44,8 +44,8 @@ namespace Dashboard
             this.dgvStockDetails.RowTemplate.Height = 25;
             this.dgvStockDetails.Size = new System.Drawing.Size(350, 305);
             this.dgvStockDetails.TabIndex = 0;
+            this.dgvStockDetails.TabStop = false;
             this.dgvStockDetails.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvStockDetails_CellClick);
-            this.dgvStockDetails.SelectionChanged += new System.EventHandler(this.dgvStockDetails_SelectionChanged);
             // 
             // frmStockDetail
             // 
@@ -58,6 +58,7 @@ namespace Dashboard
             this.Name = "frmStockDetail";
             this.Text = "frmOverview";
             this.Load += new System.EventHandler(this.frmStockDetail_Load);
+            this.Shown += new System.EventHandler(this.frmStockDetail_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.dgvStockDetails)).EndInit();
             this.ResumeLayout(false);
 

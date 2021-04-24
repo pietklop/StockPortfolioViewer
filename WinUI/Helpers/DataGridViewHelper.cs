@@ -40,7 +40,7 @@ namespace Dashboard.Helpers
             dgv.AllowUserToDeleteRows = false;
             dgv.AllowUserToOrderColumns = true;
             dgv.ReadOnly = true;
-            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgv.SelectionMode = DataGridViewSelectionMode.CellSelect;
             dgv.MultiSelect = false;
             dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
             dgv.AllowUserToResizeColumns = false;

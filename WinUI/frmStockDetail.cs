@@ -6,8 +6,8 @@ using DAL;
 using Dashboard.Helpers;
 using Dashboard.Input;
 using log4net;
+using Messages.Dtos;
 using Messages.UI.StockDetails;
-using Microsoft.EntityFrameworkCore;
 using Services;
 using Services.DI;
 using Services.Ui;
@@ -38,6 +38,11 @@ namespace Dashboard
             PopulateStockGrid();
         }
 
+        private void frmStockDetail_Shown(object sender, EventArgs e)
+        {
+            dgvStockDetails.ClearSelection();
+        }
+
         private void PopulateStockGrid()
         {
             var stockList = stockDetailService.GetDetails(stockIsin);
@@ -50,11 +55,6 @@ namespace Dashboard
 
             dgvStockDetails.SetReadOnly();
             dgvStockDetails.SetVisualStyling();
-        }
-
-        private void dgvStockDetails_SelectionChanged(object sender, EventArgs e)
-        {
-            dgvStockDetails.ClearSelection();
         }
 
         private void dgvStockDetails_CellClick(object sender, DataGridViewCellEventArgs e)
