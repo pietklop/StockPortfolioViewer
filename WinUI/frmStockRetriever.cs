@@ -76,6 +76,9 @@ namespace Dashboard
                 case nameof(StockRetrieverViewModel.Compatible):
                     TryRetrieveValue();
                     break;
+                case nameof(StockRetrieverViewModel.Key):
+                    ChangeKey();
+                    break;
             }
 
             void TryRetrieveValue()
@@ -108,6 +111,16 @@ namespace Dashboard
                 if (newName == null) return;
                 var stk = db.Stocks.Include(s => s.StockRetrieverCompatibilities).Single(s => s.Isin == stock.Isin);
                 GetOrCreateRetriever(stk, null, newName);
+            }
+
+            void ChangeKey()
+            {
+                var newKey = InputHelper.GetString("Enter key");
+                if (newKey == null) return;
+                var dataRetriever = db.DataRetrievers.Single(s => s.Name == retrieverName);
+                dataRetriever.Key = newKey;
+                db.SaveChanges();
+                PopulateRetrieverGrid();
             }
 
             StockRetrieverCompatibility GetOrCreateRetriever(Stock stk, string defaultStockRef, string newStockRef = null)
