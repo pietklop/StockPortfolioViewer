@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Core;
@@ -41,6 +42,14 @@ namespace Dashboard
         private void frmStockDetail_Shown(object sender, EventArgs e)
         {
             dgvStockDetails.ClearSelection();
+
+            //custom row config, does not work in form_load_call
+            var underlineColumn = dgvStockDetails.GetColumn(nameof(StockPropertyViewModel.UnderlineRow));
+            foreach (DataGridViewRow row in dgvStockDetails.Rows)
+            {
+                if ((bool)dgvStockDetails[underlineColumn.Index, row.Index].Value)
+                    row.DefaultCellStyle.Font = new Font(dgvStockDetails.Font, FontStyle.Underline);
+            }
         }
 
         private void PopulateStockGrid()
@@ -52,6 +61,8 @@ namespace Dashboard
             dgvStockDetails.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             var nameColumn = dgvStockDetails.GetColumn(nameof(StockPropertyViewModel.Name));
             nameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            var underlineColumn = dgvStockDetails.GetColumn(nameof(StockPropertyViewModel.UnderlineRow));
+            underlineColumn.Visible = false;
 
             dgvStockDetails.SetReadOnly();
             dgvStockDetails.SetVisualStyling();
