@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 using Dashboard.DI;
 using log4net.Config;
+using Services;
 using Services.DI;
 
 namespace Dashboard
@@ -25,8 +26,16 @@ namespace Dashboard
             var installer = DependencyInstaller.CreateInstaller(new FormInstaller());
             container.AddFacilities().Install(installer);
 
+            DoStartupActions();
+
             var mainForm = CastleContainer.Resolve<frmMain>();
             Application.Run(mainForm);
+        }
+
+        private static void DoStartupActions()
+        {
+            var curUpdater = CastleContainer.Resolve<CurrencyUpdater>();
+            curUpdater.Run();
         }
     }
 }
