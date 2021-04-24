@@ -4,6 +4,7 @@ namespace Messages.UI.Overview
 {
     public class StockViewModel
     {
+        [ColumnCellsUnderline]
         public string Name { get; set; }
         public string Isin { get; set; }
         [Description("Total value of this currently owned stock")]

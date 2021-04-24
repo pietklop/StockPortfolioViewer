@@ -21,6 +21,9 @@ namespace Dashboard.Helpers
                     var format = (DisplayFormatAttribute)p.Attributes[typeof(DisplayFormatAttribute)];
                     column.ToolTipText = p.Description;
                     column.DefaultCellStyle.Format = format?.Format;
+                    var underline = (ColumnCellsUnderlineAttribute)p.Attributes[typeof(ColumnCellsUnderlineAttribute)];
+                    if (underline != null)
+                        column.DefaultCellStyle.Font = new Font(dgv.DefaultCellStyle.Font, FontStyle.Underline);
                 }
             }
         }
