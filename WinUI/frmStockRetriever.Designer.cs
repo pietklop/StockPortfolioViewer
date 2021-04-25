@@ -40,11 +40,13 @@ namespace Dashboard
             this.lblStockName.AutoSize = true;
             this.lblStockName.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblStockName.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblStockName.Location = new System.Drawing.Point(134, 28);
+            this.lblStockName.Location = new System.Drawing.Point(59, 31);
+            this.lblStockName.MaximumSize = new System.Drawing.Size(400, 0);
             this.lblStockName.Name = "lblStockName";
             this.lblStockName.Size = new System.Drawing.Size(157, 31);
             this.lblStockName.TabIndex = 4;
             this.lblStockName.Text = "Stock name";
+            this.lblStockName.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // dgvRetrieverList
             // 
@@ -52,11 +54,11 @@ namespace Dashboard
             this.dgvRetrieverList.AllowUserToDeleteRows = false;
             this.dgvRetrieverList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvRetrieverList.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.dgvRetrieverList.Location = new System.Drawing.Point(0, 74);
+            this.dgvRetrieverList.Location = new System.Drawing.Point(0, 81);
             this.dgvRetrieverList.Name = "dgvRetrieverList";
             this.dgvRetrieverList.ReadOnly = true;
             this.dgvRetrieverList.RowTemplate.Height = 25;
-            this.dgvRetrieverList.Size = new System.Drawing.Size(459, 73);
+            this.dgvRetrieverList.Size = new System.Drawing.Size(459, 99);
             this.dgvRetrieverList.TabIndex = 5;
             this.dgvRetrieverList.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvRetrieverList_CellClick);
             this.dgvRetrieverList.SelectionChanged += new System.EventHandler(this.dgvRetrieverList_SelectionChanged);
@@ -80,7 +82,7 @@ namespace Dashboard
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
-            this.ClientSize = new System.Drawing.Size(459, 147);
+            this.ClientSize = new System.Drawing.Size(459, 180);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.dgvRetrieverList);
             this.Controls.Add(this.lblStockName);

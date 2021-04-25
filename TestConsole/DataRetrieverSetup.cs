@@ -3,6 +3,7 @@ using DAL;
 using DAL.Entities;
 using StockDataApi.AlphaVantage;
 using StockDataApi.IexCloud;
+using StockDataApi.MarketStack;
 
 namespace TestConsole
 {
@@ -12,6 +13,7 @@ namespace TestConsole
         {
             AddRetriever(db, AvDataRetriever.Name, typeof(AvDataRetriever), "https://www.alphavantage.co/", "???");
             AddRetriever(db, IexDataRetriever.Name, typeof(IexDataRetriever), "https://cloud.iexapis.com/v1/", "???");
+            AddRetriever(db, MsDataRetriever.Name, typeof(MsDataRetriever), "https://api.marketstack.com/v1/", "???");
         }
 
         private static void AddRetriever(StockDbContext db, string name, Type type, string baseUrl, string key)
