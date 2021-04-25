@@ -27,7 +27,7 @@ namespace Imports.DeGiro
         }
 
         public static double ToDouble(this string text) => 
-            double.Parse(text.Replace(",", "."), CultureInfo.InvariantCulture);
+            double.Parse(text.Replace(".", "").Replace(",", "."), CultureInfo.InvariantCulture);
 
         private static string RemoveQuotes(this string text)
         {

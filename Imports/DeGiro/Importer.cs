@@ -126,8 +126,10 @@ namespace Imports.DeGiro
             transact.Currency = fields[currencyColIndex];
             transact.TimeStamp = ExtractTimestamp(fields[dateColIndex]);
             var actionFields = fields[actionColIndex].Split(" ");
-            transact.Quantity = actionFields[1].ToDouble();
-            if (lineType == LineType.Sell) transact.Quantity *= -1;
+            if (lineType == LineType.Buy)
+                transact.Quantity += actionFields[1].ToDouble();
+            else
+                transact.Quantity -= actionFields[1].ToDouble();
             transact.Price = actionFields[3].ToDouble();
         }
 
@@ -140,15 +142,21 @@ namespace Imports.DeGiro
         private static LineType GetLineType(string actionField)
         {
             // exact matches
+            if (actionField == "")
+                return LineType.Na;
             if (actionField == "DEGIRO transactiekosten")
                 return LineType.TransactionCosts;
             if (actionField == "DEGIRO Corporate Action Kosten")
                 return LineType.CorporateActionCosts;
+            if (actionField == "Degiro Cash Sweep Transfer")
+                return LineType.Na;
             if (actionField == "Dividend")
                 return LineType.Dividend;
             if (actionField == "Dividendbelasting")
                 return LineType.DividendTax;
             if (actionField == "EUR")
+                return LineType.Na;
+            if (actionField == "Flatex Cash Sweep Transfer")
                 return LineType.Na;
             if (actionField == "iDEAL storting")
                 return LineType.Na;

@@ -100,6 +100,7 @@ namespace Dashboard
                     int nAddedDividends = 0;
                     foreach (var filePath in openFileDialog.FileNames)
                     {
+                        log.Debug($"Try import: '{filePath}'");
                         (int nT, int nDiv) = importProcessor.Process(importer.Import(filePath));
                         nAddedTransactions += nT;
                         nAddedDividends += nDiv;
