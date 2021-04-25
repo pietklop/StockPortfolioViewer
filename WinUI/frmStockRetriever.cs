@@ -87,10 +87,9 @@ namespace Dashboard
                 var sr = GetOrCreateRetriever(stk, stock.Symbol);
                 try
                 {
-                    var dre = db.DataRetrievers.SingleOrDefault(d => d.Name == retrieverName) ?? throw new Exception($"Could not find retriever '{retrieverName}'");
-                    var dr = CastleContainer.Instance.Resolve<DataRetrieverBase>(dre.Type);
+                    var dr = CastleContainer.ResolveRetriever(db, retrieverName);
                     var priceDto = dr.GetStockQuote(sr.StockRef);
-                    if (priceDto == null) throw new Exception($"Failed to retrieve stockValue of {stk} using {dre}");
+                    if (priceDto == null) throw new Exception($"Failed to retrieve stockValue of {stk} using {dr.ToString()}");
                     stockService.UpdateStockPrice(stock.Isin, priceDto.Price, priceDto.LastPriceUpdate);
                     sr.Compatibility = RetrieverCompatibility.True;
                     db.SaveChanges();

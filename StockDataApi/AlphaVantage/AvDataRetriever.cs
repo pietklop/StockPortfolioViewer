@@ -17,7 +17,7 @@ namespace StockDataApi.AlphaVantage
     {
         public const string Name = "Alpha Vantage";
 
-        public AvDataRetriever(ILog log, Settings settings) : base(log, settings.AlphaVantageBaseUrl, settings.AlphaVantageApiKey)
+        public AvDataRetriever(ILog log, string baseUrl, string apiKey) : base(log, baseUrl, apiKey)
         {
         }
 
@@ -28,7 +28,8 @@ namespace StockDataApi.AlphaVantage
             var child = data["Global Quote"];
             var price = child["05. price"];
             var date = child["07. latest trading day"];
-            return new StockQuoteDto(symbol, double.Parse(price.Value, CultureInfo.InvariantCulture), DateTime.Parse(date.Value));
+            DateTime updateDateTime = AddMissingCloseTime(DateTime.Parse(date.Value));
+            return new StockQuoteDto(symbol, double.Parse(price.Value, CultureInfo.InvariantCulture), updateDateTime);
         }
 
         public double GetCurrencyRate(string foreignCurrency)

@@ -26,7 +26,7 @@ namespace Services
             log.Debug($"Run {nameof(CurrencyUpdater)}");
             var currencies = db.Currencies.Where(c => c.Key != Constants.UserCurrency).ToList();
 
-            var dr = CastleContainer.Resolve<AvDataRetriever>();
+            var dr = (AvDataRetriever)CastleContainer.ResolveRetriever(db, AvDataRetriever.Name);
 
             foreach (var currency in currencies)
             {

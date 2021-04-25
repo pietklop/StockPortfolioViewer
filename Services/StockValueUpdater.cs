@@ -38,7 +38,7 @@ namespace Services
 
         private void AutoUpdateIexCompatibleStocks()
         {
-            var dr = CastleContainer.Resolve<IexDataRetriever>();
+            var dr = CastleContainer.ResolveRetriever(db, IexDataRetriever.Name);
 
             var stocks = db.Stocks
                 .Where(s => s.StockRetrieverCompatibilities.Any(sc => sc.DataRetriever.Name == IexDataRetriever.Name && sc.Compatibility == RetrieverCompatibility.True))

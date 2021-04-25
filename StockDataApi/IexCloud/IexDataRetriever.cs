@@ -18,7 +18,7 @@ namespace StockDataApi.IexCloud
     {
         public const string Name = "IEX Cloud";
 
-        public IexDataRetriever(ILog log, Settings settings) : base(log, settings.IexCloudBaseUrl, settings.IexCloudApiKey)
+        public IexDataRetriever(ILog log, string baseUrl, string apiKey) : base(log, baseUrl, apiKey)
         {
         }
 

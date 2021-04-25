@@ -67,5 +67,7 @@ namespace StockDataApi.General
             }
         }
 
+        protected DateTime AddMissingCloseTime(DateTime date) =>
+            date.Date == DateTime.Now.Date ? DateTime.Now : date.AddHours(18);
     }
 }

@@ -1,4 +1,10 @@
-﻿using Castle.Windsor;
+﻿using System;
+using System.Linq;
+using Castle.MicroKernel;
+using Castle.Windsor;
+using DAL;
+using DAL.Entities;
+using StockDataApi.General;
 
 namespace Services.DI
 {
@@ -14,10 +20,17 @@ namespace Services.DI
         }
 
         // shortcut to make your life easier :)
-        public static T Resolve<T>()
+        public static T Resolve<T>() => Instance.Resolve<T>();
+
+        public static DataRetrieverBase ResolveRetriever(StockDbContext db, string retrieverName)
         {
-            return Instance.Resolve<T>();
+            var entity = db.DataRetrievers.Single(d => d.Name == retrieverName)
+                         ?? throw new Exception($"Could not find retriever '{retrieverName}'");
+            return ResolveRetriever(entity);
         }
+
+        public static DataRetrieverBase ResolveRetriever(DataRetriever retriever) =>
+            Instance.Resolve<DataRetrieverBase>(retriever.Type, new Arguments { { "baseUrl", retriever.BaseUrl }, { "apiKey", retriever.Key } });
 
         public static void Dispose()
         {
