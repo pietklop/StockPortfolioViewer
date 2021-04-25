@@ -55,7 +55,7 @@ namespace Services.Ui
             foreach (var stockItem in list)
                 stockItem.PortFolioFraction = stockItem.Value / totalValue;
 
-            return list;
+            return list.OrderByDescending(l => l.Value).ToList();
 
             string LastUpdateSince(Stock stock) => (DateTime.Now - stock.LastKnownStockValue.StockValue.TimeStamp).TimeAgo();
         }
