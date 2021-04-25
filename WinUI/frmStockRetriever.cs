@@ -91,7 +91,7 @@ namespace Dashboard
                     var dr = CastleContainer.Instance.Resolve<DataRetrieverBase>(dre.Type);
                     var priceDto = dr.GetStockQuote(sr.StockRef);
                     if (priceDto == null) throw new Exception($"Failed to retrieve stockValue of {stk} using {dre}");
-                    stockService.UpdateStockPrice(stock.Isin, priceDto.Price);
+                    stockService.UpdateStockPrice(stock.Isin, priceDto.Price, priceDto.LastPriceUpdate);
                     sr.Compatibility = RetrieverCompatibility.True;
                     db.SaveChanges();
                     MessageBox.Show($"{stk.Currency.Symbol}{priceDto.Price:F2} of {priceDto.LastPriceUpdate.ToShortDateString()} {priceDto.LastPriceUpdate.ToShortTimeString()}");
@@ -107,7 +107,7 @@ namespace Dashboard
 
             void ChangeStockRef()
             {
-                var newName = InputHelper.GetString("Enter ref");
+                var newName = InputHelper.GetString("Enter ref", stock.Symbol);
                 if (newName == null) return;
                 var stk = db.Stocks.Include(s => s.StockRetrieverCompatibilities).Single(s => s.Isin == stock.Isin);
                 GetOrCreateRetriever(stk, null, newName);

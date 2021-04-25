@@ -9,7 +9,7 @@ namespace Dashboard.Input
         private readonly InputType inputType;
         public string Input { get; private set; } = null;
 
-        public frmInput(string caption, InputType inputType)
+        public frmInput(string caption, InputType inputType, string defaultValue = null)
         {
             InitializeComponent();
             lblInputT.Text = caption;
@@ -18,6 +18,12 @@ namespace Dashboard.Input
             {
                 txtInput.Visible = false;
                 lblInputT.MaximumSize = new Size(txtInput.Width, 150);
+            }
+            else if (defaultValue != null)
+            {
+                txtInput.Text = defaultValue;
+                txtInput.SelectionStart = 0;
+                txtInput.SelectionLength = defaultValue.Length;
             }
         }
 

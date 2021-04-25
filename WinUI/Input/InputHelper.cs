@@ -11,10 +11,10 @@ namespace Dashboard.Input
                 return form.ShowDialog() == DialogResult.OK;
         }
 
-        public static string GetString(string caption)
+        public static string GetString(string caption, string defaultValue = null)
         {
             string input = null;
-            using (frmInput form = new frmInput(caption, InputType.String))
+            using (frmInput form = new frmInput(caption, InputType.String, defaultValue))
             {
                 if (form.ShowDialog() == DialogResult.OK)
                     input = form.Input;
