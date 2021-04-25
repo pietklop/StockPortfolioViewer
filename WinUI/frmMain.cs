@@ -41,7 +41,7 @@ namespace Dashboard
             LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockDetail>(new Arguments{{"stockIsin", isin}}));
 
         private void btnMainOverview_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmOverview>());
-        private void btnTransactions_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, null);
+        private void btnTransactions_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmTransactions>());
         private void btnImport_Click(object sender, EventArgs e) => ImportUsingFileDialog();
 
         private void btnMainOverview_Leave(object sender, EventArgs e) => SetDefaultButtonBackColor((Button)sender);

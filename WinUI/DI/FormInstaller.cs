@@ -12,6 +12,7 @@ namespace Dashboard.DI
             container.Register(Component.For<frmOverview>().LifestyleTransient());
             container.Register(Component.For<frmStockDetail>().LifestyleTransient());
             container.Register(Component.For<frmStockRetriever>().LifestyleTransient());
+            container.Register(Component.For<frmTransactions>().LifestyleTransient());
         }
     }
 }
