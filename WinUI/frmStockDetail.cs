@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Castle.MicroKernel;
 using Core;
 using DAL;
 using Dashboard.Helpers;
@@ -123,6 +124,11 @@ namespace Dashboard
                 {
                     var stock = db.Stocks.Single(s => s.Isin == stockIsin);
                     if (string.IsNullOrEmpty(stock.Symbol)) throw new Exception($"Symbol can not be empty");
+
+                    var frmDr = CastleContainer.Instance.Resolve<frmStockRetriever>(new Arguments { { "Stock", new StockDto{ Name = stock.Name, Isin = stock.Isin, Symbol = stock.Symbol} } });
+                    frmDr.Show(this);
+                    return;
+                    
                     if (!InputHelper.GetConfirmation($"Auto price update?")) return;
                     var dr = CastleContainer.Resolve<IexDataRetriever>();
                     var priceDto = dr.GetStockQuote(stock.Symbol);
