@@ -3,6 +3,7 @@
     public static class Constants
     {
         public const string UserCurrency = "EUR";
+        public const string UserCurrencySymbol = "€";
         public const string Unknown = "Unknown";
         public const bool IsDeGiroCustodyAccount = true;
     }

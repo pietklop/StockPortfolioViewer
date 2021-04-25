@@ -7,14 +7,20 @@ namespace DAL.Entities
     {
         public static double DetermineAvgBuyUserPrice(this ICollection<Transaction> transactions)
         {
-            var buyTransactions = transactions.Where(t => t.Quantity > 0).ToList();
+            var buyTransactions = transactions.IsBuy().ToList();
             return buyTransactions.Sum(t => t.Quantity * t.StockValue.UserPrice) / buyTransactions.Sum(t => t.Quantity);
         }
 
         public static double DetermineAvgBuyNativePrice(this ICollection<Transaction> transactions)
         {
-            var buyTransactions = transactions.Where(t => t.Quantity > 0).ToList();
+            var buyTransactions = transactions.IsBuy().ToList();
             return buyTransactions.Sum(t => t.Quantity * t.StockValue.NativePrice) / buyTransactions.Sum(t => t.Quantity);
         }
+
+        public static IEnumerable<Transaction> IsBuy(this ICollection<Transaction> transactions) =>
+            transactions.Where(t => t.Quantity > 0);
+
+        public static IEnumerable<Transaction> IsSell(this ICollection<Transaction> transactions) =>
+            transactions.Where(t => t.Quantity < 0);
     }
 }
