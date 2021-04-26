@@ -55,6 +55,10 @@ namespace Dashboard
             
             if (redGreenColumnIndexes.Contains(e.ColumnIndex))
                 e.CellStyle.ForeColor = (double) e.Value < 0 ? Color.Red : Color.LawnGreen;
+
+            var lastUpdateColIndex = dgvStockList.GetColumn(nameof(StockViewModel.LastPriceUpdate)).Index;
+            if (e.ColumnIndex == lastUpdateColIndex && e.Value != null && ((string)e.Value).Contains("days"))
+                e.CellStyle.ForeColor = Color.Red;
         }
 
         private void dgvStockList_CellClick(object sender, DataGridViewCellEventArgs e)
