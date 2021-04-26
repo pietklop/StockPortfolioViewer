@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
 using DAL;
 using DAL.Entities;
 using log4net;
@@ -32,6 +33,7 @@ namespace Services.Ui
 
             var list = new List<StockViewModel>(stocks.Count());
 
+            double totVirtualBuyValue = 0;
             foreach (var stock in stocks)
             {
                 var avgBuyPrice = stock.Transactions.DetermineAvgBuyUserPrice();
@@ -39,6 +41,7 @@ namespace Services.Ui
                 var currentValue = stock.LastKnownUserPrice * nStocks
                                    + stock.Dividends.Sum(d => d.UserValue - d.UserCosts - d.UserTax);
                 var virtualBuyValue = avgBuyPrice * nStocks;
+                totVirtualBuyValue += virtualBuyValue;
                 var profit = currentValue - virtualBuyValue;
                 list.Add(new StockViewModel
                 {
@@ -55,6 +58,15 @@ namespace Services.Ui
             foreach (var stockItem in list)
                 stockItem.PortFolioFraction = stockItem.Value / totalValue;
 
+            var totalProfit = list.Sum(l => l.Profit);
+            list.Add(new StockViewModel
+            {
+                Name = Constants.Total,
+                Value = totalValue,
+                Profit = totalProfit,
+                ProfitFraction = totalProfit / totVirtualBuyValue,
+                PortFolioFraction = list.Sum(l => l.PortFolioFraction),
+            });
             return list.OrderByDescending(l => l.Value).ToList();
 
             string LastUpdateSince(Stock stock) => (DateTime.Now - stock.LastKnownStockValue.StockValue.TimeStamp).TimeAgo();

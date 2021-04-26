@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Core;
 using Dashboard.Helpers;
 using Messages.UI.Overview;
 using Services.Ui;
@@ -59,10 +60,15 @@ namespace Dashboard
         private void dgvStockList_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
-            var isinColumn = dgvStockList.GetColumn(nameof(StockViewModel.Isin));
-            var isin = dgvStockList[isinColumn.Index, e.RowIndex].Value.ToString();
             var nameColumn = dgvStockList.GetColumn(nameof(StockViewModel.Name));
             var name = dgvStockList[nameColumn.Index, e.RowIndex].Value.ToString();
+            if (name == Constants.Total)
+            {
+                MessageBox.Show("Computer says no");
+                return;
+            }
+            var isinColumn = dgvStockList.GetColumn(nameof(StockViewModel.Isin));
+            var isin = dgvStockList[isinColumn.Index, e.RowIndex].Value.ToString();
 
             Close();
 
