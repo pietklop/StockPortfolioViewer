@@ -22,5 +22,8 @@ namespace Messages.UI.Overview
         [DisplayName("Last update")]
         [Description("Last update of the stock price")]
         public string LastPriceUpdate { get; set; }
+        [DisplayName("Retrievers")]
+        [Description("Compatible data-retrievers")]
+        public string CompatibleDataRetrievers { get; set; }
     }
 }

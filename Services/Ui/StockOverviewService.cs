@@ -25,6 +25,7 @@ namespace Services.Ui
         public List<StockViewModel> GetStockList()
         {
             var stocks = db.Stocks
+                .Include(s => s.StockRetrieverCompatibilities).ThenInclude(c => c.DataRetriever)
                 .Include(s => s.Dividends)
                 .Include(s => s.LastKnownStockValue.StockValue)
                 .Include(s => s.Transactions).ThenInclude(t => t.StockValue)
@@ -51,6 +52,7 @@ namespace Services.Ui
                     Profit = profit,
                     ProfitFraction = profit / virtualBuyValue,
                     LastPriceUpdate = LastUpdateSince(stock),
+                    CompatibleDataRetrievers = string.Join(",", stock.StockRetrieverCompatibilities.Where(c => c.Compatibility == RetrieverCompatibility.True).Select(c => c.DataRetriever.Name.Substring(0, 3)))
                 });
             }
 
