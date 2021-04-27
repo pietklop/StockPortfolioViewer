@@ -5,6 +5,7 @@ using DAL.Entities;
 using StockDataApi.AlphaVantage;
 using StockDataApi.IexCloud;
 using StockDataApi.MarketStack;
+using StockDataApi.TwelveData;
 
 namespace TestConsole
 {
@@ -18,6 +19,8 @@ namespace TestConsole
                 .AddIexLimitations();
             AddRetriever(db, MsDataRetriever.ConstName, 15, typeof(MsDataRetriever), "https://api.marketstack.com/v1/", "???")
                 .AddMsLimitations();
+            AddRetriever(db, TdDataRetriever.ConstName, 7, typeof(TdDataRetriever), "https://api.twelvedata.com/", "???")
+                .AddTdLimitations();
         }
 
         private static DataRetriever AddRetriever(StockDbContext db, string name, int priority, Type type, string baseUrl, string key)
@@ -51,6 +54,14 @@ namespace TestConsole
         {
             retriever.AddLimitation(RetrieverLimitTimespanType.Month, 1_000);
             retriever.AddLimitation(RetrieverLimitTimespanType.Second, 5);
+
+            return retriever;
+        }
+
+        internal static DataRetriever AddTdLimitations(this DataRetriever retriever)
+        {
+            retriever.AddLimitation(RetrieverLimitTimespanType.Day, 800);
+            retriever.AddLimitation(RetrieverLimitTimespanType.Minute, 12);
 
             return retriever;
         }

@@ -8,6 +8,7 @@ using Services.Ui;
 using StockDataApi.AlphaVantage;
 using StockDataApi.IexCloud;
 using StockDataApi.MarketStack;
+using StockDataApi.TwelveData;
 
 namespace Services.DI
 {
@@ -42,6 +43,7 @@ namespace Services.DI
             container.Register(Component.For<AvDataRetriever>().LifestyleTransient());
             container.Register(Component.For<IexDataRetriever>().LifestyleTransient());
             container.Register(Component.For<MsDataRetriever>().LifestyleTransient());
+            container.Register(Component.For<TdDataRetriever>().LifestyleTransient());
         }
     }
 }
