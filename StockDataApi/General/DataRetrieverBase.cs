@@ -32,6 +32,7 @@ namespace StockDataApi.General
 
         public abstract string GetName();
         public abstract StockQuoteDto GetStockQuote(string symbol);
+        public abstract bool CanRetrieveCurrencies();
         public abstract double GetCurrencyRate(string foreignCurrency);
 
         protected string Get(string[] commandParameters) => GetByUrl(ComposeRequest(commandParameters));

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
 using DAL;
 using DAL.Entities;
 using log4net;
@@ -13,12 +14,14 @@ namespace Services.DataCollection
     {
         private readonly ILog log;
         private readonly StockDbContext db;
+        private readonly Settings settings;
         private readonly List<DataRetrieverService> dataRetrieverServices;
 
-        public DataRetrieverManager(ILog log, StockDbContext db)
+        public DataRetrieverManager(ILog log, StockDbContext db, Settings settings)
         {
             this.log = log;
             this.db = db;
+            this.settings = settings;
             dataRetrieverServices = ResolveServices();
         }
 
@@ -33,9 +36,28 @@ namespace Services.DataCollection
             return services;
         }
 
-        public void TryUpdateStocks(TimeSpan? olderThan = null)
+        public void TryUpdateCurrencies()
         {
-            if (olderThan == null) olderThan = TimeSpan.FromSeconds(10);
+            var dr = dataRetrieverServices.OrderBy(d => d.Priority).FirstOrDefault(d => d.CanRetrieveCurrencies)
+                ?? throw new Exception($"Could not find any retriever to update currencies");
+
+            log.Debug($"Check for outdated currencies");
+            var currencies = db.Currencies.Where(c => c.Key != Constants.UserCurrency).ToList();
+
+            foreach (var currency in currencies)
+            {
+                if ((DateTime.Now - currency.LastUpdate).TotalHours < settings.CurrencyRatioExpiresAfterHours)
+                    continue;
+                dr.UpdateCurrency(currency);
+            }
+
+            db.SaveChanges();
+        }
+
+        public void TryUpdateStocks() => TryUpdateStocks(TimeSpan.FromMinutes(settings.StockUpdateAfterMinutes));
+
+        public void TryUpdateStocks(TimeSpan olderThan)
+        {
             var stocks = db.Stocks
                 .Include(s => s.Currency)
                 .Include(s => s.LastKnownStockValue)
@@ -58,7 +80,7 @@ namespace Services.DataCollection
             db.SaveChanges();
 
             List<Stock> WhereOutdated() =>
-                stocks.Where(s => (DateTime.Now - s.LastKnownStockValue.LastUpdate).TotalSeconds > olderThan.Value.TotalSeconds).ToList();
+                stocks.Where(s => (DateTime.Now - s.LastKnownStockValue.LastUpdate).TotalSeconds > olderThan.TotalSeconds).ToList();
             
             List<Stock> WhereNotUpdatedInTheWeekend() => stocks.Where(s => !IsWeekend(s.LastKnownStockValue.LastUpdate)).ToList();
         }

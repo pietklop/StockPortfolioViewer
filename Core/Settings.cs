@@ -2,6 +2,7 @@
 {
     public class Settings
     {
-        public int CurrencyRatioExpiresAfterDays { get; set; }
+        public int CurrencyRatioExpiresAfterHours { get; set; }
+        public int StockUpdateAfterMinutes { get; set; }
     }
 }

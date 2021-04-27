@@ -41,21 +41,14 @@ namespace Dashboard
         {
             try
             {
-                var curUpdater = CastleContainer.Resolve<CurrencyUpdater>();
-                curUpdater.Run();
-
-                RunDataRetrieverManager();
+                var drMan = CastleContainer.Resolve<DataRetrieverManager>();
+                drMan.TryUpdateCurrencies();
+                drMan.TryUpdateStocks();
             }
             catch (Exception ex)
             {
                 log.Error($"Error during {nameof(DoStartupActions)}", ex);
             }
-        }
-
-        private static void RunDataRetrieverManager()
-        {
-            var drMan = CastleContainer.Resolve<DataRetrieverManager>();
-            drMan.TryUpdateStocks(TimeSpan.FromHours(24));
         }
     }
 }

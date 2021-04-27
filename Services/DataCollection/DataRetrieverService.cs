@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Core;
 using DAL;
 using DAL.Entities;
 using log4net;
@@ -20,6 +21,7 @@ namespace Services.DataCollection
         private readonly StockService stockService;
         public string Name => dataRetriever.Name;
         public int Priority => dataRetriever.Priority;
+        public bool CanRetrieveCurrencies => dataRetriever.CanRetrieveCurrencies();
 
         public DataRetrieverService(ILog log, StockDbContext db, DataRetrieverBase dataRetriever, StockService stockService)
         {
@@ -27,6 +29,14 @@ namespace Services.DataCollection
             this.db = db;
             this.dataRetriever = dataRetriever;
             this.stockService = stockService;
+        }
+
+        public void UpdateCurrency(Currency currency)
+        {
+            currency.Ratio = dataRetriever.GetCurrencyRate(currency.Key);
+            currency.LastUpdate = DateTime.Now;
+            log.Info($"Updated currency '{currency}' Ratio: 1 {Constants.UserCurrency} = {currency.Symbol}{currency.Ratio}");
+            UpdateCallCount();
         }
 
         public StockQuoteDto UpdateStockQuote(Stock stock)

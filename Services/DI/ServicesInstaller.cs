@@ -26,7 +26,6 @@ namespace Services.DI
 
             RegisterDataRetrievers(container);
 
-            container.Register(Component.For<CurrencyUpdater>().LifestyleTransient());
             container.Register(Component.For<DataRetrieverManager>().LifestyleTransient());
             container.Register(Component.For<DataRetrieverService>().LifestyleTransient());
             container.Register(Component.For<Importer>().LifestyleTransient());

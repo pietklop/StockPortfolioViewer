@@ -73,7 +73,7 @@ namespace Services
             else
             {
                 var curr = db.Currencies.Get(stock.Currency.Key);
-                if ((now - curr.LastUpdate).TotalDays >= settings.CurrencyRatioExpiresAfterDays)
+                if ((now - curr.LastUpdate).TotalDays >= settings.CurrencyRatioExpiresAfterHours)
                     throw new Exception($"Currency '{curr}' ratio has expired.");
                 userPrice = nativePrice.ToUserCurrency(curr.Ratio);
             }
