@@ -24,12 +24,20 @@ namespace Services
             this.settings = settings;
         }
 
-        public Stock GetOrCreateStock(string name, string isin, string currency)
+        public Stock GetStockOrThrow(string isin) =>
+            GetStock(isin) ?? throw new Exception($"Could not find stock with isin: '{isin}'");
+
+        private Stock GetStock(string isin)
         {
-            var stock = db.Stocks
+            return db.Stocks
                 .Include(s => s.Currency)
                 .Include(s => s.LastKnownStockValue.StockValue)
-                .FirstOrDefault(s => s.Isin == isin);
+                .SingleOrDefault(s => s.Isin == isin);
+        }
+
+        public Stock GetOrCreateStock(string name, string isin, string currency)
+        {
+            var stock = GetStock(isin);
 
             if (stock == null)
             {
@@ -50,12 +58,12 @@ namespace Services
             return stock;
         }
 
-        public Stock UpdateStockPrice(string isin, double nativePrice, DateTime? lastPriceUpdate = null)
+        [Obsolete("Make internal")]
+        public Stock UpdateStockPrice(string isin, double nativePrice, DateTime? lastPriceUpdate = null) =>
+            UpdateStockPrice(GetStockOrThrow(isin), nativePrice, lastPriceUpdate);
+
+        internal Stock UpdateStockPrice(Stock stock, double nativePrice, DateTime? lastPriceUpdate = null)
         {
-            var stock = db.Stocks
-                .Include(s => s.Currency)
-                .Include(s => s.LastKnownStockValue.StockValue)
-                .FirstOrDefault(s => s.Isin == isin) ?? throw new Exception($"Could not find stock with isin: {isin}");
             log.Info($"Set latest stock price: {stock} to: {stock.Currency.Symbol}{nativePrice}");
 
             var now = DateTime.Now;

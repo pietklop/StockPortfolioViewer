@@ -16,9 +16,9 @@ namespace StockDataApi.IexCloud
     /// </summary>
     public class IexDataRetriever : DataRetrieverBase
     {
-        public const string Name = "IEX Cloud";
+        public const string ConstName = "IEX Cloud";
 
-        public IexDataRetriever(ILog log, string baseUrl, string apiKey) : base(log, baseUrl, apiKey)
+        public IexDataRetriever(ILog log, string baseUrl, string apiKey, int priority) : base(log, baseUrl, apiKey, priority)
         {
         }
 
@@ -51,5 +51,11 @@ namespace StockDataApi.IexCloud
 
         protected override string ComposeRequest(string command) =>
             $"{baseUrl}{command}?token={apiKey}";
+
+        public override string GetName() => ConstName;
+
+        public override double GetCurrencyRate(string foreignCurrency) =>
+            throw new NotSupportedException($"{nameof(GetCurrencyRate)} is not supported for {ConstName}");
+
     }
 }

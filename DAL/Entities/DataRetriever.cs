@@ -13,12 +13,13 @@ namespace DAL.Entities
 
         public string BaseUrl { get; set; }
         public string Key { get; set; }
+        /// <summary>
+        /// Order when multiple retrievers are available
+        /// 0 or less means not available
+        /// </summary>
+        public int Priority { get; set; }
 
         public DateTime LastRequest { get; set; }
-        /// <summary>
-        /// Number of calls in the month of <see cref="LastRequest"/>
-        /// </summary>
-        public int CallsLastMonth { get; set; }
         /// <summary>
         /// Content of the last request
         /// For debugging purposes
@@ -30,6 +31,7 @@ namespace DAL.Entities
         /// </summary>
         public string LastResponseData { get; set; }
 
+        public ICollection<RetrieverLimitation> RetrieverLimitations { get; set; }
         public ICollection<StockRetrieverCompatibility> StockRetrieverCompatibilities { get; set; }
 
         public override string ToString() => Name;

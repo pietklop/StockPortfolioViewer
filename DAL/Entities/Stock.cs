@@ -21,7 +21,7 @@ namespace DAL.Entities
         public ICollection<StockRetrieverCompatibility> StockRetrieverCompatibilities { get; set; }
 
         public double LastKnownUserPrice => LastKnownStockValue.StockValue.UserPrice;
-        public override string ToString() => Name;
+        public override string ToString() => $"'{Name}'";
     }
 
     public class LastKnownStockValue : Entity

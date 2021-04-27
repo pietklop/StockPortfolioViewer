@@ -15,9 +15,9 @@ namespace StockDataApi.AlphaVantage
     /// </summary>
     public class AvDataRetriever : DataRetrieverBase
     {
-        public const string Name = "Alpha Vantage";
+        public const string ConstName = "Alpha Vantage";
 
-        public AvDataRetriever(ILog log, string baseUrl, string apiKey) : base(log, baseUrl, apiKey)
+        public AvDataRetriever(ILog log, string baseUrl, string apiKey, int priority) : base(log, baseUrl, apiKey, priority)
         {
         }
 
@@ -32,7 +32,7 @@ namespace StockDataApi.AlphaVantage
             return new StockQuoteDto(symbol, double.Parse(price.Value, CultureInfo.InvariantCulture), updateDateTime);
         }
 
-        public double GetCurrencyRate(string foreignCurrency)
+        public override double GetCurrencyRate(string foreignCurrency)
         {
             string response = Get($"function=CURRENCY_EXCHANGE_RATE&from_currency={Constants.UserCurrency}&to_currency={foreignCurrency}");
             dynamic data = JObject.Parse(response);
@@ -57,5 +57,8 @@ namespace StockDataApi.AlphaVantage
 
         protected override string ComposeRequest(string command) =>
             $"{baseUrl}query?{command}&apikey={apiKey}&datatype=json";
+
+        public override string GetName() => ConstName;
+
     }
 }

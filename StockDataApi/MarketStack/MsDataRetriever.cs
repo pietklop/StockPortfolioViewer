@@ -15,9 +15,9 @@ namespace StockDataApi.MarketStack
     /// </summary>
     public class MsDataRetriever : DataRetrieverBase
     {
-        public const string Name = "MarketStack";
+        public const string ConstName = "MarketStack";
 
-        public MsDataRetriever(ILog log, string baseUrl, string apiKey) : base(log, baseUrl, apiKey)
+        public MsDataRetriever(ILog log, string baseUrl, string apiKey, int priority) : base(log, baseUrl, apiKey, priority)
         {
 
         }
@@ -42,5 +42,10 @@ namespace StockDataApi.MarketStack
          
             return new StockQuoteDto(symbol, price, dateTime);
         }
+
+        public override string GetName() => ConstName;
+
+        public override double GetCurrencyRate(string foreignCurrency) =>
+            throw new NotSupportedException($"{nameof(GetCurrencyRate)} is not supported for {ConstName}");
     }
 }

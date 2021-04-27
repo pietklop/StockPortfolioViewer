@@ -8,12 +8,19 @@ namespace StockDataApi.General
 {
     public abstract class DataRetrieverBase
     {
+        /// <summary>
+        /// Order when multiple retrievers are available
+        /// -1 means not available
+        /// </summary>
+        public int Priority { get; }
+        public string Name => GetName();
         protected readonly ILog log;
         protected readonly string baseUrl;
         protected readonly string apiKey;
 
-        protected DataRetrieverBase(ILog log, string baseUrl, string apiKey)
+        protected DataRetrieverBase(ILog log, string baseUrl, string apiKey, int priority)
         {
+            Priority = priority;
             if (!baseUrl.EndsWith("/")) baseUrl += "/";
             this.log = log;
             this.baseUrl = baseUrl;
@@ -23,7 +30,9 @@ namespace StockDataApi.General
         protected abstract string ComposeRequest(string[] commandParameters);
         protected abstract string ComposeRequest(string command);
 
+        public abstract string GetName();
         public abstract StockQuoteDto GetStockQuote(string symbol);
+        public abstract double GetCurrencyRate(string foreignCurrency);
 
         protected string Get(string[] commandParameters) => GetByUrl(ComposeRequest(commandParameters));
 
@@ -69,5 +78,7 @@ namespace StockDataApi.General
 
         protected DateTime AddMissingCloseTime(DateTime date) =>
             date.Date == DateTime.Now.Date ? DateTime.Now : date.AddHours(18);
+
+        public override string ToString() => Name;
     }
 }

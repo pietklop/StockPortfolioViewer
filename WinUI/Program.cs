@@ -6,6 +6,7 @@ using Dashboard.DI;
 using log4net;
 using log4net.Config;
 using Services;
+using Services.DataCollection;
 using Services.DI;
 
 namespace Dashboard
@@ -43,13 +44,18 @@ namespace Dashboard
                 var curUpdater = CastleContainer.Resolve<CurrencyUpdater>();
                 curUpdater.Run();
 
-                var stockUpdater = CastleContainer.Resolve<StockValueUpdater>();
-                stockUpdater.Run();
+                RunDataRetrieverManager();
             }
             catch (Exception ex)
             {
                 log.Error($"Error during {nameof(DoStartupActions)}", ex);
             }
+        }
+
+        private static void RunDataRetrieverManager()
+        {
+            var drMan = CastleContainer.Resolve<DataRetrieverManager>();
+            drMan.TryUpdateStocks(TimeSpan.FromHours(24));
         }
     }
 }

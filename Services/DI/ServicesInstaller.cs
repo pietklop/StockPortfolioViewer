@@ -3,6 +3,7 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Core;
 using Imports.DeGiro;
+using Services.DataCollection;
 using Services.Ui;
 using StockDataApi.AlphaVantage;
 using StockDataApi.IexCloud;
@@ -26,13 +27,14 @@ namespace Services.DI
             RegisterDataRetrievers(container);
 
             container.Register(Component.For<CurrencyUpdater>().LifestyleTransient());
+            container.Register(Component.For<DataRetrieverManager>().LifestyleTransient());
+            container.Register(Component.For<DataRetrieverService>().LifestyleTransient());
             container.Register(Component.For<Importer>().LifestyleTransient());
             container.Register(Component.For<ImportProcessor>().LifestyleTransient());
             container.Register(Component.For<StockDetailService>().LifestyleTransient());
             container.Register(Component.For<StockService>().LifestyleTransient());
             container.Register(Component.For<StockOverviewService>().LifestyleTransient());
             container.Register(Component.For<StockRetrieverService>().LifestyleTransient());
-            container.Register(Component.For<StockValueUpdater>().LifestyleTransient());
             container.Register(Component.For<TransactionOverviewService>().LifestyleTransient());
         }
 
