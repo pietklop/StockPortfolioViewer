@@ -41,7 +41,8 @@ namespace StockDataApi.IexCloud
             dynamic data = JObject.Parse(response);
             var price = (double)data["latestPrice"].Value;
             long epochMsec = (long)data["latestUpdate"].Value;
-            return new StockQuoteDto(symbol, price, DateTimeOffset.FromUnixTimeMilliseconds(epochMsec).DateTime);
+            var lastPriceUpdate = FromUtcToLocalTime(DateTimeOffset.FromUnixTimeMilliseconds(epochMsec).DateTime);
+            return new StockQuoteDto(symbol, price, lastPriceUpdate);
         }
 
         protected override string ComposeRequest(string[] commandParameters)
@@ -53,6 +54,8 @@ namespace StockDataApi.IexCloud
             $"{baseUrl}{command}?token={apiKey}";
 
         public override string GetName() => ConstName;
+
+        public override bool DataIsDayBehind() => false;
 
         public override bool CanRetrieveCurrencies() => false;
         public override double GetCurrencyRate(string foreignCurrency) =>

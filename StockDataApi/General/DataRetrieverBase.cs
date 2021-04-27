@@ -34,6 +34,7 @@ namespace StockDataApi.General
         public abstract StockQuoteDto GetStockQuote(string symbol);
         public abstract bool CanRetrieveCurrencies();
         public abstract double GetCurrencyRate(string foreignCurrency);
+        public abstract bool DataIsDayBehind();
 
         protected string Get(string[] commandParameters) => GetByUrl(ComposeRequest(commandParameters));
 
@@ -75,6 +76,13 @@ namespace StockDataApi.General
                 log.Error($"Exception occured during web request", ex);
                 return null;
             }
+        }
+
+        protected DateTime FromUtcToLocalTime(DateTime dateTime)
+        {
+            var now = DateTime.Now;
+            var diff = now.TimeOfDay - now.ToUniversalTime().TimeOfDay;
+            return dateTime + diff;
         }
 
         protected DateTime AddMissingCloseTime(DateTime date) =>

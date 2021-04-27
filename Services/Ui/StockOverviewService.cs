@@ -51,8 +51,8 @@ namespace Services.Ui
                     Value = currentValue,
                     Profit = profit,
                     ProfitFraction = profit / virtualBuyValue,
-                    LastPriceUpdate = LastUpdateSince(stock),
-                    CompatibleDataRetrievers = string.Join(",", stock.StockRetrieverCompatibilities.Where(c => c.Compatibility == RetrieverCompatibility.True).Select(c => c.DataRetriever.Name.Substring(0, 3)))
+                    LastPriceChange = LastUpdateSince(stock),
+                    CompatibleDataRetrievers = string.Join(",", stock.StockRetrieverCompatibilities.OrderBy(c => c.DataRetriever.Priority).Where(c => c.DataRetriever.Priority > 0 && c.Compatibility == RetrieverCompatibility.True).Select(c => c.DataRetriever.Name.Substring(0, 3)))
                 });
             }
 

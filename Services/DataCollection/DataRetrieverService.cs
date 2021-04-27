@@ -22,6 +22,7 @@ namespace Services.DataCollection
         public string Name => dataRetriever.Name;
         public int Priority => dataRetriever.Priority;
         public bool CanRetrieveCurrencies => dataRetriever.CanRetrieveCurrencies();
+        public bool DataIsDayBehind => dataRetriever.DataIsDayBehind();
 
         public DataRetrieverService(ILog log, StockDbContext db, DataRetrieverBase dataRetriever, StockService stockService)
         {

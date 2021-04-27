@@ -35,6 +35,8 @@ namespace StockDataApi.TwelveData
 
         public override string GetName() => ConstName;
 
+        public override bool DataIsDayBehind() => false;
+
         public override bool CanRetrieveCurrencies() => false;
         public override double GetCurrencyRate(string foreignCurrency) =>
             throw new NotSupportedException($"{nameof(GetCurrencyRate)} is not supported for {ConstName}");

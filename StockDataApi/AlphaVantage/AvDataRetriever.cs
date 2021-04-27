@@ -61,5 +61,6 @@ namespace StockDataApi.AlphaVantage
 
         public override string GetName() => ConstName;
 
+        public override bool DataIsDayBehind() => true;
     }
 }

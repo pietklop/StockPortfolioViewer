@@ -27,7 +27,7 @@ namespace Services.DataCollection
 
         private List<DataRetrieverService> ResolveServices()
         {
-            var drs = db.DataRetrievers.Where(d => d.Priority > 0).ToList();
+            var drs = db.DataRetrievers.ToList();
 
             var services = new List<DataRetrieverService>();
             foreach (var drDb in drs)
@@ -98,6 +98,12 @@ namespace Services.DataCollection
                 .Where(c => c.DataRetriever.Priority > 0 && c.Compatibility == RetrieverCompatibility.True)
                 .ToList();
 
+            if (AllCompatibleRetrieversGiveDataDayBehind() && stock.LastKnownStockValue.LastUpdate.Date == DateTime.Now.Date)
+            {
+                log.Debug($"All retrievers provide day behind data for {stock} and stock is updated today, so abort");
+                return;
+            }
+
             var drService = GetFirstAvailableService();
             if (drService == null)
             {
@@ -121,6 +127,8 @@ namespace Services.DataCollection
 
                 return null;
             }
+
+            bool AllCompatibleRetrieversGiveDataDayBehind() => dataRetrieverServices.Where(d => drDbs.Select(b => b.DataRetriever.Name).Contains(d.Name)).All(d => d.DataIsDayBehind);
         }
     }
 }
