@@ -94,7 +94,7 @@ namespace Dashboard
 
             void ChangeName()
             {
-                var newName = InputHelper.GetString("Enter name");
+                var newName = InputHelper.GetString(this, "Enter name");
                 if (newName == null) return;
                 var stock = db.Stocks.Single(s => s.Isin == stockIsin);
                 stock.Name = newName;
@@ -103,7 +103,7 @@ namespace Dashboard
 
             void ChangeSymbol()
             {
-                var input = InputHelper.GetString("Enter symbol");
+                var input = InputHelper.GetString(this, "Enter symbol");
                 if (input == null) return;
                 var stock = db.Stocks.Single(s => s.Isin == stockIsin);
                 stock.Symbol = input;
@@ -112,7 +112,7 @@ namespace Dashboard
 
             void ChangeCurrentPrice()
             {
-                var input = InputHelper.GetPositiveValue("Enter price");
+                var input = InputHelper.GetPositiveValue(this, "Enter price");
                 if (input == null) return;
                 var stock = stockService.UpdateStockPrice(stockIsin, input.Value);
                 SaveAndUpdate($"{stock.Currency.Symbol}{input:F2}");
@@ -129,7 +129,7 @@ namespace Dashboard
                     frmDr.Show(this);
                     return;
                     
-                    if (!InputHelper.GetConfirmation($"Auto price update?")) return;
+                    if (!InputHelper.GetConfirmation(this, $"Auto price update?")) return;
                     var dr = CastleContainer.Resolve<IexDataRetriever>();
                     var priceDto = dr.GetStockQuote(stock.Symbol);
                     stockService.UpdateStockPrice(stockIsin, priceDto.Price);

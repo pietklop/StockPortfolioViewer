@@ -106,7 +106,7 @@ namespace Dashboard
 
             void ChangeStockRef()
             {
-                var newName = InputHelper.GetString("Enter ref", stock.Symbol);
+                var newName = InputHelper.GetString(this, "Enter ref", stock.Symbol);
                 if (newName == null) return;
                 var stk = db.Stocks.Include(s => s.StockRetrieverCompatibilities).Single(s => s.Isin == stock.Isin);
                 GetOrCreateRetriever(stk, null, newName);
@@ -114,7 +114,7 @@ namespace Dashboard
 
             void ChangeKey()
             {
-                var newKey = InputHelper.GetString("Enter key");
+                var newKey = InputHelper.GetString(this, "Enter key");
                 if (newKey == null) return;
                 var dataRetriever = db.DataRetrievers.Single(s => s.Name == retrieverName);
                 dataRetriever.Key = newKey;
