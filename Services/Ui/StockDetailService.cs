@@ -59,8 +59,8 @@ namespace Services.Ui
                 new StockPropertyViewModel{Name = "Dividend", Value = $"{FormatUserCurrency(userDividendValue)}  [{stock.Dividends.Count}]"},
                 new StockPropertyViewModel{Name = "Transaction costs", Value = $"{FormatUserCurrency(userTransactionCosts)}  [{transactions.Count}]"},
                 new StockPropertyViewModel{Name = "Currency", Value = stock.Currency.Key},
-                new StockPropertyViewModel{Name = "Area", Value = FirstOrMultiple(stock.AreaShares.Select(a => a.Area.Name).ToArray())},
-                new StockPropertyViewModel{Name = "Sector", Value = FirstOrMultiple(stock.SectorShares.Select(a => a.Sector.Name).ToArray())},
+                new StockPropertyViewModel{Name = StockDetailProperties.Area, Value = FirstOrMultiple(stock.AreaShares.Select(a => a.Area.Name).ToArray()), UnderlineRow = true},
+                new StockPropertyViewModel{Name = StockDetailProperties.Sector, Value = FirstOrMultiple(stock.SectorShares.Select(a => a.Sector.Name).ToArray()), UnderlineRow = true},
             };
 
             string FormatUserCurrency(double value) => value.FormatUserCurrency();

@@ -5,11 +5,13 @@ using System.Windows.Forms;
 using Castle.MicroKernel;
 using Core;
 using DAL;
+using DAL.Entities;
 using Dashboard.Helpers;
 using Dashboard.Input;
 using log4net;
 using Messages.Dtos;
 using Messages.UI.StockDetails;
+using Microsoft.EntityFrameworkCore;
 using Services;
 using Services.DI;
 using Services.Ui;
@@ -90,6 +92,12 @@ namespace Dashboard
                 case StockDetailProperties.LastPriceUpdate:
                     TryAutoPriceUpdate();
                     break;
+                case StockDetailProperties.Area:
+                    ChangeArea();
+                    break;
+                case StockDetailProperties.Sector:
+                    ChangeSector();
+                    break;
             }
 
             void ChangeName()
@@ -140,6 +148,32 @@ namespace Dashboard
                     MessageBox.Show($"Something went wrong. Msg: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     log.Error($"Error during StockPrice data request", ex);
                 }
+            }
+
+            void ChangeArea()
+            {
+                var areas = db.Areas.Where(a => a.IsContinent).ToList();
+                var input = DistributionInputHelper.GetDistribution(this, "Enter area share", areas.Select(a => a.Name).ToList());
+                if (input == null) return;
+                var stock = db.Stocks.Include(s => s.AreaShares).Single(s => s.Isin == stockIsin);
+                db.AreaShares.RemoveRange(stock.AreaShares);
+                for (int i = 0; i < input.Keys.Length; i++)
+                    stock.AreaShares.Add(new AreaShare {Area = areas.Single(a => a.Name == input.Keys[i]), Fraction = input.Fractions[i]});
+
+                SaveAndUpdate(input.Keys.Length == 1 ? input.Keys[0] : "(Multiple)");
+            }
+
+            void ChangeSector()
+            {
+                var sectors = db.Sectors.ToList();
+                var input = DistributionInputHelper.GetDistribution(this, "Enter sector share", sectors.Select(a => a.Name).ToList());
+                if (input == null) return;
+                var stock = db.Stocks.Include(s => s.SectorShares).Single(s => s.Isin == stockIsin);
+                db.SectorShares.RemoveRange(stock.SectorShares);
+                for (int i = 0; i < input.Keys.Length; i++)
+                    stock.SectorShares.Add(new SectorShare {Sector = sectors.Single(a => a.Name == input.Keys[i]), Fraction = input.Fractions[i]});
+
+                SaveAndUpdate(input.Keys.Length == 1 ? input.Keys[0] : "(Multiple)");
             }
 
             void SaveAndUpdate(object newValue)
