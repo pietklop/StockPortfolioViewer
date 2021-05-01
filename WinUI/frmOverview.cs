@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,18 +14,30 @@ namespace Dashboard
     {
         private readonly frmMain frmMain;
         private readonly StockOverviewService stockOverviewService;
+        private readonly PortfolioDistributionService portfolioDistributionService;
+        private List<Button> distributionButtons = new List<Button>();
 
-        public frmOverview(frmMain frmMain, StockOverviewService stockOverviewService)
+        public frmOverview(frmMain frmMain, StockOverviewService stockOverviewService, PortfolioDistributionService portfolioDistributionService)
         {
             this.frmMain = frmMain;
             this.stockOverviewService = stockOverviewService;
+            this.portfolioDistributionService = portfolioDistributionService;
             InitializeComponent();
+
+            distributionButtons.Add(btnDistributionArea);
+            distributionButtons.Add(btnDistributionCurrency);
+            distributionButtons.Add(btnDistributionSector);
         }
 
         private void frmOverview_Load(object sender, EventArgs e)
         {
             PopulateStockGrid();
+            ChartHelper.ConfigPieChart(chart);
+            btnDistributionArea_Click(btnDistributionArea, EventArgs.Empty);
         }
+
+        private void PopulatePieChart(PortfolioDistributionDto dto) =>
+            ChartHelper.PopulateChart(chart, dto.Labels, dto.Fractions);
 
         private void PopulateStockGrid()
         {
@@ -77,6 +90,33 @@ namespace Dashboard
             Close();
 
             frmMain.ShowStockDetails(name, isin);
+        }
+
+        private void SetDistributionButtons(Button activeButton)
+        {
+            distributionButtons.ForEach(b => b.FlatAppearance.BorderSize = 0);
+            activeButton.FlatAppearance.BorderSize = 2;
+        }
+
+        private void btnDistributionArea_Click(object sender, EventArgs e)
+        {
+            PopulatePieChart(portfolioDistributionService.GetAreaDistribution());
+            var btn = (Button) sender;
+            SetDistributionButtons(btn);
+        }
+
+        private void btnDistributionCurrency_Click(object sender, EventArgs e)
+        {
+            PopulatePieChart(portfolioDistributionService.GetCurrencyDistribution());
+            var btn = (Button)sender;
+            SetDistributionButtons(btn);
+        }
+
+        private void btnDistributionSector_Click(object sender, EventArgs e)
+        {
+            PopulatePieChart(portfolioDistributionService.GetSectorDistribution());
+            var btn = (Button)sender;
+            SetDistributionButtons(btn);
         }
     }
 }
