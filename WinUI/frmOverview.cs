@@ -25,6 +25,7 @@ namespace Dashboard
             InitializeComponent();
 
             distributionButtons.Add(btnDistributionArea);
+            distributionButtons.Add(btnDistributionContinent);
             distributionButtons.Add(btnDistributionCurrency);
             distributionButtons.Add(btnDistributionSector);
         }
@@ -102,6 +103,13 @@ namespace Dashboard
         {
             PopulatePieChart(portfolioDistributionService.GetAreaDistribution());
             var btn = (Button) sender;
+            SetDistributionButtons(btn);
+        }
+
+        private void btnDistributionContinent_Click(object sender, EventArgs e)
+        {
+            PopulatePieChart(portfolioDistributionService.GetAreaDistributionByContinent());
+            var btn = (Button)sender;
             SetDistributionButtons(btn);
         }
 

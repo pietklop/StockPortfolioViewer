@@ -37,6 +37,7 @@ namespace Dashboard
             this.btnDistributionCurrency = new System.Windows.Forms.Button();
             this.btnDistributionArea = new System.Windows.Forms.Button();
             this.btnDistributionSector = new System.Windows.Forms.Button();
+            this.btnDistributionContinent = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvStockList)).BeginInit();
             this.SuspendLayout();
             // 
@@ -78,7 +79,7 @@ namespace Dashboard
             this.btnDistributionCurrency.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
             this.btnDistributionCurrency.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDistributionCurrency.ForeColor = System.Drawing.Color.Gainsboro;
-            this.btnDistributionCurrency.Location = new System.Drawing.Point(731, 34);
+            this.btnDistributionCurrency.Location = new System.Drawing.Point(731, 68);
             this.btnDistributionCurrency.Name = "btnDistributionCurrency";
             this.btnDistributionCurrency.Size = new System.Drawing.Size(96, 28);
             this.btnDistributionCurrency.TabIndex = 1;
@@ -95,7 +96,7 @@ namespace Dashboard
             this.btnDistributionArea.Name = "btnDistributionArea";
             this.btnDistributionArea.Size = new System.Drawing.Size(96, 28);
             this.btnDistributionArea.TabIndex = 2;
-            this.btnDistributionArea.Text = "Area";
+            this.btnDistributionArea.Text = "Country";
             this.btnDistributionArea.UseVisualStyleBackColor = false;
             this.btnDistributionArea.Click += new System.EventHandler(this.btnDistributionArea_Click);
             // 
@@ -104,13 +105,26 @@ namespace Dashboard
             this.btnDistributionSector.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
             this.btnDistributionSector.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDistributionSector.ForeColor = System.Drawing.Color.Gainsboro;
-            this.btnDistributionSector.Location = new System.Drawing.Point(731, 68);
+            this.btnDistributionSector.Location = new System.Drawing.Point(731, 102);
             this.btnDistributionSector.Name = "btnDistributionSector";
             this.btnDistributionSector.Size = new System.Drawing.Size(96, 28);
             this.btnDistributionSector.TabIndex = 3;
             this.btnDistributionSector.Text = "Sector";
             this.btnDistributionSector.UseVisualStyleBackColor = false;
             this.btnDistributionSector.Click += new System.EventHandler(this.btnDistributionSector_Click);
+            // 
+            // btnDistributionContinent
+            // 
+            this.btnDistributionContinent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
+            this.btnDistributionContinent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDistributionContinent.ForeColor = System.Drawing.Color.Gainsboro;
+            this.btnDistributionContinent.Location = new System.Drawing.Point(731, 34);
+            this.btnDistributionContinent.Name = "btnDistributionContinent";
+            this.btnDistributionContinent.Size = new System.Drawing.Size(96, 28);
+            this.btnDistributionContinent.TabIndex = 4;
+            this.btnDistributionContinent.Text = "Continent";
+            this.btnDistributionContinent.UseVisualStyleBackColor = false;
+            this.btnDistributionContinent.Click += new System.EventHandler(this.btnDistributionContinent_Click);
             // 
             // frmOverview
             // 
@@ -119,6 +133,7 @@ namespace Dashboard
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(51)))), ((int)(((byte)(73)))));
             this.ClientSize = new System.Drawing.Size(933, 677);
             this.Controls.Add(this.chart);
+            this.Controls.Add(this.btnDistributionContinent);
             this.Controls.Add(this.btnDistributionSector);
             this.Controls.Add(this.btnDistributionArea);
             this.Controls.Add(this.btnDistributionCurrency);
@@ -139,5 +154,6 @@ namespace Dashboard
         private System.Windows.Forms.Button btnDistributionCurrency;
         private System.Windows.Forms.Button btnDistributionArea;
         private System.Windows.Forms.Button btnDistributionSector;
+        private System.Windows.Forms.Button btnDistributionContinent;
     }
 }

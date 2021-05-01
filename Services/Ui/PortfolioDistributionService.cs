@@ -34,11 +34,13 @@ namespace Services.Ui
             return new PortfolioDistributionDto("Currency distribution", grouped.Select(d => d.currency).ToArray(), grouped.Select(g => g.sum).ToArray());
         }
 
-        public PortfolioDistributionDto GetAreaDistribution(string isin = null)
+        public PortfolioDistributionDto GetAreaDistributionByContinent() => GetAreaDistribution(null, true);
+
+        public PortfolioDistributionDto GetAreaDistribution(string isin = null, bool groupByContinent = false)
         {
             var data = db.Stocks
                 .Include(s => s.StockValues)
-                .Include(s => s.AreaShares).ThenInclude(a => a.Area)
+                .Include(s => s.AreaShares).ThenInclude(a => a.Area.Continent)
                 .Where(s => isin == null || s.Isin == isin)
                 .Where(s => s.Transactions.Sum(t => t.Quantity) > 0)
                 .ToList();
@@ -50,10 +52,11 @@ namespace Services.Ui
                 var value = stock.Transactions.Sum(t => t.Quantity) * stock.LastKnownUserPrice;
                 foreach (var areaShare in stock.AreaShares)
                 {
-                    if (areaValueDict.ContainsKey(areaShare.Area.Name))
-                        areaValueDict[areaShare.Area.Name] += value * areaShare.Fraction;
+                    var name = groupByContinent ? areaShare.Area.Continent?.Name ?? areaShare.Area.Name : areaShare.Area.Name;
+                    if (areaValueDict.ContainsKey(name))
+                        areaValueDict[name] += value * areaShare.Fraction;
                     else
-                        areaValueDict[areaShare.Area.Name] = value * areaShare.Fraction;
+                        areaValueDict[name] = value * areaShare.Fraction;
                 }
             }
 
