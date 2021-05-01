@@ -25,14 +25,16 @@ namespace Dashboard
         private readonly StockDbContext db;
         private readonly StockService stockService;
         private readonly StockDetailService stockDetailService;
+        private readonly PortfolioDistributionService portfolioDistributionService;
         private readonly string stockIsin;
 
-        public frmStockDetail(ILog log, StockDbContext db, StockService stockService, StockDetailService stockDetailService, string stockIsin)
+        public frmStockDetail(ILog log, StockDbContext db, StockService stockService, StockDetailService stockDetailService, PortfolioDistributionService portfolioDistributionService, string stockIsin)
         {
             this.log = log;
             this.db = db;
             this.stockService = stockService;
             this.stockDetailService = stockDetailService;
+            this.portfolioDistributionService = portfolioDistributionService;
             this.stockIsin = stockIsin;
             InitializeComponent();
         }
@@ -152,19 +154,36 @@ namespace Dashboard
 
             void ChangeArea()
             {
-                var areas = db.Areas.Where(a => a.IsContinent).ToList();
-                var input = DistributionInputHelper.GetDistribution(this, "Enter area share", areas.Select(a => a.Name).ToList());
+                using var distributionForm = new frmDistribution(portfolioDistributionService.GetAreaDistribution(stockIsin));
+                distributionForm.ShowDialog(this);
+                if (!distributionForm.ResetRequest) return;
+
+                var areas = db.Areas.Include(a => a.Continent).ToList();
+                var input = DistributionInputHelper.GetDistribution(this, "Enter area share", areas.Where(a => a.IsContinent).Select(a => a.Name).ToList(), areas.Where(a => !a.IsContinent).Select(a => new AreaCountryInputDto(a.Continent.Name, a.Name)).ToList());
                 if (input == null) return;
                 var stock = db.Stocks.Include(s => s.AreaShares).Single(s => s.Isin == stockIsin);
                 db.AreaShares.RemoveRange(stock.AreaShares);
+
+                foreach (var newCountry in input.NewCountries)
+                {
+                    if (areas.Any(a => a.Name == newCountry.Country)) continue;
+                    areas.Add(new Area {Continent = areas.Single(a => a.Name == newCountry.Continent), Name = newCountry.Country});
+                }
+
                 for (int i = 0; i < input.Keys.Length; i++)
                     stock.AreaShares.Add(new AreaShare {Area = areas.Single(a => a.Name == input.Keys[i]), Fraction = input.Fractions[i]});
 
                 SaveAndUpdate(input.Keys.Length == 1 ? input.Keys[0] : "(Multiple)");
+                if (stock.AreaShares.Count > 1) // user probably wants to see/check te result
+                    ChangeArea();
             }
 
             void ChangeSector()
             {
+                using var distributionForm = new frmDistribution(portfolioDistributionService.GetSectorDistribution(stockIsin));
+                distributionForm.ShowDialog(this);
+                if (!distributionForm.ResetRequest) return;
+                
                 var sectors = db.Sectors.ToList();
                 var input = DistributionInputHelper.GetDistribution(this, "Enter sector share", sectors.Select(a => a.Name).ToList());
                 if (input == null) return;
@@ -174,6 +193,8 @@ namespace Dashboard
                     stock.SectorShares.Add(new SectorShare {Sector = sectors.Single(a => a.Name == input.Keys[i]), Fraction = input.Fractions[i]});
 
                 SaveAndUpdate(input.Keys.Length == 1 ? input.Keys[0] : "(Multiple)");
+                if (stock.SectorShares.Count > 1) // user probably wants to see/check te result
+                    ChangeSector();
             }
 
             void SaveAndUpdate(object newValue)

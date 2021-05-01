@@ -1,15 +1,20 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Dashboard.Input
 {
     public partial class frmDistributionInput : Form
     {
+        private readonly List<AreaCountryInputDto> countries;
         public string MemberKey { get; private set; } = null;
         public int MemberPercentage { get; private set; }
+        public AreaCountryInputDto Country { get; private set; }
+        private bool countryInput = false;
 
-        public frmDistributionInput(string caption, List<string> listMembers, int assignedPercentage)
+        public frmDistributionInput(string caption, List<string> listMembers, int assignedPercentage, List<AreaCountryInputDto> countries)
         {
+            this.countries = countries;
             InitializeComponent();
             lblInputT.Text = caption;
             cmbMember.DataSource = listMembers;
@@ -22,7 +27,14 @@ namespace Dashboard.Input
         {
             if (cmbMember.SelectedIndex < 0) return;
 
-            MemberKey = cmbMember.Text;
+            if (countryInput)
+            {
+                if (cmbCountry.Text == "") return;
+                Country = new AreaCountryInputDto(cmbMember.Text, cmbCountry.Text);
+            }
+            else
+                MemberKey = cmbMember.Text;
+
             MemberPercentage = (int)numPercentage.Value;
 
             DialogResult = DialogResult.OK;
@@ -39,6 +51,16 @@ namespace Dashboard.Input
         {
             numPercentage.Select();
             numPercentage.Select(0, numPercentage.Value.ToString().Length);
+        }
+
+        private void cmbMember_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right || countries == null || cmbMember.SelectedIndex < 0) return;
+            cmbMember.Visible = false;
+            cmbCountry.DataSource = countries.Where(c => c.Continent == cmbMember.Text).OrderBy(c => c.Country).Select(c => c.Country).ToList();
+            cmbCountry.SelectedIndex = -1;
+            cmbCountry.Visible = true;
+            countryInput = true;
         }
     }
 }

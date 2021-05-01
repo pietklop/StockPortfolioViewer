@@ -34,6 +34,7 @@ namespace Dashboard.Input
             this.lblInputT = new System.Windows.Forms.Label();
             this.numPercentage = new System.Windows.Forms.NumericUpDown();
             this.cmbMember = new System.Windows.Forms.ComboBox();
+            this.cmbCountry = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.numPercentage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -103,6 +104,16 @@ namespace Dashboard.Input
             this.cmbMember.Name = "cmbMember";
             this.cmbMember.Size = new System.Drawing.Size(121, 23);
             this.cmbMember.TabIndex = 0;
+            this.cmbMember.MouseUp += new System.Windows.Forms.MouseEventHandler(this.cmbMember_MouseUp);
+            // 
+            // cmbCountry
+            // 
+            this.cmbCountry.FormattingEnabled = true;
+            this.cmbCountry.Location = new System.Drawing.Point(12, 34);
+            this.cmbCountry.Name = "cmbCountry";
+            this.cmbCountry.Size = new System.Drawing.Size(121, 23);
+            this.cmbCountry.TabIndex = 7;
+            this.cmbCountry.Visible = false;
             // 
             // frmDistributionInput
             // 
@@ -110,6 +121,7 @@ namespace Dashboard.Input
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
             this.ClientSize = new System.Drawing.Size(246, 68);
+            this.Controls.Add(this.cmbCountry);
             this.Controls.Add(this.cmbMember);
             this.Controls.Add(this.numPercentage);
             this.Controls.Add(this.lblInputT);
@@ -132,5 +144,6 @@ namespace Dashboard.Input
         private System.Windows.Forms.Label lblInputT;
         private System.Windows.Forms.NumericUpDown numPercentage;
         private System.Windows.Forms.ComboBox cmbMember;
+        private System.Windows.Forms.ComboBox cmbCountry;
     }
 }
