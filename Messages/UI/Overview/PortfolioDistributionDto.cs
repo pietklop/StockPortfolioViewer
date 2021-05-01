@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Messages.UI.Overview
 {
@@ -8,18 +10,23 @@ namespace Messages.UI.Overview
         public string[] Labels { get; }
         public double[] Fractions { get; }
 
-        public PortfolioDistributionDto(string name, string[] labels, double[] values)
+        public PortfolioDistributionDto(string name, string[] labels, double[] values, bool removeBelowOnePercent = false)
         {
             Name = name;
-            Labels = new string[labels.Length];
+            var labelList = new List<string>();
             var total = values.Sum();
-            var fractions = new double[values.Length];
+            var fractions = new List<double>();
             for (int i = 0; i < values.Length; i++)
             {
-                fractions[i] = values[i] / total;
-                Labels[i] += $"{labels[i]} ({fractions[i]:P0})";
+                var fraction = values[i] / total;
+                if (!removeBelowOnePercent || fraction > 0.005)
+                {
+                    labelList.Add($"{labels[i]} ({fraction:P0})");
+                    fractions.Add(fraction);
+                }
             }
 
+            Labels = labelList.ToArray();
             Fractions = fractions.ToArray();
         }
     }

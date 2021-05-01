@@ -66,7 +66,7 @@ namespace Services.Ui
                 d.Value,
             }).ToList();
 
-            return new PortfolioDistributionDto("Area distribution", sorted.Select(d => d.Key).ToArray(), sorted.Select(g => g.Value).ToArray());
+            return new PortfolioDistributionDto("Area distribution", sorted.Select(d => d.Key).ToArray(), sorted.Select(g => g.Value).ToArray(), true);
         }
 
         public PortfolioDistributionDto GetSectorDistribution(string isin = null)
