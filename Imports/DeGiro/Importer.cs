@@ -160,6 +160,10 @@ namespace Imports.DeGiro
                 return LineType.Na;
             if (actionField == "iDEAL storting")
                 return LineType.Na;
+            if (actionField == "iDEAL Deposit")
+                return LineType.Na;
+            if (actionField == "Reservation iDEAL / Sofort Deposit")
+                return LineType.Na;
             if (actionField == "Terugstorting")
                 return LineType.Na;
 
