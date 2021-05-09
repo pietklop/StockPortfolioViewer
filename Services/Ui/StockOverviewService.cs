@@ -25,9 +25,11 @@ namespace Services.Ui
         public List<StockViewModel> GetStockList()
         {
             var stocks = db.Stocks
+                .Include(s => s.AreaShares).ThenInclude(a => a.Area)
                 .Include(s => s.StockRetrieverCompatibilities).ThenInclude(c => c.DataRetriever)
                 .Include(s => s.Dividends)
                 .Include(s => s.LastKnownStockValue.StockValue)
+                .Include(s => s.SectorShares).ThenInclude(ss => ss.Sector)
                 .Include(s => s.Transactions).ThenInclude(t => t.StockValue)
                 .Where(s => s.Transactions.Sum(t => t.Quantity) > 0)
                 .ToList();
@@ -46,7 +48,7 @@ namespace Services.Ui
                 var profit = currentValue - virtualBuyValue;
                 list.Add(new StockViewModel
                 {
-                    Name = stock.Name,
+                    Name = StockName(stock),
                     Isin = stock.Isin,
                     Value = currentValue,
                     Profit = profit,
@@ -72,6 +74,19 @@ namespace Services.Ui
             return list.OrderByDescending(l => l.Value).ToList();
 
             string LastUpdateSince(Stock stock) => (DateTime.Now - stock.LastKnownStockValue.StockValue.TimeStamp).TimeAgo();
+
+            // add suffix to stockName in case data is incomplete
+            string StockName(Stock stock)
+            {
+                if (stock.AreaShares.Count == 1 && stock.AreaShares.Single().Area.Name == Constants.Unknown)
+                    return StockNameMarkUnknown(stock);
+                if (stock.SectorShares.Count == 1 && stock.SectorShares.Single().Sector.Name == Constants.Unknown)
+                    return StockNameMarkUnknown(stock);
+
+                return stock.Name;
+            }
+
+            string StockNameMarkUnknown(Stock stock) => $"{stock.Name} (Unk.)";
         }
     }
 }
