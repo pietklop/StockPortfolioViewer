@@ -15,8 +15,11 @@
         public const string Symbol = "Symbol";
         public const string CurrentPrice = "Current price";
         public const string LastPriceUpdate = "Last price update";
+        public const string Bought = "Bought";
+        public const string Sold = "Sold";
         public const string Area = "Area";
         public const string Sector = "Sector";
+        public const string TransactionCosts = "Transaction costs";
     }
 
 }

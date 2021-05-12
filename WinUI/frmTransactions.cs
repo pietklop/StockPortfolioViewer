@@ -9,10 +9,12 @@ namespace Dashboard
     public partial class frmTransactions : Form
     {
         private readonly TransactionOverviewService transactionOverviewService;
+        private readonly string stockIsin;
 
-        public frmTransactions(TransactionOverviewService transactionOverviewService)
+        public frmTransactions(TransactionOverviewService transactionOverviewService, string stockIsin = null)
         {
             this.transactionOverviewService = transactionOverviewService;
+            this.stockIsin = stockIsin;
             InitializeComponent();
         }
 
@@ -23,7 +25,7 @@ namespace Dashboard
 
         private void PopulateStockGrid()
         {
-            var stockList = transactionOverviewService.GetStockList();
+            var stockList = transactionOverviewService.GetStockList(stockIsin);
             dgvTransactions.DataSource = stockList;
 
             // column configuration
@@ -42,9 +44,8 @@ namespace Dashboard
         {
             var qColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.Quantity)).Index;
 
-            if (qColumnIndex == e.ColumnIndex && (double)e.Value < 0)
-                dgvTransactions.Rows[e.RowIndex].DefaultCellStyle.ForeColor = Color.LightSlateGray;
-
+            if (qColumnIndex == e.ColumnIndex)
+                dgvTransactions.Rows[e.RowIndex].DefaultCellStyle.ForeColor = (double) e.Value > 0 ? Color.Gainsboro : Color.LightSlateGray;
         }
     }
 }

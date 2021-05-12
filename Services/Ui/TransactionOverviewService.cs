@@ -18,11 +18,12 @@ namespace Services.Ui
             this.db = db;
         }
 
-        public List<TransactionViewModel> GetStockList()
+        public List<TransactionViewModel> GetStockList(string isin = null)
         {
             var transactions = db.Transactions
                 .Include(t => t.Stock.Currency)
                 .Include(t => t.StockValue)
+                .Where(t => isin == null || t.Stock.Isin == isin)
                 .OrderByDescending(t => t.StockValue.TimeStamp).ToList();
 
             var list = new List<TransactionViewModel>(transactions.Count());

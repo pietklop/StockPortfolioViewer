@@ -23,15 +23,17 @@ namespace Dashboard
     {
         private readonly ILog log;
         private readonly StockDbContext db;
+        private readonly frmMain frmMain;
         private readonly StockService stockService;
         private readonly StockDetailService stockDetailService;
         private readonly PortfolioDistributionService portfolioDistributionService;
         private readonly string stockIsin;
 
-        public frmStockDetail(ILog log, StockDbContext db, StockService stockService, StockDetailService stockDetailService, PortfolioDistributionService portfolioDistributionService, string stockIsin)
+        public frmStockDetail(ILog log, StockDbContext db, frmMain frmMain, StockService stockService, StockDetailService stockDetailService, PortfolioDistributionService portfolioDistributionService, string stockIsin)
         {
             this.log = log;
             this.db = db;
+            this.frmMain = frmMain;
             this.stockService = stockService;
             this.stockDetailService = stockDetailService;
             this.portfolioDistributionService = portfolioDistributionService;
@@ -99,6 +101,11 @@ namespace Dashboard
                     break;
                 case StockDetailProperties.Sector:
                     ChangeSector();
+                    break;
+                case StockDetailProperties.Bought:
+                case StockDetailProperties.Sold:
+                case StockDetailProperties.TransactionCosts:
+                    frmMain.ShowStockTransactions(stockIsin);
                     break;
             }
 
