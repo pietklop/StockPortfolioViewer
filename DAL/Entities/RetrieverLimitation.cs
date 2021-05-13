@@ -1,4 +1,5 @@
 ﻿using System;
+using Core;
 
 namespace DAL.Entities
 {
@@ -12,16 +13,6 @@ namespace DAL.Entities
         /// Requests done during this timespan
         /// </summary>
         public int RequestsDone { get; set; }
-    }
-
-    public enum RetrieverLimitTimespanType
-    {
-        None,
-        Second,
-        Minute,
-        Hour,
-        Day,
-        Month,
     }
 
     public static class RetrieverLimitationHelper
