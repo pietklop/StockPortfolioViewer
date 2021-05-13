@@ -10,7 +10,7 @@ using Dashboard.Helpers;
 using Dashboard.Input;
 using log4net;
 using Messages.Dtos;
-using Messages.UI.StockDetails;
+using Messages.UI;
 using Microsoft.EntityFrameworkCore;
 using Services;
 using Services.DI;
@@ -51,7 +51,7 @@ namespace Dashboard
             dgvStockDetails.ClearSelection();
 
             //custom row config, does not work in form_load_call
-            var underlineColumn = dgvStockDetails.GetColumn(nameof(StockPropertyViewModel.UnderlineRow));
+            var underlineColumn = dgvStockDetails.GetColumn(nameof(PropertyViewModel.UnderlineRow));
             foreach (DataGridViewRow row in dgvStockDetails.Rows)
             {
                 if ((bool)dgvStockDetails[underlineColumn.Index, row.Index].Value)
@@ -66,9 +66,9 @@ namespace Dashboard
 
             // column configuration
             dgvStockDetails.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-            var nameColumn = dgvStockDetails.GetColumn(nameof(StockPropertyViewModel.Name));
+            var nameColumn = dgvStockDetails.GetColumn(nameof(PropertyViewModel.Name));
             nameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            var underlineColumn = dgvStockDetails.GetColumn(nameof(StockPropertyViewModel.UnderlineRow));
+            var underlineColumn = dgvStockDetails.GetColumn(nameof(PropertyViewModel.UnderlineRow));
             underlineColumn.Visible = false;
 
             dgvStockDetails.SetReadOnly();
@@ -78,8 +78,8 @@ namespace Dashboard
         private void dgvStockDetails_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex < 0 || e.RowIndex < 0) return;
-            var nameColumnIndex = dgvStockDetails.GetColumn(nameof(StockPropertyViewModel.Name)).Index;
-            var valueColumnIndex = dgvStockDetails.GetColumn(nameof(StockPropertyViewModel.Value)).Index;
+            var nameColumnIndex = dgvStockDetails.GetColumn(nameof(PropertyViewModel.Name)).Index;
+            var valueColumnIndex = dgvStockDetails.GetColumn(nameof(PropertyViewModel.Value)).Index;
             var propName = (string)dgvStockDetails[nameColumnIndex, e.RowIndex].Value;
 
             switch (propName)

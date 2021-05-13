@@ -5,7 +5,7 @@ using Core;
 using DAL;
 using DAL.Entities;
 using log4net;
-using Messages.UI.StockDetails;
+using Messages.UI;
 using Microsoft.EntityFrameworkCore;
 using Services.Helpers;
 
@@ -22,7 +22,7 @@ namespace Services.Ui
             this.db = db;
         }
 
-        public List<StockPropertyViewModel> GetDetails(string stockIsin)
+        public List<PropertyViewModel> GetDetails(string stockIsin)
         {
             var stock = db.Stocks
                             .Include(s => s.AreaShares).ThenInclude(a => a.Area)
@@ -42,25 +42,25 @@ namespace Services.Ui
             var userDividendValue = stock.Dividends.Sum(d => d.UserValue - d.UserCosts - d.UserTax);
             var profit = currentUserValue + userSalesValue - userBuyValue - userTransactionCosts + userDividendValue;
 
-            return new List<StockPropertyViewModel>
+            return new List<PropertyViewModel>
             {
-                new StockPropertyViewModel{Name = StockDetailProperties.Name, Value = stock.Name, UnderlineRow = true},
-                new StockPropertyViewModel{Name = "Isin", Value = stock.Isin},
-                new StockPropertyViewModel{Name = "Quantity", Value = nStocks},
-                new StockPropertyViewModel{Name = StockDetailProperties.Symbol, Value = stock.Symbol, UnderlineRow = true},
-                new StockPropertyViewModel{Name = StockDetailProperties.CurrentPrice, Value = FormatCurrency(stock.LastKnownStockValue.StockValue.NativePrice), UnderlineRow = true},
-                new StockPropertyViewModel{Name = StockDetailProperties.LastPriceUpdate, Value = LastUpdateSince(), UnderlineRow = true},
-                new StockPropertyViewModel{Name = "Avg buy price", Value = FormatCurrency(stock.Transactions.DetermineAvgBuyNativePrice())},
-                new StockPropertyViewModel{Name = "First buy", Value = $"{transactions.OrderBy(t => t.StockValue.TimeStamp).First().StockValue.TimeStamp.ToShortDateString()}"},
-                new StockPropertyViewModel{Name = StockDetailProperties.Bought, Value = $"{FormatUserCurrency(userBuyValue)}  [{transactions.IsBuy().Count()}]", UnderlineRow = true},
-                new StockPropertyViewModel{Name = StockDetailProperties.Sold, Value = $"{FormatUserCurrency(userSalesValue)}  [{transactions.IsSell().Count()}]", UnderlineRow = true},
-                new StockPropertyViewModel{Name = "Current value", Value = $"{FormatUserCurrency(currentUserValue)}"},
-                new StockPropertyViewModel{Name = "Profit", Value = $"{FormatUserCurrency(profit)}"},
-                new StockPropertyViewModel{Name = "Dividend", Value = $"{FormatUserCurrency(userDividendValue)}  [{stock.Dividends.Count}]"},
-                new StockPropertyViewModel{Name = StockDetailProperties.TransactionCosts, Value = $"{FormatUserCurrency(userTransactionCosts)}  [{transactions.Count}]", UnderlineRow = true},
-                new StockPropertyViewModel{Name = "Currency", Value = stock.Currency.Key},
-                new StockPropertyViewModel{Name = StockDetailProperties.Area, Value = FirstOrMultiple(stock.AreaShares.Select(a => a.Area.Name).ToArray()), UnderlineRow = true},
-                new StockPropertyViewModel{Name = StockDetailProperties.Sector, Value = FirstOrMultiple(stock.SectorShares.Select(a => a.Sector.Name).ToArray()), UnderlineRow = true},
+                new PropertyViewModel{Name = StockDetailProperties.Name, Value = stock.Name, UnderlineRow = true},
+                new PropertyViewModel{Name = "Isin", Value = stock.Isin},
+                new PropertyViewModel{Name = "Quantity", Value = nStocks},
+                new PropertyViewModel{Name = StockDetailProperties.Symbol, Value = stock.Symbol, UnderlineRow = true},
+                new PropertyViewModel{Name = StockDetailProperties.CurrentPrice, Value = FormatCurrency(stock.LastKnownStockValue.StockValue.NativePrice), UnderlineRow = true},
+                new PropertyViewModel{Name = StockDetailProperties.LastPriceUpdate, Value = LastUpdateSince(), UnderlineRow = true},
+                new PropertyViewModel{Name = "Avg buy price", Value = FormatCurrency(stock.Transactions.DetermineAvgBuyNativePrice())},
+                new PropertyViewModel{Name = "First buy", Value = $"{transactions.OrderBy(t => t.StockValue.TimeStamp).First().StockValue.TimeStamp.ToShortDateString()}"},
+                new PropertyViewModel{Name = StockDetailProperties.Bought, Value = $"{FormatUserCurrency(userBuyValue)}  [{transactions.IsBuy().Count()}]", UnderlineRow = true},
+                new PropertyViewModel{Name = StockDetailProperties.Sold, Value = $"{FormatUserCurrency(userSalesValue)}  [{transactions.IsSell().Count()}]", UnderlineRow = true},
+                new PropertyViewModel{Name = "Current value", Value = $"{FormatUserCurrency(currentUserValue)}"},
+                new PropertyViewModel{Name = "Profit", Value = $"{FormatUserCurrency(profit)}"},
+                new PropertyViewModel{Name = "Dividend", Value = $"{FormatUserCurrency(userDividendValue)}  [{stock.Dividends.Count}]"},
+                new PropertyViewModel{Name = StockDetailProperties.TransactionCosts, Value = $"{FormatUserCurrency(userTransactionCosts)}  [{transactions.Count}]", UnderlineRow = true},
+                new PropertyViewModel{Name = "Currency", Value = stock.Currency.Key},
+                new PropertyViewModel{Name = StockDetailProperties.Area, Value = FirstOrMultiple(stock.AreaShares.Select(a => a.Area.Name).ToArray()), UnderlineRow = true},
+                new PropertyViewModel{Name = StockDetailProperties.Sector, Value = FirstOrMultiple(stock.SectorShares.Select(a => a.Sector.Name).ToArray()), UnderlineRow = true},
             };
 
             string FormatUserCurrency(double value) => value.FormatUserCurrency();

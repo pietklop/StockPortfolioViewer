@@ -1,6 +1,6 @@
-﻿namespace Messages.UI.StockDetails
+﻿namespace Messages.UI
 {
-    public class StockPropertyViewModel
+    public class PropertyViewModel
     {
         public string Name { get; set; }
         public object Value { get; set; }
