@@ -18,6 +18,8 @@ namespace DAL.Entities
         /// 0 or less means not available
         /// </summary>
         public int Priority { get; set; }
+        public string SupportedArea { get; set; }
+        public string Description { get; set; }
 
         public DateTime LastRequest { get; set; }
         /// <summary>

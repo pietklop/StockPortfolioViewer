@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Core;
 using DAL;
 using DAL.Entities;
 using StockDataApi.AlphaVantage;
@@ -13,17 +14,20 @@ namespace TestConsole
     {
         public static void AddRetrievers(StockDbContext db)
         {
-            AddRetriever(db, AvDataRetriever.ConstName, 10, typeof(AvDataRetriever), "https://www.alphavantage.co/", "???")
-                .AddAvLimitations();
-            AddRetriever(db, IexDataRetriever.ConstName, 5, typeof(IexDataRetriever), "https://cloud.iexapis.com/v1/", "???")
-                .AddIexLimitations();
-            AddRetriever(db, MsDataRetriever.ConstName, 15, typeof(MsDataRetriever), "https://api.marketstack.com/v1/", "???")
-                .AddMsLimitations();
-            AddRetriever(db, TdDataRetriever.ConstName, 7, typeof(TdDataRetriever), "https://api.twelvedata.com/", "???")
+            AddRetriever(db, AvDataRetriever.ConstName, 10, typeof(AvDataRetriever), "https://www.alphavantage.co/", "???", "World")
+                .AddAvLimitations()
+                .Description = @"You can use this site to search for symbols: https://www.buyupside.com/alphavantagelive/searchforsymboluser.php" + "\r\nEuropean stocks should be suffixed with the exchange like for example BMW.FRK or AIR.PAR";
+            AddRetriever(db, IexDataRetriever.ConstName, 5, typeof(IexDataRetriever), "https://cloud.iexapis.com/v1/", "???", "Usa")
+                .AddIexLimitations()
+                .Description = "Preferred data-provider because of the high limit and realtime data. Covers usa only";
+            AddRetriever(db, MsDataRetriever.ConstName, 15, typeof(MsDataRetriever), "https://api.marketstack.com/v1/", "???", "World")
+                .AddMsLimitations()
+                .Description = @"You can search for symbols on the site: https://marketstack.com/search";
+            AddRetriever(db, TdDataRetriever.ConstName, 7, typeof(TdDataRetriever), "https://api.twelvedata.com/", "???", "World")
                 .AddTdLimitations();
         }
 
-        private static DataRetriever AddRetriever(StockDbContext db, string name, int priority, Type type, string baseUrl, string key)
+        private static DataRetriever AddRetriever(StockDbContext db, string name, int priority, Type type, string baseUrl, string key, string area)
         {
             return db.DataRetrievers.Add(new DataRetriever
             {
@@ -31,7 +35,8 @@ namespace TestConsole
                 Type = type.FullName,
                 BaseUrl = baseUrl,
                 Key = key,
-                Priority = priority
+                Priority = priority,
+                SupportedArea = area,
             }).Entity;
         }
 
