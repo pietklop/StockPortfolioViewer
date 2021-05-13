@@ -12,11 +12,10 @@ using Microsoft.EntityFrameworkCore;
 using Services;
 using Services.DI;
 using Services.Ui;
-using StockDataApi.General;
 
 namespace Dashboard
 {
-    public partial class frmStockRetriever : Form
+    public partial class frmStockRetrievers : Form
     {
         private readonly ILog log;
         private readonly StockDbContext db;
@@ -24,7 +23,7 @@ namespace Dashboard
         private readonly StockService stockService;
         private readonly StockRetrieverService stockRetrieverService;
 
-        public frmStockRetriever(ILog log, StockDbContext db, StockDto stock, StockService stockService, StockRetrieverService stockRetrieverService)
+        public frmStockRetrievers(ILog log, StockDbContext db, StockDto stock, StockService stockService, StockRetrieverService stockRetrieverService)
         {
             this.log = log;
             this.db = db;

@@ -1,7 +1,7 @@
 ﻿
 namespace Dashboard
 {
-    partial class frmStockRetriever
+    partial class frmStockRetrievers
     {
         /// <summary>
         /// Required designer variable.
@@ -87,7 +87,7 @@ namespace Dashboard
             this.Controls.Add(this.dgvRetrieverList);
             this.Controls.Add(this.lblStockName);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "frmStockRetriever";
+            this.Name = "frmStockRetrievers";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "frmStockRetriever";
             this.Load += new System.EventHandler(this.frmStockRetriever_Load);
