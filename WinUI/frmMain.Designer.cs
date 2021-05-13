@@ -31,19 +31,21 @@ namespace Dashboard
         {
             this.pnlMenu = new System.Windows.Forms.Panel();
             this.pnlNav = new System.Windows.Forms.Panel();
+            this.btnImport = new System.Windows.Forms.Button();
             this.btnTransactions = new System.Windows.Forms.Button();
             this.btnMainOverview = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.btnClose = new System.Windows.Forms.Button();
             this.pnlFormLoader = new System.Windows.Forms.Panel();
             this.lblViewName = new System.Windows.Forms.Label();
-            this.btnImport = new System.Windows.Forms.Button();
+            this.btnDataRetrieval = new System.Windows.Forms.Button();
             this.pnlMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlMenu
             // 
             this.pnlMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
+            this.pnlMenu.Controls.Add(this.btnDataRetrieval);
             this.pnlMenu.Controls.Add(this.pnlNav);
             this.pnlMenu.Controls.Add(this.btnImport);
             this.pnlMenu.Controls.Add(this.btnTransactions);
@@ -62,6 +64,21 @@ namespace Dashboard
             this.pnlNav.Name = "pnlNav";
             this.pnlNav.Size = new System.Drawing.Size(5, 100);
             this.pnlNav.TabIndex = 2;
+            // 
+            // btnImport
+            // 
+            this.btnImport.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.btnImport.FlatAppearance.BorderSize = 0;
+            this.btnImport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnImport.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btnImport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
+            this.btnImport.Location = new System.Drawing.Point(0, 737);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(186, 40);
+            this.btnImport.TabIndex = 1;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // btnTransactions
             // 
@@ -136,20 +153,20 @@ namespace Dashboard
             this.lblViewName.TabIndex = 3;
             this.lblViewName.Text = "View name";
             // 
-            // btnImport
+            // btnDataRetrieval
             // 
-            this.btnImport.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.btnImport.FlatAppearance.BorderSize = 0;
-            this.btnImport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnImport.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.btnImport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
-            this.btnImport.Location = new System.Drawing.Point(0, 737);
-            this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(186, 40);
-            this.btnImport.TabIndex = 1;
-            this.btnImport.Text = "Import";
-            this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            this.btnDataRetrieval.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.btnDataRetrieval.FlatAppearance.BorderSize = 0;
+            this.btnDataRetrieval.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDataRetrieval.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btnDataRetrieval.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
+            this.btnDataRetrieval.Location = new System.Drawing.Point(0, 697);
+            this.btnDataRetrieval.Name = "btnDataRetrieval";
+            this.btnDataRetrieval.Size = new System.Drawing.Size(186, 40);
+            this.btnDataRetrieval.TabIndex = 3;
+            this.btnDataRetrieval.Text = "Data retrieval";
+            this.btnDataRetrieval.UseVisualStyleBackColor = true;
+            this.btnDataRetrieval.Click += new System.EventHandler(this.btnDataRetrieval_Click);
             // 
             // frmMain
             // 
@@ -183,6 +200,7 @@ namespace Dashboard
         private System.Windows.Forms.Panel pnlFormLoader;
         private System.Windows.Forms.Label lblViewName;
         private System.Windows.Forms.Button btnImport;
+        private System.Windows.Forms.Button btnDataRetrieval;
     }
 }
 

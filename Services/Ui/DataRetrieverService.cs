@@ -20,6 +20,16 @@ namespace Services.Ui
             this.db = db;
         }
 
+        public List<RetrieverViewModel> GetRetrievers()
+        {
+            return db.DataRetrievers.Select(r => new RetrieverViewModel
+            {
+                Name = r.Name,
+                SupportedArea = r.SupportedArea,
+                LastRequest = ToDateAndTime(r.LastRequest),
+            }).ToList();
+        }
+
         public List<RetrieverLimitationViewModel> GetRetrieverLimitations(string name)
         {
             return db.RetrieverLimitations.Where(r => r.DataRetriever.Name == name)
@@ -43,11 +53,13 @@ namespace Services.Ui
                 new PropertyViewModel{Name = "Name", Value = retriever.Name},
                 new PropertyViewModel{Name = "Url", Value = retriever.BaseUrl},
                 new PropertyViewModel{Name = "Priority", Value = retriever.Priority},
-                new PropertyViewModel{Name = "Last request", Value = retriever.LastRequest.ToShortDateString()},
+                new PropertyViewModel{Name = "Last request", Value = ToDateAndTime(retriever.LastRequest)},
                 new PropertyViewModel{Name = "Area", Value = retriever.SupportedArea},
                 new PropertyViewModel{Name = "Currency", Value = dr.CanRetrieveCurrencies},
                 new PropertyViewModel{Name = "Day behind", Value = dr.DataIsDayBehind},
             };
         }
+
+        private static string ToDateAndTime(DateTime dateTime) => $"{dateTime.ToShortDateString()} {dateTime.ToShortTimeString()}";
     }
 }

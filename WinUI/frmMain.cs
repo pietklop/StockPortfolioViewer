@@ -3,12 +3,10 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Castle.MicroKernel;
-using Dashboard.DI;
 using Imports.DeGiro;
 using log4net;
 using Services;
 using Services.DI;
-using Syroot.Windows.IO;
 
 namespace Dashboard
 {
@@ -42,9 +40,13 @@ namespace Dashboard
 
         public void ShowStockTransactions(string isin) =>
             LoadForm("Transactions", CastleContainer.Instance.Resolve<frmTransactions>(new Arguments{{"stockIsin", isin}}));
+        
+        public void ShowDataRetriever(string name) =>
+            LoadForm(name, CastleContainer.Instance.Resolve<frmDataRetriever>(new Arguments{{"dataRetrieverName", name}}));
 
         private void btnMainOverview_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmOverview>());
         private void btnTransactions_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmTransactions>());
+        private void btnDataRetrieval_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmDataRetrievers>());
         private void btnImport_Click(object sender, EventArgs e) => ImportUsingFileDialog();
 
         private void btnMainOverview_Leave(object sender, EventArgs e) => SetDefaultButtonBackColor((Button)sender);

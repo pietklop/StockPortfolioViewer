@@ -9,6 +9,7 @@ namespace Dashboard.DI
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(Component.For<frmDataRetriever>().LifestyleSingleton());
+            container.Register(Component.For<frmDataRetrievers>().LifestyleSingleton());
             container.Register(Component.For<frmMain>().LifestyleSingleton());
             container.Register(Component.For<frmOverview>().LifestyleTransient());
             container.Register(Component.For<frmStockDetail>().LifestyleTransient());
