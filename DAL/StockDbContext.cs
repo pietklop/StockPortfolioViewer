@@ -33,7 +33,8 @@ namespace DAL
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = @"c:\Temp\Stock.db" };
+            var settings = SettingsHelper.GetSettings();
+            var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = settings.DbFileNamePath };
             var connectionString = connectionStringBuilder.ToString();
             var connection = new SqliteConnection(connectionString);
 
