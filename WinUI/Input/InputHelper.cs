@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace Dashboard.Input
@@ -35,5 +36,17 @@ namespace Dashboard.Input
 
             return input;
         }
+
+        public static int GetListIndex(Form ownerForm, string caption, List<string> listMembers)
+        {
+            using (var form = new frmListInput(caption, listMembers))
+            {
+                if (form.ShowDialog(ownerForm) == DialogResult.OK)
+                    return form.MemberIndex;
+            }
+
+            return -1;
+        }
+
     }
 }

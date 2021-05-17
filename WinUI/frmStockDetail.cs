@@ -107,6 +107,9 @@ namespace Dashboard
                 case StockDetailProperties.TransactionCosts:
                     frmMain.ShowStockTransactions(stockIsin);
                     break;
+                case StockDetailProperties.DividendPayout:
+                    ChangeDividendPayout();
+                    break;
             }
 
             void ChangeName()
@@ -202,6 +205,15 @@ namespace Dashboard
                 SaveAndUpdate(input.Keys.Length == 1 ? input.Keys[0] : "(Multiple)");
                 if (stock.SectorShares.Count > 1) // user probably wants to see/check te result
                     ChangeSector();
+            }
+
+            void ChangeDividendPayout()
+            {
+                var input = InputHelper.GetListIndex(this, "Select div payout", Enum.GetNames(typeof(DividendPayoutInterval)).Skip(1).ToList());
+                if (input == -1) return;
+                var divPayout = (DividendPayoutInterval) input + 1;
+                db.Stocks.Single(s => s.Isin == stockIsin).DividendPayoutInterval = divPayout;
+                SaveAndUpdate($"{divPayout}");
             }
 
             void SaveAndUpdate(object newValue)
