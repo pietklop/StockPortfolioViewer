@@ -54,7 +54,7 @@ namespace Services.Ui
                 new PropertyViewModel{Name = "First buy", Value = $"{transactions.OrderBy(t => t.StockValue.TimeStamp).First().StockValue.TimeStamp.ToShortDateString()}"},
                 new PropertyViewModel{Name = StockDetailProperties.Bought, Value = $"{FormatUserCurrency(userBuyValue)}  [{transactions.IsBuy().Count()}]", UnderlineRow = true},
                 new PropertyViewModel{Name = StockDetailProperties.Sold, Value = $"{FormatUserCurrency(userSalesValue)}  [{transactions.IsSell().Count()}]", UnderlineRow = true},
-                new PropertyViewModel{Name = "Current value", Value = $"{FormatUserCurrency(currentUserValue)}"},
+                new PropertyViewModel{Name = "Current total value", Value = $"{FormatUserCurrency(currentUserValue)}"},
                 new PropertyViewModel{Name = "Profit", Value = $"{FormatUserCurrency(profit)}"},
                 new PropertyViewModel{Name = "Dividend", Value = $"{FormatUserCurrency(userDividendValue)}  [{stock.Dividends.Count}]"},
                 new PropertyViewModel{Name = StockDetailProperties.TransactionCosts, Value = $"{FormatUserCurrency(userTransactionCosts)}  [{transactions.Count}]", UnderlineRow = true},
