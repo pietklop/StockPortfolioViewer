@@ -21,6 +21,7 @@
         public const string Sector = "Sector";
         public const string TransactionCosts = "Transaction costs";
         public const string DividendPayout = "Dividend payout";
+        public const string ExpenseRatio = "Expense ratio";
     }
 
 }

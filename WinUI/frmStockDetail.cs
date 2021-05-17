@@ -110,6 +110,9 @@ namespace Dashboard
                 case StockDetailProperties.DividendPayout:
                     ChangeDividendPayout();
                     break;
+                case StockDetailProperties.ExpenseRatio:
+                    ChangeExpenseRatio();
+                    break;
             }
 
             void ChangeName()
@@ -214,6 +217,17 @@ namespace Dashboard
                 var divPayout = (DividendPayoutInterval) input + 1;
                 db.Stocks.Single(s => s.Isin == stockIsin).DividendPayoutInterval = divPayout;
                 SaveAndUpdate($"{divPayout}");
+            }
+
+            void ChangeExpenseRatio()
+            {
+                var input = InputHelper.GetPositiveValue(this, "Enter ratio [%]");
+                if (input == null) return;
+                input /= 100;
+                if (input >= 0.01)
+                    MessageBox.Show($"{input:P0}!? Thats expensive, i would take another one", "Wow", MessageBoxButtons.OK, MessageBoxIcon.Question);
+                db.Stocks.Single(s => s.Isin == stockIsin).ExpenseRatio = input.Value;
+                SaveAndUpdate($"{input:P2}");
             }
 
             void SaveAndUpdate(object newValue)
