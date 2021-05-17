@@ -20,7 +20,7 @@ namespace TestConsole
             AddRetriever(db, IexDataRetriever.ConstName, 5, typeof(IexDataRetriever), "https://cloud.iexapis.com/v1/", "???", "Usa")
                 .AddIexLimitations()
                 .Description = "Preferred data-provider because of the high limit and realtime data. Covers usa only";
-            AddRetriever(db, MsDataRetriever.ConstName, 15, typeof(MsDataRetriever), "https://api.marketstack.com/v1/", "???", "World")
+            AddRetriever(db, MsDataRetriever.ConstName, 15, typeof(MsDataRetriever), "http://api.marketstack.com/v1/", "???", "World")
                 .AddMsLimitations()
                 .Description = @"You can search for symbols on the site: https://marketstack.com/search";
             AddRetriever(db, TdDataRetriever.ConstName, 7, typeof(TdDataRetriever), "https://api.twelvedata.com/", "???", "World")
