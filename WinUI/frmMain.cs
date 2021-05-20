@@ -38,6 +38,9 @@ namespace Dashboard
         public void ShowStockDetails(string stockName, string isin) =>
             LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockDetail>(new Arguments{{"stockIsin", isin}}));
 
+        public void ShowDividends(string isin) =>
+            LoadForm("Dividends", CastleContainer.Instance.Resolve<frmDividends>(new Arguments{{"stockIsin", isin}}));
+
         public void ShowStockTransactions(string isin) =>
             LoadForm("Transactions", CastleContainer.Instance.Resolve<frmTransactions>(new Arguments{{"stockIsin", isin}}));
         
@@ -46,11 +49,13 @@ namespace Dashboard
 
         private void btnMainOverview_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmOverview>());
         private void btnTransactions_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmTransactions>());
+        private void btnDividends_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmDividends>());
         private void btnDataRetrieval_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmDataRetrievers>());
         private void btnImport_Click(object sender, EventArgs e) => ImportUsingFileDialog();
 
         private void btnMainOverview_Leave(object sender, EventArgs e) => SetDefaultButtonBackColor((Button)sender);
         private void btnTransactions_Leave(object sender, EventArgs e) => SetDefaultButtonBackColor((Button)sender);
+        private void btnDividends_Leave(object sender, EventArgs e) => SetDefaultButtonBackColor((Button)sender);
 
         private void HandleMenuButtonClick(Button button, Form formToShow)
         {

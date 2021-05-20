@@ -1,4 +1,6 @@
-﻿namespace Core
+﻿using System;
+
+namespace Core
 {
     public enum DividendPayoutInterval
     {
@@ -6,8 +8,28 @@
         GrowthStock,
         Accumulated,
         PerMonth,
-        Per3Months,
+        Quarterly,
         Per6Months,
-        PerYear,
+        Annually,
+    }
+
+    public static class DividendPayoutIntervalHelper
+    {
+        public static double ToYearMultiplier(this DividendPayoutInterval interval)
+        {
+            switch (interval)
+            {
+                case DividendPayoutInterval.PerMonth:
+                    return 12;
+                case DividendPayoutInterval.Quarterly:
+                    return 4;
+                case DividendPayoutInterval.Per6Months:
+                    return 2;
+                case DividendPayoutInterval.Annually:
+                    return 1;
+                default:
+                    throw new ArgumentOutOfRangeException($"Unsupported interval: {interval}");
+            }
+        }
     }
 }

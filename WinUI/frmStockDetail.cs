@@ -107,6 +107,9 @@ namespace Dashboard
                 case StockDetailProperties.TransactionCosts:
                     frmMain.ShowStockTransactions(stockIsin);
                     break;
+                case StockDetailProperties.Dividend:
+                    frmMain.ShowDividends(stockIsin);
+                    break;
                 case StockDetailProperties.DividendPayout:
                     ChangeDividendPayout();
                     break;

@@ -56,7 +56,7 @@ namespace Services.Ui
                 new PropertyViewModel{Name = StockDetailProperties.Sold, Value = $"{FormatUserCurrency(userSalesValue)}  [{transactions.IsSell().Count()}]", UnderlineRow = true},
                 new PropertyViewModel{Name = "Current total value", Value = $"{FormatUserCurrency(currentUserValue)}"},
                 new PropertyViewModel{Name = "Profit", Value = $"{FormatUserCurrency(profit)}"},
-                new PropertyViewModel{Name = "Dividend", Value = $"{FormatUserCurrency(userDividendValue)}  [{stock.Dividends.Count}]"},
+                new PropertyViewModel{Name = StockDetailProperties.Dividend, Value = $"{FormatUserCurrency(userDividendValue)}  [{stock.Dividends.Count}]", UnderlineRow = true},
                 new PropertyViewModel{Name = StockDetailProperties.DividendPayout, Value = stock.DividendPayoutInterval, UnderlineRow = true},
                 new PropertyViewModel{Name = StockDetailProperties.TransactionCosts, Value = $"{FormatUserCurrency(userTransactionCosts)}  [{transactions.Count}]", UnderlineRow = true},
                 new PropertyViewModel{Name = "Currency", Value = stock.Currency.Key},
