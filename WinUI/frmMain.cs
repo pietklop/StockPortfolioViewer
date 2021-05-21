@@ -69,6 +69,12 @@ namespace Dashboard
             form.Dock = DockStyle.Fill;
             form.TopLevel = false;
             form.TopMost = true;
+            foreach (Control control in pnlFormLoader.Controls)
+            {
+                var frm = control as Form;
+                frm?.Close();
+                frm?.Dispose();
+            }
             pnlFormLoader.Controls.Clear();
             pnlFormLoader.Controls.Add(form);
             form.Show();
