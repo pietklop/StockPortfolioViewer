@@ -78,12 +78,17 @@ namespace Services
                 userPrice = nativePrice.ToUserCurrency(curr.Ratio);
             }
 
-            stock.LastKnownStockValue = new LastKnownStockValue
-            {
-                LastUpdate = now,
-                StockValue = CreatePitStockValue(),
-            };
-
+            stock.LastKnownStockValue.LastUpdate = now;
+            lastPriceUpdate ??= now;
+            if (stock.LastKnownStockValue.StockValue.TimeStamp.Date == lastPriceUpdate.Value.Date)
+            {   // do not save multiple value updates per day
+                stock.LastKnownStockValue.StockValue.TimeStamp = lastPriceUpdate.Value;
+                stock.LastKnownStockValue.StockValue.NativePrice = nativePrice;
+                stock.LastKnownStockValue.StockValue.UserPrice = userPrice;
+            }
+            else
+                stock.LastKnownStockValue.StockValue = CreatePitStockValue();
+            
             return stock;
 
             PitStockValue CreatePitStockValue()
@@ -91,7 +96,7 @@ namespace Services
                 return new PitStockValue
                 {
                     Stock = stock,
-                    TimeStamp = lastPriceUpdate ?? now,
+                    TimeStamp = lastPriceUpdate.Value,
                     NativePrice = nativePrice,
                     UserPrice = userPrice,
                 };
@@ -102,6 +107,7 @@ namespace Services
         {
             log.Info($"Create transaction: {dto.Name} Quantity: {dto.Quantity} on {dto.TimeStamp.ToShortDateString()}");
             var stock = GetOrCreateStock(dto.Name, dto.Isin, dto.Currency);
+
             if (stock.Currency.Key != dto.Currency) 
                 throw new Exception($"Stock ({stock}) currency ('{stock.Currency.Key}') should be equal to transaction currency ('{dto.Currency}')");
 
@@ -112,7 +118,7 @@ namespace Services
             }
             ValidateEnoughToSell();
 
-            var pitStockValue = CreatePitStockValue();
+            var pitStockValue = GetOrCreatePitStockValue();
             var trans = new Transaction
             {
                 Stock = stock,
@@ -146,8 +152,16 @@ namespace Services
                 }
             }
 
-            PitStockValue CreatePitStockValue()
+            PitStockValue GetOrCreatePitStockValue()
             {
+                var psv = db.PitStockValues.FirstOrDefault(p => p.Stock.Isin == dto.Isin && p.TimeStamp.Date == dto.TimeStamp.Date);
+                if (psv != null)
+                {   // StockValue does already exist for this day => update
+                    psv.NativePrice = dto.Price;
+                    psv.UserPrice = dto.Price.ToUserCurrency(dto.CurrencyRatio, dto.Currency);
+                    return psv;
+                }
+
                 return new PitStockValue
                 {
                     Stock = stock,

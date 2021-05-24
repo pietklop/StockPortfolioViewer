@@ -60,7 +60,7 @@ namespace Services.DataCollection
         {
             var stocks = db.Stocks
                 .Include(s => s.Currency)
-                .Include(s => s.LastKnownStockValue)
+                .Include(s => s.LastKnownStockValue.StockValue)
                 .Include(s => s.StockRetrieverCompatibilities).ThenInclude(c => c.DataRetriever)
                 .Where(s => s.StockRetrieverCompatibilities.Any(c => c.DataRetriever.Priority > 0 && c.Compatibility == RetrieverCompatibility.True))
                 .OrderBy(s => s.LastKnownStockValue.LastUpdate)
