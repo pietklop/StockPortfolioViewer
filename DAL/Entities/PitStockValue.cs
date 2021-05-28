@@ -18,5 +18,9 @@ namespace DAL.Entities
         /// Price in user defined base currency
         /// </summary>
         public double UserPrice { get; set; }
+        /// <summary>
+        /// Daily growth factor from previous PitValue till this one
+        /// </summary>
+        public double DailyGrowth { get; set; }
     }
 }
