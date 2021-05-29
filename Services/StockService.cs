@@ -8,6 +8,7 @@ using Imports;
 using log4net;
 using Messages.Dtos;
 using Microsoft.EntityFrameworkCore;
+using Services.Helpers;
 
 namespace Services
 {
@@ -88,6 +89,8 @@ namespace Services
             }
             else
                 stock.LastKnownStockValue.StockValue = CreatePitStockValue();
+
+            UpdateDailyGrowth(stock.LastKnownStockValue.StockValue, false);
             
             return stock;
 
@@ -118,7 +121,7 @@ namespace Services
             }
             ValidateEnoughToSell();
 
-            var pitStockValue = GetOrCreatePitStockValue();
+            var pitStockValue = GetOrCreatePitStockValue(stock.LastKnownStockValue == null);
             var trans = new Transaction
             {
                 Stock = stock,
@@ -152,23 +155,38 @@ namespace Services
                 }
             }
 
-            PitStockValue GetOrCreatePitStockValue()
+            PitStockValue GetOrCreatePitStockValue(bool initialTransaction)
             {
                 var psv = db.PitStockValues.FirstOrDefault(p => p.Stock.Isin == dto.Isin && p.TimeStamp.Date == dto.TimeStamp.Date);
                 if (psv != null)
                 {   // StockValue does already exist for this day => update
                     psv.NativePrice = dto.Price;
                     psv.UserPrice = dto.Price.ToUserCurrency(dto.CurrencyRatio, dto.Currency);
-                    return psv;
                 }
+                else
+                    psv = new PitStockValue
+                    {
+                        Stock = stock,
+                        TimeStamp = dto.TimeStamp,
+                        NativePrice = dto.Price,
+                        UserPrice = dto.Price.ToUserCurrency(dto.CurrencyRatio, dto.Currency),
+                    };
 
-                return new PitStockValue
-                {
-                    Stock = stock,
-                    TimeStamp = dto.TimeStamp,
-                    NativePrice = dto.Price,
-                    UserPrice = dto.Price.ToUserCurrency(dto.CurrencyRatio, dto.Currency),
-                };
+                UpdateDailyGrowth(psv, initialTransaction);
+
+                return psv;
+            }
+        }
+
+        private void UpdateDailyGrowth(PitStockValue psv, bool initialTransaction)
+        {
+            if (initialTransaction)
+                psv.DailyGrowth = 1;
+            else
+            {
+                var previousPsv = db.PitStockValues.First(p => p.Stock.Isin == psv.Stock.Isin && p.TimeStamp < psv.TimeStamp)
+                                  ?? throw new Exception($"Could not find previous PitStockValue {psv.Stock}");
+                psv.DailyGrowth = GrowthHelper.DailyGrowth(previousPsv, psv);
             }
         }
 
