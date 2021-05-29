@@ -8,7 +8,8 @@ namespace Messages.UI.Overview
         public string Name { get; set; }
         public string Isin { get; set; }
         [Description("Total value of this currently owned stock")]
-        [DisplayFormat("C0")] 
+        [DisplayFormat("C0")]
+        [ColumnCellsUnderline]
         public double Value { get; set; }
         [DisplayFormat("C0")]
         public double Profit { get; set; }

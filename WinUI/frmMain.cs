@@ -38,6 +38,9 @@ namespace Dashboard
         public void ShowStockDetails(string stockName, string isin) =>
             LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockDetail>(new Arguments{{"stockIsin", isin}}));
 
+        public void ShowStockPerformance(string stockName, string isin) =>
+            LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockPerformance>(new Arguments{{"stockIsin", isin}}));
+
         public void ShowDividends(string isin) =>
             LoadForm("Dividends", CastleContainer.Instance.Resolve<frmDividends>(new Arguments{{"stockIsin", isin}}));
 

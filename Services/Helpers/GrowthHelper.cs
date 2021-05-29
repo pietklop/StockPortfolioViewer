@@ -15,6 +15,12 @@ namespace Services.Helpers
             return Math.Pow(factor, 1 / nDays);
         }
 
+        public static double AnnualPerformance(double performance, DateTime dateStart, DateTime dateEnd)
+        {
+            var years = (dateEnd - dateStart).TotalDays / 365;
+            return performance / years;
+        }
+
         public static double PastPrice(this PitStockValue pitStockValue, int nDaysBack) => pitStockValue.UserPrice / Math.Pow(pitStockValue.DailyGrowth, nDaysBack);
     }
 }

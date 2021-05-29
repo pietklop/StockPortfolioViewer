@@ -38,7 +38,7 @@ namespace Dashboard
         }
 
         private void PopulatePieChart(PortfolioDistributionDto dto) =>
-            ChartHelper.PopulateChart(chart, dto.Labels, dto.Fractions);
+            ChartHelper.PopulatePieChart(chart, dto.Labels, dto.Fractions);
 
         private void PopulateStockGrid()
         {
@@ -87,10 +87,14 @@ namespace Dashboard
             }
             var isinColumn = dgvStockList.GetColumn(nameof(StockViewModel.Isin));
             var isin = dgvStockList[isinColumn.Index, e.RowIndex].Value.ToString();
+            var valueColumnIndex = dgvStockList.GetColumn(nameof(StockViewModel.Value)).Index;
 
             Close();
 
-            frmMain.ShowStockDetails(name, isin);
+            if (e.ColumnIndex == valueColumnIndex)
+                frmMain.ShowStockPerformance(name, isin);
+            else
+                frmMain.ShowStockDetails(name, isin);
         }
 
         private void SetDistributionButtons(Button activeButton)

@@ -35,6 +35,7 @@ namespace Services.DI
             container.Register(Component.For<ImportProcessor>().LifestyleTransient());
             container.Register(Component.For<PortfolioDistributionService>().LifestyleTransient());
             container.Register(Component.For<StockDetailService>().LifestyleTransient());
+            container.Register(Component.For<StockPerformanceService>().LifestyleTransient());
             container.Register(Component.For<StockService>().LifestyleTransient());
             container.Register(Component.For<StockOverviewService>().LifestyleTransient());
             container.Register(Component.For<StockRetrieverService>().LifestyleTransient());

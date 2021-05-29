@@ -23,7 +23,7 @@ namespace Dashboard
         }
 
         private void PopulatePieChart(PortfolioDistributionDto dto) =>
-            ChartHelper.PopulateChart(chart, dto.Labels, dto.Fractions);
+            ChartHelper.PopulatePieChart(chart, dto.Labels, dto.Fractions);
 
         private void btnClose_Click(object sender, EventArgs e)
         {
