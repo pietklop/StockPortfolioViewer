@@ -4,6 +4,7 @@ using System.Linq;
 using DAL;
 using DAL.Entities;
 using log4net;
+using Microsoft.EntityFrameworkCore;
 using Services.Helpers;
 
 namespace Services.Ui
@@ -25,7 +26,9 @@ namespace Services.Ui
             dateFrom ??= DateTime.MinValue;
             dateTo ??= DateTime.Now;
             var pitValues = db.PitStockValues
-                .Where(t => isin == null || t.Stock.Isin == isin)
+                .Include(p => p.Stock).ThenInclude(s => s.Dividends)
+                .Include(p => p.Stock).ThenInclude(s => s.Transactions).ThenInclude(t => t.StockValue)
+                .Where(p => isin == null || p.Stock.Isin == isin)
                 .Where(p => p.TimeStamp > dateFrom && p.TimeStamp.Date <= dateTo.Value.Date)
                 .OrderBy(p => p.TimeStamp).ToList();
 
@@ -40,7 +43,11 @@ namespace Services.Ui
             }
             if (fromStart) points.Add(CreatePoint(pitValues, dateFrom.Value));
 
+            var stock = pitValues.First().Stock;
             points.Reverse(0, points.Count);
+            var transactions = stock.Transactions.ToList();
+            AddQuantity(points, transactions);
+            AddTotalValue(points, transactions);
 
             return ScalePointsForGraph();
 
@@ -61,14 +68,28 @@ namespace Services.Ui
 
             List<ValuePointDto> ScalePointsForGraph()
             {   // make sure first value of range is 100
-                var baseValue = points.First().Value;
-                points.ForEach(p => p.Value *=100 / baseValue);
+                var baseValue = points.First().RelativeValue;
+                points.ForEach(p => p.RelativeValue *=100 / baseValue);
 
                 return points;
             }
         }
 
-        private ValuePointDto CreatePoint(List<PitStockValue> pitValues, DateTime date)
+        private static void AddQuantity(List<ValuePointDto> points, List<Transaction> transactions)
+        {
+            foreach (var point in points)
+                point.Quantity = Quantity(point.Date);
+
+            double Quantity(DateTime date) => transactions.Where(t => t.StockValue.TimeStamp.Date <= date).Sum(t => t.Quantity);
+        }
+
+        private static void AddTotalValue(List<ValuePointDto> points, List<Transaction> transactions)
+        {
+            foreach (var point in points)
+                point.TotalValue = point.Quantity * point.RelativeValue;
+        }
+
+        private static ValuePointDto CreatePoint(List<PitStockValue> pitValues, DateTime date)
         {
             var pv = pitValues.FirstOrDefault(p => p.TimeStamp.Date >= date) ?? throw new Exception($"No pitValue found");
             return new ValuePointDto(pv.PastPrice((pv.TimeStamp - date).Days), date);
@@ -77,12 +98,14 @@ namespace Services.Ui
 
     public class ValuePointDto
     {
-        public double Value { get; set; }
+        public double Quantity { get; set; }
+        public double TotalValue { get; set; }
+        public double RelativeValue { get; set; }
         public DateTime Date { get; }
 
-        public ValuePointDto(double value, DateTime date)
+        public ValuePointDto(double relativeValue, DateTime date)
         {
-            Value = value;
+            RelativeValue = relativeValue;
             Date = date;
         }
     }

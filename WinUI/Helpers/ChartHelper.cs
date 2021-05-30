@@ -6,7 +6,7 @@ namespace Dashboard.Helpers
 {
     public static class ChartHelper
     {
-        public static void ConfigPieChart(Chart chart)
+        public static void ConfigPieChart(this Chart chart)
         {
             chart.Series[0].ChartType = SeriesChartType.Pie;
             chart.Series[0]["PieLabelStyle"] = "Disabled"; // hide the in-chart labels
@@ -14,9 +14,8 @@ namespace Dashboard.Helpers
             ConfigChart(chart);
         }
 
-        public static void ConfigLineChart(Chart chart)
+        public static void ConfigXyChart(this Chart chart)
         {
-            chart.Series[0].ChartType = SeriesChartType.Line;
             chart.ChartAreas[0].AxisX.LineColor = Color.Gainsboro;
             chart.ChartAreas[0].AxisX.LabelStyle.ForeColor = Color.Gainsboro;
 
@@ -26,7 +25,7 @@ namespace Dashboard.Helpers
             ConfigChart(chart);
         }
 
-        private static void ConfigChart(Chart chart)
+        private static void ConfigChart(this Chart chart)
         {
             chart.Legends[0].Enabled = true;
             chart.Legends[0].Font = new Font(chart.Legends[0].Font.FontFamily, 10f);
@@ -37,13 +36,23 @@ namespace Dashboard.Helpers
             chart.ChartAreas[0].Visible = true;
         }
 
-        public static void PopulatePieChart(Chart chart, string[] labels, double[] values) =>
+        public static void PopulatePieChart(this Chart chart, string[] labels, double[] values) =>
             chart.Series[0].Points.DataBindXY(labels, values);
         
-        public static void PopulateLineChart(Chart chart, DateTime[] labels, double[] values, string dataLabel)
+        public static void AddXySeries(this Chart chart, SeriesChartType chartType, DateTime[] labels, double[] values, string dataLabel)
         {
-            chart.Series[0].Points.DataBindXY(labels, values);
-            chart.Series[0].Name = dataLabel;
+            Series series;
+            if (chart.Series[0].Name == "Series1")
+                series = chart.Series[0];
+            else
+            {
+                series = new Series(dataLabel);
+                chart.Series.Add(series);
+            }
+            series.ChartType = chartType;
+            series.BorderWidth = 3; // Width of the plotted line
+            series.Points.DataBindXY(labels, values);
+            series.Name = dataLabel;
         }
     }
 }
