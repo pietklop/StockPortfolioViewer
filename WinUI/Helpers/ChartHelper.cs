@@ -39,7 +39,7 @@ namespace Dashboard.Helpers
         public static void PopulatePieChart(this Chart chart, string[] labels, double[] values) =>
             chart.Series[0].Points.DataBindXY(labels, values);
         
-        public static void AddXySeries(this Chart chart, SeriesChartType chartType, DateTime[] labels, double[] values, string dataLabel)
+        public static Series AddXySeries(this Chart chart, SeriesChartType chartType, DateTime[] labels, double[] values, string dataLabel)
         {
             Series series;
             if (chart.Series[0].Name == "Series1")
@@ -53,6 +53,8 @@ namespace Dashboard.Helpers
             series.BorderWidth = 3; // Width of the plotted line
             series.Points.DataBindXY(labels, values);
             series.Name = dataLabel;
+
+            return series;
         }
     }
 }
