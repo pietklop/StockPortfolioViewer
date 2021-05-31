@@ -36,16 +36,28 @@ namespace Services.Ui
 
             dateFrom = pitValues.First().TimeStamp.Date;
             var date = pitValues.Last().TimeStamp.Date;
+            var stock = pitValues.First().Stock;
+            var transactions = stock.Transactions.ToList();
+            var divsToAdd = new List<Dividend>();
+            divsToAdd.AddRange(stock.Dividends.ToList());
+            var dates = new List<DateTime>();
             while (date > dateFrom)
             {
-                points.Add(CreatePoint(pitValues, date));
-                date = SubtractInterval(date);
+                var nextDate = SubtractInterval(date);;
+                dates.Add(date);
+                date = nextDate;
             }
-            if (fromStart) points.Add(CreatePoint(pitValues, dateFrom.Value));
+            var price = pitValues.First().UserPrice;
+            dates.Add(pitValues.First().TimeStamp.Date);
+            dates.Reverse();
 
-            var stock = pitValues.First().Stock;
-            points.Reverse(0, points.Count);
-            var transactions = stock.Transactions.ToList();
+            for (int i = -1; i < dates.Count -1; i++)
+            {
+                var point = i == -1 ? new ValuePointDto(price, dateFrom.Value) : CreatePoint(price, pitValues, dates[i], dates[i+1]);
+                points.Add(point);
+                price = point.RelativeValue;
+            }
+
             AddQuantity(points, transactions);
             AddTotalValue(points, transactions);
 
@@ -78,10 +90,10 @@ namespace Services.Ui
         private static void AddQuantity(List<ValuePointDto> points, List<Transaction> transactions)
         {
             foreach (var point in points)
-                point.Quantity = Quantity(point.Date);
-
-            double Quantity(DateTime date) => transactions.Where(t => t.StockValue.TimeStamp.Date <= date).Sum(t => t.Quantity);
+                point.Quantity = Quantity(transactions, point.Date);
         }
+
+        private static double Quantity(List<Transaction> transactions, DateTime date) => transactions.Where(t => t.StockValue.TimeStamp.Date <= date).Sum(t => t.Quantity);
 
         private static void AddTotalValue(List<ValuePointDto> points, List<Transaction> transactions)
         {
@@ -89,10 +101,17 @@ namespace Services.Ui
                 point.TotalValue = point.Quantity * point.RelativeValue;
         }
 
-        private static ValuePointDto CreatePoint(List<PitStockValue> pitValues, DateTime date)
+        private static ValuePointDto CreatePoint(double value, List<PitStockValue> pitValues, DateTime date, DateTime nextDate, double addedValuePerShare = 0)
         {
-            var pv = pitValues.FirstOrDefault(p => p.TimeStamp.Date >= date) ?? throw new Exception($"No pitValue found");
-            return new ValuePointDto(pv.PastPrice((pv.TimeStamp - date).Days), date);
+            var inBetweenValues = pitValues.Where(p => p.TimeStamp.Date > date && p.TimeStamp < nextDate).ToList();
+            foreach (var pit in inBetweenValues)
+            {
+                value = GrowthHelper.FuturePrice(value, pit.DailyGrowth, (pit.TimeStamp.Date.Date - date).Days);
+                date = pit.TimeStamp.Date.Date;
+            }
+            var pv = pitValues.FirstOrDefault(p => p.TimeStamp.Date >= nextDate) ?? throw new Exception($"No pitValue found");
+
+            return new ValuePointDto(GrowthHelper.FuturePrice(value + addedValuePerShare, pv.DailyGrowth, (nextDate - date).Days), nextDate);
         }
     }
 

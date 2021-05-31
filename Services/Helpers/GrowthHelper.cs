@@ -11,7 +11,7 @@ namespace Services.Helpers
         {
             var nDays = Math.Round((dateEnd - dateStart).TotalDays);
             if (nDays < 0) throw new Exception($"{nameof(dateEnd)} 2 must have a date later in time");
-            if (nDays == 0) return 1;
+            if (nDays == 0) return performance;
 
             return Math.Pow(performance, 1 / nDays);
         }
@@ -30,6 +30,7 @@ namespace Services.Helpers
             return Math.Pow(dailyGrowth, (dateEnd.Date - dateStart.Date).Days);
         }
 
-        public static double PastPrice(this PitStockValue pitStockValue, int nDaysBack) => pitStockValue.UserPrice / Math.Pow(pitStockValue.DailyGrowth, nDaysBack);
+        public static double PastPrice(double price, double dailyGrowth, int nDaysBack) => price / Math.Pow(dailyGrowth, nDaysBack);
+        public static double FuturePrice(double price, double dailyGrowth, int nDays) => price * Math.Pow(dailyGrowth, Math.Max(nDays, 1));
     }
 }
