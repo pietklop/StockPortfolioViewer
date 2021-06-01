@@ -41,7 +41,10 @@ namespace Dashboard
 
             var baseReturnPoints = CreateBaseLine();
             var baseSeries = chart.AddXySeries(SeriesChartType.Line, dates, baseReturnPoints.Select(p => p.RelativeValue).ToArray(), $"Base ({settings.BaseAnnualPerformance:P0})");
-            baseSeries.BorderWidth = 1; 
+            baseSeries.BorderWidth = 1;
+            
+            if (points.Any(p => p.Dividend > 0))
+                chart.AddXySeries(SeriesChartType.Stock, dates, points.Select(p => p.Dividend).ToArray(), "Dividend");
 
             List<ValuePointDto> CreateBaseLine()
             {

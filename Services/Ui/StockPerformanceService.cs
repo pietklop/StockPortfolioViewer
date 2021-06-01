@@ -22,6 +22,14 @@ namespace Services.Ui
 
         public List<ValuePointDto> GetValues(string isin, PerformanceInterval interval, DateTime? dateFrom = null, DateTime? dateTo = null)
         {
+            // todo
+            // performance based on owned stocks (this will only result in another final performance value)
+            // add dividend and transaction costs
+            // show base-yield line
+            // show number of stocks
+            // sum of all stocks
+            // support all intervals (ui)
+
             bool fromStart = dateFrom == null;
             dateFrom ??= DateTime.MinValue;
             dateTo ??= DateTime.Now;
@@ -41,9 +49,19 @@ namespace Services.Ui
             var divsToAdd = new List<Dividend>();
             divsToAdd.AddRange(stock.Dividends.ToList());
             var dates = new List<DateTime>();
+            var divAddedValue = new List<double>();
             while (date > dateFrom)
             {
                 var nextDate = SubtractInterval(date);;
+                var divsToAddThisSpan = divsToAdd.Where(d => d.TimeStamp.Date >= nextDate.Date).ToList();
+                if (divsToAddThisSpan.Any())
+                {
+                    var quantity = Quantity(transactions, date);
+                    divAddedValue.Add(divsToAddThisSpan.Sum(d => d.UserValue) / quantity);
+                    divsToAddThisSpan.ForEach(d => divsToAdd.Remove(d));
+                }
+                else
+                    divAddedValue.Add(0);
                 dates.Add(date);
                 date = nextDate;
             }
@@ -53,7 +71,7 @@ namespace Services.Ui
 
             for (int i = -1; i < dates.Count -1; i++)
             {
-                var point = i == -1 ? new ValuePointDto(price, dateFrom.Value) : CreatePoint(price, pitValues, dates[i], dates[i+1]);
+                var point = i == -1 ? new ValuePointDto(price, dateFrom.Value) : CreatePoint(price, pitValues, dates[i], dates[i+1], divAddedValue[i]);
                 points.Add(point);
                 price = point.RelativeValue;
             }
@@ -82,6 +100,9 @@ namespace Services.Ui
             {   // make sure first value of range is 100
                 var baseValue = points.First().RelativeValue;
                 points.ForEach(p => p.RelativeValue *=100 / baseValue);
+                var maxDiv = points.Max(p => p.Dividend);
+                if (maxDiv > 0)
+                    points.ForEach(p => p.Dividend *= 50 / maxDiv); // max div is scaled to 50% in graph
 
                 return points;
             }
@@ -101,7 +122,7 @@ namespace Services.Ui
                 point.TotalValue = point.Quantity * point.RelativeValue;
         }
 
-        private static ValuePointDto CreatePoint(double value, List<PitStockValue> pitValues, DateTime date, DateTime nextDate, double addedValuePerShare = 0)
+        private static ValuePointDto CreatePoint(double value, List<PitStockValue> pitValues, DateTime date, DateTime nextDate, double dividendPerShare = 0)
         {
             var inBetweenValues = pitValues.Where(p => p.TimeStamp.Date > date && p.TimeStamp < nextDate).ToList();
             foreach (var pit in inBetweenValues)
@@ -111,7 +132,7 @@ namespace Services.Ui
             }
             var pv = pitValues.FirstOrDefault(p => p.TimeStamp.Date >= nextDate) ?? throw new Exception($"No pitValue found");
 
-            return new ValuePointDto(GrowthHelper.FuturePrice(value + addedValuePerShare, pv.DailyGrowth, (nextDate - date).Days), nextDate);
+            return new ValuePointDto(GrowthHelper.FuturePrice(value + dividendPerShare, pv.DailyGrowth, (nextDate - date).Days), nextDate, dividendPerShare);
         }
     }
 
@@ -121,11 +142,13 @@ namespace Services.Ui
         public double TotalValue { get; set; }
         public double RelativeValue { get; set; }
         public DateTime Date { get; }
+        public double Dividend { get; set; }
 
-        public ValuePointDto(double relativeValue, DateTime date)
+        public ValuePointDto(double relativeValue, DateTime date, double dividend = 0)
         {
             RelativeValue = relativeValue;
             Date = date;
+            Dividend = dividend;
         }
     }
 
