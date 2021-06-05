@@ -24,26 +24,48 @@ namespace Services.Ui
         {
             // todo
             // performance based on owned stocks (this will only result in another final performance value)
-            // add dividend and transaction costs
-            // show base-yield line
-            // show number of stocks
             // sum of all stocks
             // support all intervals (ui)
 
             bool fromStart = dateFrom == null;
             dateFrom ??= DateTime.MinValue;
-            dateTo ??= DateTime.Now;
-            var pitValues = db.PitStockValues
+            dateTo ??= DateTime.Now.Date;
+
+            var allPitValues = GetAllPitStockValues(dateFrom.Value, dateTo.Value, new []{isin});
+            var pitValues = allPitValues.GroupBy(p => p.StockId).First().ToList();
+
+            List<ValuePointDto> points = GetPoints(pitValues, interval, dateFrom.Value, dateTo.Value);
+
+            return ScalePointsForGraph(points);
+        }
+
+        private List<ValuePointDto> ScalePointsForGraph(List<ValuePointDto> points)
+        {   // make sure first value of range is 100
+            var baseValue = points.First().RelativeValue;
+            points.ForEach(p => p.RelativeValue *= 100 / baseValue);
+            var maxDiv = points.Max(p => p.Dividend);
+            if (maxDiv > 0)
+                points.ForEach(p => p.Dividend *= 50 / maxDiv); // max div is scaled to 50% in graph
+
+            return points;
+        }
+
+        private List<PitStockValue> GetAllPitStockValues(DateTime dateFrom, DateTime dateTo, string[] isins = null)
+        {
+            var allPitValues = db.PitStockValues
                 .Include(p => p.Stock).ThenInclude(s => s.Dividends)
                 .Include(p => p.Stock).ThenInclude(s => s.Transactions).ThenInclude(t => t.StockValue)
-                .Where(p => isin == null || p.Stock.Isin == isin)
-                .Where(p => p.TimeStamp > dateFrom && p.TimeStamp.Date <= dateTo.Value.Date)
+                .Where(p => isins == null || isins.Contains(p.Stock.Isin))
+                .Where(p => p.TimeStamp > dateFrom.Date && p.TimeStamp.Date <= dateTo.Date)
                 .OrderBy(p => p.TimeStamp).ToList();
 
-            var points = new List<ValuePointDto>();
+            return allPitValues;
+        }
 
+        private List<ValuePointDto> GetPoints(List<PitStockValue> pitValues, PerformanceInterval interval, DateTime dateFrom, DateTime dateTo)
+        {
             dateFrom = pitValues.First().TimeStamp.Date;
-            var date = pitValues.Last().TimeStamp.Date;
+            var date = dateTo;
             var stock = pitValues.First().Stock;
             var transactions = stock.Transactions.ToList();
             var divsToAdd = new List<Dividend>();
@@ -52,7 +74,8 @@ namespace Services.Ui
             var divAddedValue = new List<double>();
             while (date > dateFrom)
             {
-                var nextDate = SubtractInterval(date);;
+                var nextDate = SubtractInterval(date);
+                
                 var divsToAddThisSpan = divsToAdd.Where(d => d.TimeStamp.Date >= nextDate.Date).ToList();
                 if (divsToAddThisSpan.Any())
                 {
@@ -62,16 +85,19 @@ namespace Services.Ui
                 }
                 else
                     divAddedValue.Add(0);
+
                 dates.Add(date);
                 date = nextDate;
             }
+
             var price = pitValues.First().UserPrice;
             dates.Add(pitValues.First().TimeStamp.Date);
             dates.Reverse();
 
-            for (int i = -1; i < dates.Count -1; i++)
+            var points = new List<ValuePointDto>();
+            for (int i = -1; i < dates.Count - 1; i++)
             {
-                var point = i == -1 ? new ValuePointDto(price, dateFrom.Value) : CreatePoint(price, pitValues, dates[i], dates[i+1], divAddedValue[i]);
+                var point = i == -1 ? new ValuePointDto(price, dateFrom) : CreatePoint(price, pitValues, dates[i], dates[i + 1], divAddedValue[i]);
                 points.Add(point);
                 price = point.RelativeValue;
             }
@@ -79,7 +105,7 @@ namespace Services.Ui
             AddQuantity(points, transactions);
             AddTotalValue(points, transactions);
 
-            return ScalePointsForGraph();
+            return points;
 
             DateTime SubtractInterval(DateTime d)
             {
@@ -94,17 +120,6 @@ namespace Services.Ui
                     default:
                         throw new ArgumentOutOfRangeException($"Unsupported {nameof(interval)} {interval}");
                 }
-            }
-
-            List<ValuePointDto> ScalePointsForGraph()
-            {   // make sure first value of range is 100
-                var baseValue = points.First().RelativeValue;
-                points.ForEach(p => p.RelativeValue *=100 / baseValue);
-                var maxDiv = points.Max(p => p.Dividend);
-                if (maxDiv > 0)
-                    points.ForEach(p => p.Dividend *= 50 / maxDiv); // max div is scaled to 50% in graph
-
-                return points;
             }
         }
 
@@ -130,7 +145,8 @@ namespace Services.Ui
                 value = GrowthHelper.FuturePrice(value, pit.DailyGrowth, (pit.TimeStamp.Date.Date - date).Days);
                 date = pit.TimeStamp.Date.Date;
             }
-            var pv = pitValues.FirstOrDefault(p => p.TimeStamp.Date >= nextDate) ?? throw new Exception($"No pitValue found");
+
+            var pv = pitValues.FirstOrDefault(p => p.TimeStamp.Date >= nextDate) ?? pitValues.OrderByDescending(p => p.TimeStamp).First();
 
             return new ValuePointDto(GrowthHelper.FuturePrice(value + dividendPerShare, pv.DailyGrowth, (nextDate - date).Days), nextDate, dividendPerShare);
         }
@@ -142,6 +158,9 @@ namespace Services.Ui
         public double TotalValue { get; set; }
         public double RelativeValue { get; set; }
         public DateTime Date { get; }
+        /// <summary>
+        /// Per share
+        /// </summary>
         public double Dividend { get; set; }
 
         public ValuePointDto(double relativeValue, DateTime date, double dividend = 0)
