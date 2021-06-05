@@ -24,6 +24,7 @@ namespace Services.Ui
         public List<DividendViewModel> GetStockList(string isin = null)
         {
             var dividends = db.Dividends
+                .Include(t => t.Stock.Currency)
                 .Include(t => t.Stock.StockValues)
                 .Include(t => t.Stock.Transactions).ThenInclude(t => t.StockValue)
                 .Where(t => isin == null || t.Stock.Isin == isin)
