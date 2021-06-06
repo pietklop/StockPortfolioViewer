@@ -17,7 +17,7 @@ namespace StockDataApi.AlphaVantage
     {
         public const string ConstName = "Alpha Vantage";
 
-        public AvDataRetriever(ILog log, string baseUrl, string apiKey, int priority) : base(log, baseUrl, apiKey, priority)
+        public AvDataRetriever(ILog log, Settings settings, string baseUrl, string apiKey, int priority) : base(log, settings, baseUrl, apiKey, priority)
         {
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using Core;
 using log4net;
 using Messages.StockDataApi;
 
@@ -15,14 +16,16 @@ namespace StockDataApi.General
         public int Priority { get; }
         public string Name => GetName();
         protected readonly ILog log;
+        private readonly Settings settings;
         protected readonly string baseUrl;
         protected readonly string apiKey;
 
-        protected DataRetrieverBase(ILog log, string baseUrl, string apiKey, int priority)
+        protected DataRetrieverBase(ILog log, Settings settings, string baseUrl, string apiKey, int priority)
         {
             Priority = priority;
             if (!baseUrl.EndsWith("/")) baseUrl += "/";
             this.log = log;
+            this.settings = settings;
             this.baseUrl = baseUrl;
             this.apiKey = apiKey;
         }
@@ -54,6 +57,12 @@ namespace StockDataApi.General
                 {
                     data = reader.ReadToEnd();
                     log.Debug(data);
+                    if (settings.DebugMode)
+                    {
+                        string fileName = $"{DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH'.'mm'.'ss'.'fff")}.txt";
+                        var path = Path.Combine(settings.DebugPath, "ReceivedData", fileName);
+                        File.WriteAllText(path, data);
+                    }
                 }
 
                 return data;

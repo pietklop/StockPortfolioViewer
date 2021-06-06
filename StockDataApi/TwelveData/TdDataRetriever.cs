@@ -1,4 +1,5 @@
 ﻿using System;
+using Core;
 using log4net;
 using Messages.StockDataApi;
 using Newtonsoft.Json.Linq;
@@ -15,7 +16,7 @@ namespace StockDataApi.TwelveData
     {
         public const string ConstName = "Twelve Data";
 
-        public TdDataRetriever(ILog log, string baseUrl, string apiKey, int priority) : base(log, baseUrl, apiKey, priority)
+        public TdDataRetriever(ILog log, Settings settings, string baseUrl, string apiKey, int priority) : base(log, settings, baseUrl, apiKey, priority)
         {
         }
 

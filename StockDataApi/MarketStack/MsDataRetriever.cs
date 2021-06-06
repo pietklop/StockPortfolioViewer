@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Core;
 using log4net;
 using Messages.StockDataApi;
 using Newtonsoft.Json.Linq;
@@ -17,7 +18,7 @@ namespace StockDataApi.MarketStack
     {
         public const string ConstName = "MarketStack";
 
-        public MsDataRetriever(ILog log, string baseUrl, string apiKey, int priority) : base(log, baseUrl, apiKey, priority)
+        public MsDataRetriever(ILog log, Settings settings, string baseUrl, string apiKey, int priority) : base(log, settings, baseUrl, apiKey, priority)
         {
 
         }

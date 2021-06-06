@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Castle.MicroKernel;
+using Core;
 using Imports.DeGiro;
 using log4net;
 using Services;
@@ -14,6 +15,7 @@ namespace Dashboard
     public partial class frmMain : Form
     {
         private readonly ILog log;
+        private readonly Settings settings;
 
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn
@@ -26,9 +28,10 @@ namespace Dashboard
             int nHeightEllipse
         );
 
-        public frmMain(ILog log)
+        public frmMain(ILog log, Settings settings)
         {
             this.log = log;
+            this.settings = settings;
             InitializeComponent();
             SetWindowRoundCorners(25);
             HandleMenuButtonClick(btnMainOverview, CastleContainer.Instance.Resolve<frmOverview>(new Arguments { { nameof(frmMain), this } }));
@@ -107,7 +110,10 @@ namespace Dashboard
             {
                 using (OpenFileDialog openFileDialog = new OpenFileDialog())
                 {
-                    openFileDialog.InitialDirectory = new KnownFolder(KnownFolderType.Downloads).Path;
+                    if (settings.DebugMode)
+                        openFileDialog.InitialDirectory = settings.DebugPath;
+                    else
+                        openFileDialog.InitialDirectory = new KnownFolder(KnownFolderType.Downloads).Path;
                     openFileDialog.Filter = "txt files (*.csv)|*.csv|All files (*.*)|*.*";
                     openFileDialog.Multiselect = true;
                     openFileDialog.Title = "Select files to import";
@@ -123,7 +129,7 @@ namespace Dashboard
                     foreach (var filePath in openFileDialog.FileNames)
                     {
                         log.Debug($"Try import: '{filePath}'");
-                        (int nT, int nDiv) = importProcessor.Process(importer.Import(filePath));
+                        (int nT, int nDiv) = importProcessor.Process(importer.Import(filePath, settings.DebugMode));
                         nAddedTransactions += nT;
                         nAddedDividends += nDiv;
                     }
@@ -139,6 +145,5 @@ namespace Dashboard
                 MessageBox.Show($"Error occured during file import: '{ex.Message}'. See log for more details", "Import results", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
     }
 }

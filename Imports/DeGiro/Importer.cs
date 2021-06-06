@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Core;
+using log4net;
 using Messages.Dtos;
 
 namespace Imports.DeGiro
@@ -17,7 +19,9 @@ namespace Imports.DeGiro
         private const int valueColIndex = 8;
         private const int guidColIndex = 11;
 
-        public ImportDto Import(string filePath)
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        public ImportDto Import(string filePath, bool debugMode)
         {
             var lines = File.ReadAllLines(filePath);
             var transactions = new List<TransactionDto>();
@@ -52,7 +56,12 @@ namespace Imports.DeGiro
                     case LineType.Na:
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException($"Not supported LineType: {lineType}");
+                        var msg = $"Not supported LineType: {lineType}";
+                        if (debugMode)
+                            throw new ArgumentOutOfRangeException(msg);
+                        else
+                            log.Warn(msg);
+                        break;
                 }
             }
 
