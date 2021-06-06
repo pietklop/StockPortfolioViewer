@@ -93,6 +93,7 @@ namespace Services.Ui
             var price = pitValues.First().UserPrice;
             dates.Add(pitValues.First().TimeStamp.Date);
             dates.Reverse();
+            divAddedValue.Reverse();
 
             var points = new List<ValuePointDto>();
             for (int i = -1; i < dates.Count - 1; i++)
