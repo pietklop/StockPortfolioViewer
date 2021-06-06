@@ -30,13 +30,18 @@ namespace Dashboard
             PopulateGraph(stockPerformanceService.GetValues(stockIsin, PerformanceInterval.Month));
         }
 
+        private bool MultipleStocks() => stockIsin == null;
+
         private void PopulateGraph(List<ValuePointDto> points)
         {
             var performance = points.Last().RelativeValue / points.First().RelativeValue-1;
             var annualPerformance = GrowthHelper.AnnualPerformance(performance, points.First().Date, points.Last().Date);
             var dataLabelRelativeValue = $"{performance:P1} ({annualPerformance:P0})";
             var dates = points.Select(p => p.Date).ToArray();
-            chart.AddXySeries(SeriesChartType.Column, dates, points.Select(p => p.Quantity).ToArray(), "Number of stocks");
+            if (MultipleStocks())
+                chart.AddXySeries(SeriesChartType.Column, dates, points.Select(p => p.TotalValue).ToArray(), "Total value");
+            else
+                chart.AddXySeries(SeriesChartType.Column, dates, points.Select(p => p.Quantity).ToArray(), "Number of stocks");
             chart.AddXySeries(SeriesChartType.Line, dates, points.Select(p => p.RelativeValue).ToArray(), dataLabelRelativeValue);
 
             var baseReturnPoints = CreateBaseLine();

@@ -20,12 +20,65 @@ namespace Services.Ui
             this.db = db;
         }
 
+        public List<ValuePointDto> GetValues(PerformanceInterval interval, DateTime? dateFrom = null, DateTime? dateTo = null)
+        {
+            dateFrom ??= DateTime.MinValue;
+            dateTo ??= DateTime.Now.Date;
+
+            var allPitValues = GetAllPitStockValues(dateFrom.Value, dateTo.Value);
+            dateFrom = AlignWithInterval(interval, allPitValues.First().TimeStamp.Date, dateTo.Value);
+
+            var groupedPitValues = allPitValues.GroupBy(p => p.StockId).ToList();
+
+            var dict = new Dictionary<DateTime, List<ValuePointDto>>();
+            foreach (var pitStockValues in groupedPitValues)
+            {
+                var p = GetPoints(pitStockValues.ToList(), interval, dateFrom.Value, dateTo.Value);
+                for (int i = 0; i < p.Count; i++)
+                {
+                    var date = p[i].Date;
+                    var growth = i == 0 ? 1 : p[i].RelativeValue / p[i-1].RelativeValue;
+                    var vp = new ValuePointDto(growth, date, p[i].Dividend);
+                    vp.TotalValue = p[i].TotalValue;
+                    vp.Quantity = p[i].Quantity;
+                    vp.Dividend = p[i].Dividend * vp.Quantity;
+                    if (!dict.ContainsKey(date)) dict.Add(date, new List<ValuePointDto>());
+                    dict[date].Add(vp);
+                }
+            }
+
+            var resultList = new List<ValuePointDto>();
+            var relativeValue = 1d;
+            foreach (var pointsPerDate in dict.Values.OrderBy(d => d.First().Date))
+            {
+                var total = pointsPerDate.Sum(p => p.TotalValue);
+                if (total <= 0) continue;
+                relativeValue *= pointsPerDate.Sum(p => p.RelativeValue * p.TotalValue / total);
+                var div = pointsPerDate.Sum(p => p.Dividend * p.Quantity);
+                var dto = new ValuePointDto(relativeValue, pointsPerDate.First().Date, div);
+                dto.TotalValue = total;
+                resultList.Add(dto);
+            }
+
+            return ScalePointsForGraph(resultList);
+        }
+
+        private static DateTime AlignWithInterval(PerformanceInterval interval, DateTime firstDate, DateTime dateTo)
+        {
+            var date = dateTo;
+
+            while (true)
+            {
+                var returnDate = date;
+                date = SubtractInterval(interval, date);
+                if (date < firstDate)
+                    return returnDate;
+            }
+        }
+
         public List<ValuePointDto> GetValues(string isin, PerformanceInterval interval, DateTime? dateFrom = null, DateTime? dateTo = null)
         {
-            // todo
-            // performance based on owned stocks (this will only result in another final performance value)
-            // sum of all stocks
-            // support all intervals (ui)
+            if (isin == null) return GetValues(interval, dateFrom, dateTo);
 
             bool fromStart = dateFrom == null;
             dateFrom ??= DateTime.MinValue;
@@ -34,7 +87,7 @@ namespace Services.Ui
             var allPitValues = GetAllPitStockValues(dateFrom.Value, dateTo.Value, new []{isin});
             var pitValues = allPitValues.GroupBy(p => p.StockId).First().ToList();
 
-            List<ValuePointDto> points = GetPoints(pitValues, interval, dateFrom.Value, dateTo.Value);
+            List<ValuePointDto> points = GetPoints(pitValues, interval, pitValues.First().TimeStamp.Date, dateTo.Value);
 
             return ScalePointsForGraph(points);
         }
@@ -43,9 +96,14 @@ namespace Services.Ui
         {   // make sure first value of range is 100
             var baseValue = points.First().RelativeValue;
             points.ForEach(p => p.RelativeValue *= 100 / baseValue);
+            
             var maxDiv = points.Max(p => p.Dividend);
             if (maxDiv > 0)
                 points.ForEach(p => p.Dividend *= 50 / maxDiv); // max div is scaled to 50% in graph
+            
+            var maxTotal = points.Max(p => p.TotalValue);
+            if (maxTotal > 0)
+                points.ForEach(p => p.TotalValue *= 100 / maxTotal); // max total is scaled to 100% in graph
 
             return points;
         }
@@ -64,17 +122,15 @@ namespace Services.Ui
 
         private List<ValuePointDto> GetPoints(List<PitStockValue> pitValues, PerformanceInterval interval, DateTime dateFrom, DateTime dateTo)
         {
-            dateFrom = pitValues.First().TimeStamp.Date;
             var date = dateTo;
             var stock = pitValues.First().Stock;
             var transactions = stock.Transactions.ToList();
-            var divsToAdd = new List<Dividend>();
-            divsToAdd.AddRange(stock.Dividends.ToList());
+            var divsToAdd = stock.Dividends.ToList();
             var dates = new List<DateTime>();
             var divAddedValue = new List<double>();
             while (date > dateFrom)
             {
-                var nextDate = SubtractInterval(date);
+                var nextDate = SubtractInterval(interval, date);
                 
                 var divsToAddThisSpan = divsToAdd.Where(d => d.TimeStamp.Date >= nextDate.Date).ToList();
                 if (divsToAddThisSpan.Any())
@@ -107,20 +163,20 @@ namespace Services.Ui
             AddTotalValue(points, transactions);
 
             return points;
+        }
 
-            DateTime SubtractInterval(DateTime d)
+        private static DateTime SubtractInterval(PerformanceInterval interval, DateTime d)
+        {
+            switch (interval)
             {
-                switch (interval)
-                {
-                    case PerformanceInterval.Week:
-                        return d.AddDays(-7);
-                    case PerformanceInterval.Month:
-                        return d.AddMonths(-1);
-                    case PerformanceInterval.Quarter:
-                        return d.AddMonths(-3);
-                    default:
-                        throw new ArgumentOutOfRangeException($"Unsupported {nameof(interval)} {interval}");
-                }
+                case PerformanceInterval.Week:
+                    return d.AddDays(-7);
+                case PerformanceInterval.Month:
+                    return d.AddMonths(-1);
+                case PerformanceInterval.Quarter:
+                    return d.AddMonths(-3);
+                default:
+                    throw new ArgumentOutOfRangeException($"Unsupported {nameof(interval)} {interval}");
             }
         }
 

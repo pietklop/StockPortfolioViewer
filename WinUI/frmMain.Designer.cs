@@ -40,12 +40,14 @@ namespace Dashboard
             this.btnClose = new System.Windows.Forms.Button();
             this.pnlFormLoader = new System.Windows.Forms.Panel();
             this.lblViewName = new System.Windows.Forms.Label();
+            this.btnPerformance = new System.Windows.Forms.Button();
             this.pnlMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlMenu
             // 
             this.pnlMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
+            this.pnlMenu.Controls.Add(this.btnPerformance);
             this.pnlMenu.Controls.Add(this.btnDividends);
             this.pnlMenu.Controls.Add(this.btnDataRetrieval);
             this.pnlMenu.Controls.Add(this.pnlNav);
@@ -186,6 +188,21 @@ namespace Dashboard
             this.lblViewName.TabIndex = 3;
             this.lblViewName.Text = "View name";
             // 
+            // btnPerformance
+            // 
+            this.btnPerformance.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnPerformance.FlatAppearance.BorderSize = 0;
+            this.btnPerformance.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPerformance.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btnPerformance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
+            this.btnPerformance.Location = new System.Drawing.Point(0, 264);
+            this.btnPerformance.Name = "btnPerformance";
+            this.btnPerformance.Size = new System.Drawing.Size(186, 40);
+            this.btnPerformance.TabIndex = 5;
+            this.btnPerformance.Text = "Performance";
+            this.btnPerformance.UseVisualStyleBackColor = true;
+            this.btnPerformance.Click += new System.EventHandler(this.btnPerformance_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -220,6 +237,7 @@ namespace Dashboard
         private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.Button btnDataRetrieval;
         private System.Windows.Forms.Button btnDividends;
+        private System.Windows.Forms.Button btnPerformance;
     }
 }
 
