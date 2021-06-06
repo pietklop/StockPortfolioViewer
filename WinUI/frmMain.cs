@@ -7,6 +7,7 @@ using Imports.DeGiro;
 using log4net;
 using Services;
 using Services.DI;
+using Syroot.Windows.IO;
 
 namespace Dashboard
 {
