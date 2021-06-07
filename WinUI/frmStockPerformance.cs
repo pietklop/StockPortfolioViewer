@@ -26,14 +26,34 @@ namespace Dashboard
 
         private void frmStockPerformance_Load(object sender, EventArgs e)
         {
+            cmbPeriod.DataSource = Enum.GetValues(typeof(Period));
+            cmbPeriod.SelectedItem = Period.AllTime;
             chart.ConfigXyChart();
-            PopulateGraph(stockPerformanceService.GetValues(stockIsin, PerformanceInterval.Month));
+            PopulateGraph();
         }
 
         private bool MultipleStocks() => stockIsin == null;
 
-        private void PopulateGraph(List<ValuePointDto> points)
+        private void PopulateGraph()
         {
+            var period = (Period) cmbPeriod.SelectedItem;
+            DateTime from;
+            DateTime to;
+            switch (period)
+            {
+                case Period.AllTime:
+                    from = DateTime.MinValue;
+                    to = DateTime.Today;
+                    break;
+                case Period.TTM:
+                    to = DateTime.Today;
+                    from = to.AddDays(-365);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException($"Unsupported {nameof(Period)} {period}");
+            }
+
+            var points = stockPerformanceService.GetValues(stockIsin, PerformanceInterval.Month, from, to);
             var performance = points.Last().RelativeValue / points.First().RelativeValue-1;
             var annualPerformance = GrowthHelper.AnnualPerformance(performance, points.First().Date, points.Last().Date);
             var dataLabelRelativeValue = $"{performance:P1} ({annualPerformance:P0})";
@@ -42,10 +62,10 @@ namespace Dashboard
                 chart.AddXySeries(SeriesChartType.Column, dates, points.Select(p => p.TotalValue).ToArray(), "Total value");
             else
                 chart.AddXySeries(SeriesChartType.Column, dates, points.Select(p => p.Quantity).ToArray(), "Number of stocks");
-            chart.AddXySeries(SeriesChartType.Line, dates, points.Select(p => p.RelativeValue).ToArray(), dataLabelRelativeValue);
+            chart.AddXySeries(SeriesChartType.Line, dates, points.Select(p => p.RelativeValue).ToArray(), "RelativeValue", dataLabelRelativeValue);
 
             var baseReturnPoints = CreateBaseLine();
-            var baseSeries = chart.AddXySeries(SeriesChartType.Line, dates, baseReturnPoints.Select(p => p.RelativeValue).ToArray(), $"Base ({settings.BaseAnnualPerformance:P0})");
+            var baseSeries = chart.AddXySeries(SeriesChartType.Line, dates, baseReturnPoints.Select(p => p.RelativeValue).ToArray(), "BasePerformance", $"Base ({settings.BaseAnnualPerformance:P0})");
             baseSeries.BorderWidth = 1;
             
             if (points.Any(p => p.Dividend > 0))
@@ -62,5 +82,16 @@ namespace Dashboard
                 return basePoints;
             }
         }
+
+        private void cmbPeriod_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            PopulateGraph();
+        }
     }
+
+    enum Period
+    {
+        AllTime,
+        TTM,
+    } 
 }

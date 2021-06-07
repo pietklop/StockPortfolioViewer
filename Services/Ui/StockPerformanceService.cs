@@ -20,20 +20,17 @@ namespace Services.Ui
             this.db = db;
         }
 
-        public List<ValuePointDto> GetValues(PerformanceInterval interval, DateTime? dateFrom = null, DateTime? dateTo = null)
+        public List<ValuePointDto> GetValues(PerformanceInterval interval, DateTime dateFrom, DateTime dateTo)
         {
-            dateFrom ??= DateTime.MinValue;
-            dateTo ??= DateTime.Now.Date;
-
-            var allPitValues = GetAllPitStockValues(dateFrom.Value, dateTo.Value);
-            dateFrom = AlignWithInterval(interval, allPitValues.First().TimeStamp.Date, dateTo.Value);
+            var allPitValues = GetAllPitStockValues(dateFrom, dateTo);
+            dateFrom = AlignWithInterval(interval, allPitValues.First().TimeStamp.Date, dateTo);
 
             var groupedPitValues = allPitValues.GroupBy(p => p.StockId).ToList();
 
             var dict = new Dictionary<DateTime, List<ValuePointDto>>();
             foreach (var pitStockValues in groupedPitValues)
             {
-                var p = GetPoints(pitStockValues.ToList(), interval, dateFrom.Value, dateTo.Value);
+                var p = GetPoints(pitStockValues.ToList(), interval, dateFrom, dateTo);
                 for (int i = 0; i < p.Count; i++)
                 {
                     var date = p[i].Date;
@@ -76,18 +73,15 @@ namespace Services.Ui
             }
         }
 
-        public List<ValuePointDto> GetValues(string isin, PerformanceInterval interval, DateTime? dateFrom = null, DateTime? dateTo = null)
+        public List<ValuePointDto> GetValues(string isin, PerformanceInterval interval, DateTime dateFrom , DateTime dateTo)
         {
             if (isin == null) return GetValues(interval, dateFrom, dateTo);
 
             bool fromStart = dateFrom == null;
-            dateFrom ??= DateTime.MinValue;
-            dateTo ??= DateTime.Now.Date;
-
-            var allPitValues = GetAllPitStockValues(dateFrom.Value, dateTo.Value, new []{isin});
+            var allPitValues = GetAllPitStockValues(dateFrom, dateTo, new []{isin});
             var pitValues = allPitValues.GroupBy(p => p.StockId).First().ToList();
 
-            List<ValuePointDto> points = GetPoints(pitValues, interval, pitValues.First().TimeStamp.Date, dateTo.Value);
+            List<ValuePointDto> points = GetPoints(pitValues, interval, pitValues.First().TimeStamp.Date, dateTo);
 
             return ScalePointsForGraph(points);
         }

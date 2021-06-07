@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Dashboard.Helpers
@@ -38,21 +39,24 @@ namespace Dashboard.Helpers
 
         public static void PopulatePieChart(this Chart chart, string[] labels, double[] values) =>
             chart.Series[0].Points.DataBindXY(labels, values);
-        
-        public static Series AddXySeries(this Chart chart, SeriesChartType chartType, DateTime[] labels, double[] values, string dataLabel)
+
+        public static Series AddXySeries(this Chart chart, SeriesChartType chartType, DateTime[] labels, double[] values, string name, string legendText = null)
         {
             Series series;
             if (chart.Series[0].Name == "Series1")
                 series = chart.Series[0];
+            else if (chart.Series.Any(s => s.Name == name))
+                series = chart.Series.Single(s => s.Name == name);
             else
             {
-                series = new Series(dataLabel);
+                series = new Series(name);
                 chart.Series.Add(series);
             }
             series.ChartType = chartType;
             series.BorderWidth = 3; // Width of the plotted line
             series.Points.DataBindXY(labels, values);
-            series.Name = dataLabel;
+            series.Name = name;
+            series.LegendText = legendText ?? name;
 
             return series;
         }

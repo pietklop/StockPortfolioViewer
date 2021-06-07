@@ -33,6 +33,7 @@ namespace Dashboard
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.cmbPeriod = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // chart
@@ -53,12 +54,23 @@ namespace Dashboard
             this.chart.TabIndex = 0;
             this.chart.Text = "chart";
             // 
+            // cmbPeriod
+            // 
+            this.cmbPeriod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPeriod.FormattingEnabled = true;
+            this.cmbPeriod.Location = new System.Drawing.Point(537, 100);
+            this.cmbPeriod.Name = "cmbPeriod";
+            this.cmbPeriod.Size = new System.Drawing.Size(80, 23);
+            this.cmbPeriod.TabIndex = 0;
+            this.cmbPeriod.SelectionChangeCommitted += new System.EventHandler(this.cmbPeriod_SelectionChangeCommitted);
+            // 
             // frmStockPerformance
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(51)))), ((int)(((byte)(73)))));
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.cmbPeriod);
             this.Controls.Add(this.chart);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "frmStockPerformance";
@@ -71,5 +83,6 @@ namespace Dashboard
         #endregion
 
         private System.Windows.Forms.DataVisualization.Charting.Chart chart;
+        private System.Windows.Forms.ComboBox cmbPeriod;
     }
 }
