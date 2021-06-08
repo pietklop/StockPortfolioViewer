@@ -55,7 +55,9 @@ namespace Dashboard
 
             var points = stockPerformanceService.GetValues(stockIsin, from, to);
             var performance = points.Last().RelativeValue / points.First().RelativeValue-1;
-            var annualPerformance = GrowthHelper.AnnualPerformance(performance, points.First().Date, points.Last().Date);
+            var firstDate = points.First().Date;
+            var lastDate = points.Last().Date;
+            var annualPerformance = GrowthHelper.AnnualPerformance(performance, firstDate, lastDate);
             var dataLabelRelativeValue = $"{performance:P1} ({annualPerformance:P0})";
             var dates = points.Select(p => p.Date).ToArray();
             if (MultipleStocks())
@@ -71,6 +73,8 @@ namespace Dashboard
             if (points.Any(p => p.Dividend > 0))
                 chart.AddXySeries(SeriesChartType.Stock, dates, points.Select(p => p.Dividend).ToArray(), "Dividend");
 
+            lblPeriod.Text = PeriodText();
+
             List<ValuePointDto> CreateBaseLine()
             {
                 var basePoints = new List<ValuePointDto>(points.Count);
@@ -80,6 +84,17 @@ namespace Dashboard
                     basePoints.Add(new ValuePointDto(points[0].RelativeValue * GrowthHelper.ExpectedPerformance(1+settings.BaseAnnualPerformance, points[0].Date, point.Date), point.Date));
 
                 return basePoints;
+            }
+
+            string PeriodText()
+            {
+                var nDays = (int)(lastDate - firstDate).TotalDays + 1;
+                if (nDays <= 31) return $"Period: {nDays} days";
+                var nWeeks = Math.Round(nDays / 7d);
+                if (nWeeks < 20) return $"Period: {nWeeks} weeks";
+                var nMonths = (int)Math.Round(nDays / 30d);
+                if (nMonths <= 12) return $"Period: {nMonths} months";
+                return $"Period: {nMonths / 12} years and {nMonths % 12} months";
             }
         }
 
