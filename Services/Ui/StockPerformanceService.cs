@@ -20,10 +20,13 @@ namespace Services.Ui
             this.db = db;
         }
 
-        public List<ValuePointDto> GetValues(PerformanceInterval interval, DateTime dateFrom, DateTime dateTo)
+        public List<ValuePointDto> GetValues(DateTime dateFrom, DateTime dateTo)
         {
             var allPitValues = GetAllPitStockValues(dateFrom, dateTo);
-            dateFrom = AlignWithInterval(interval, allPitValues.First().TimeStamp.Date, dateTo);
+            var firstDate = allPitValues.First().TimeStamp.Date;
+            var lastDate = allPitValues.Last().TimeStamp.Date;
+            var interval = DetermineInterval(firstDate, lastDate);
+            dateFrom = AlignWithInterval(interval, firstDate, dateTo);
 
             var groupedPitValues = allPitValues.GroupBy(p => p.StockId).ToList();
 
@@ -73,17 +76,29 @@ namespace Services.Ui
             }
         }
 
-        public List<ValuePointDto> GetValues(string isin, PerformanceInterval interval, DateTime dateFrom , DateTime dateTo)
+        public List<ValuePointDto> GetValues(string isin, DateTime dateFrom , DateTime dateTo)
         {
-            if (isin == null) return GetValues(interval, dateFrom, dateTo);
+            if (isin == null) return GetValues(dateFrom, dateTo);
 
             bool fromStart = dateFrom == null;
             var allPitValues = GetAllPitStockValues(dateFrom, dateTo, new []{isin});
             var pitValues = allPitValues.GroupBy(p => p.StockId).First().ToList();
 
-            List<ValuePointDto> points = GetPoints(pitValues, interval, pitValues.First().TimeStamp.Date, dateTo);
+            var firstDate = pitValues.First().TimeStamp.Date;
+            var lastDate = pitValues.Last().TimeStamp.Date;
+            var interval = DetermineInterval(firstDate, lastDate);
+            List<ValuePointDto> points = GetPoints(pitValues, interval, firstDate, lastDate);
 
             return ScalePointsForGraph(points);
+        }
+
+        private PerformanceInterval DetermineInterval(DateTime dateFirst, DateTime dateLast)
+        {
+            int maxDataPointsXaxis = 40;
+            var nDays = (dateLast - dateFirst).TotalDays;
+            if (nDays / 7 < maxDataPointsXaxis) return PerformanceInterval.Week;
+            if (nDays / 30 < maxDataPointsXaxis) return PerformanceInterval.Month;
+            return PerformanceInterval.Quarter;
         }
 
         private List<ValuePointDto> ScalePointsForGraph(List<ValuePointDto> points)

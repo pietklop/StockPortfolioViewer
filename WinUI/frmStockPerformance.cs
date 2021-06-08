@@ -53,7 +53,7 @@ namespace Dashboard
                     throw new ArgumentOutOfRangeException($"Unsupported {nameof(Period)} {period}");
             }
 
-            var points = stockPerformanceService.GetValues(stockIsin, PerformanceInterval.Month, from, to);
+            var points = stockPerformanceService.GetValues(stockIsin, from, to);
             var performance = points.Last().RelativeValue / points.First().RelativeValue-1;
             var annualPerformance = GrowthHelper.AnnualPerformance(performance, points.First().Date, points.Last().Date);
             var dataLabelRelativeValue = $"{performance:P1} ({annualPerformance:P0})";
