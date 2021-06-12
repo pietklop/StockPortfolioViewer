@@ -189,6 +189,8 @@ namespace Imports.DeGiro
                 return LineType.Na;
             if (actionField.StartsWith("Koersverandering"))
                 return LineType.Na;
+            if (actionField.StartsWith("Overboeking van uw"))
+                return LineType.Na;
 
             throw new Exception($"Unknown action: '{actionField}'");
         }
