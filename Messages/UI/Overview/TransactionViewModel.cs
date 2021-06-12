@@ -4,6 +4,7 @@ namespace Messages.UI.Overview
 {
     public class TransactionViewModel
     {
+        public const string SumOf = "Sum of";
         public string Name { get; set; }
         public string Date { get; set; }
         public double Quantity { get; set; }
