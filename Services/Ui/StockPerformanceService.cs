@@ -212,9 +212,17 @@ namespace Services.Ui
                 date = pit.TimeStamp.Date.Date;
             }
 
-            var pv = pitValues.FirstOrDefault(p => p.TimeStamp.Date >= nextDate) ?? pitValues.OrderByDescending(p => p.TimeStamp).First();
+            if (date != nextDate)
+            {
+                // determine the value for this date by interpolation
+                var lastUsedPitValue = inBetweenValues.Last();
+                var firstAfter = pitValues.First(p => p.TimeStamp.Date >= nextDate);
+                var dailyGrowth = GrowthHelper.DailyGrowth(firstAfter.UserPrice / lastUsedPitValue.UserPrice, lastUsedPitValue.TimeStamp,  firstAfter.TimeStamp);
+                int nDays = (int)(nextDate - date).TotalDays;
+                value = GrowthHelper.FuturePrice(value, dailyGrowth, nDays);
+            }
 
-            return new ValuePointDto(GrowthHelper.FuturePrice(value + dividendPerShare, pv.DailyGrowth, (nextDate - date).Days), nextDate, dividendPerShare);
+            return new ValuePointDto(value+dividendPerShare, nextDate, dividendPerShare);
         }
     }
 
