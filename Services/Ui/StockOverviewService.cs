@@ -45,7 +45,7 @@ namespace Services.Ui
                                    + stock.Dividends.Sum(d => d.UserValue - d.UserCosts - d.UserTax);
                 var virtualBuyValue = avgBuyPrice * nStocks;
                 totVirtualBuyValue += virtualBuyValue;
-                var profit = currentValue - virtualBuyValue;
+                var profit = stock.Transactions.Sum(t => -t.Quantity * t.StockValue.UserPrice) + currentValue;
                 list.Add(new StockViewModel
                 {
                     Name = StockName(stock),
