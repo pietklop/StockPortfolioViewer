@@ -9,11 +9,18 @@ namespace Services.Helpers
 
         public static double DailyGrowth(double performance, DateTime dateStart, DateTime dateEnd)
         {
-            var nDays = Math.Round((dateEnd - dateStart).TotalDays);
+            var nDays = (int)(dateEnd.Date - dateStart.Date).TotalDays;
             if (nDays < 0) throw new Exception($"{nameof(dateEnd)} 2 must have a date later in time");
+
+            return DailyGrowth(performance, nDays);
+        }
+
+        public static double DailyGrowth(double performance, int nDays)
+        {
+            if (nDays < 0) throw new Exception($"Date diff can not be negative");
             if (nDays == 0) return performance;
 
-            return Math.Pow(performance, 1 / nDays);
+            return Math.Pow(performance, 1d / nDays);
         }
 
         public static double AnnualPerformance(double performance, DateTime dateStart, DateTime dateEnd)
