@@ -26,22 +26,24 @@ namespace Services.Ui
             var firstDate = allPitValues.First().TimeStamp.Date;
             var lastDate = allPitValues.Last().TimeStamp.Date;
             var interval = DetermineInterval(firstDate, lastDate);
-            dateFrom = AlignWithInterval(interval, firstDate, dateTo);
+            dateFrom = AlignWithInterval(interval, firstDate, lastDate);
 
             var groupedPitValues = allPitValues.GroupBy(p => p.StockId).ToList();
 
             var dict = new Dictionary<DateTime, List<ValuePointDto>>();
+            var dates = CreateIntervals(interval, dateFrom, lastDate);
             foreach (var pitStockValues in groupedPitValues)
             {
-                var p = GetPoints(pitStockValues.ToList(), interval, dateFrom, dateTo);
-                for (int i = 0; i < p.Count; i++)
+                var points = GetPoints(pitStockValues.ToList(), dates);
+                for (int i = 0; i < points.Count; i++)
                 {
-                    var date = p[i].Date;
-                    var growth = i == 0 ? 1 : p[i].RelativeValue / p[i-1].RelativeValue;
-                    var vp = new ValuePointDto(growth, date, p[i].Dividend);
-                    vp.TotalValue = p[i].TotalValue;
-                    vp.Quantity = p[i].Quantity;
-                    vp.Dividend = p[i].Dividend * vp.Quantity;
+                    var date = points[i].Date;
+                    var growth = i == 0 ? 1 : points[i].RelativeValue / points[i-1].RelativeValue;
+                    var vp = new ValuePointDto(growth, date, points[i].Dividend);
+                    vp.TotalValue = points[i].TotalValue;
+                    vp.Quantity = points[i].Quantity;
+                    if (vp.Quantity <= 0) continue;
+                    vp.Dividend = points[i].Dividend * vp.Quantity;
                     if (!dict.ContainsKey(date)) dict.Add(date, new List<ValuePointDto>());
                     dict[date].Add(vp);
                 }
@@ -49,15 +51,37 @@ namespace Services.Ui
 
             var resultList = new List<ValuePointDto>();
             var relativeValue = 1d;
+            DateTime? previousDate = null;
+            double inBetweenRv = 0; // weighed extrapolation to next interval date
+            double inBetweenTotal = 0;
             foreach (var pointsPerDate in dict.Values.OrderBy(d => d.First().Date))
             {
+                if (!dates.Contains(pointsPerDate.First().Date))
+                {
+                    if (previousDate == null)
+                        continue;
+                    var selectedPoints = pointsPerDate.Where(p => p.RelativeValue != 1);
+                    var selectedTotal = selectedPoints.Sum(p => p.TotalValue);
+                    var tot = selectedTotal * (pointsPerDate.First().Date - previousDate.Value).Days / interval.Days(); // weighs relative to length of the interval
+                    if (tot == 0) continue;
+                    var rv = selectedPoints.Sum(p => p.RelativeValue * p.TotalValue / selectedTotal);
+                    var tt = tot + inBetweenTotal;
+                    inBetweenRv = rv * tot / tt + inBetweenRv * inBetweenTotal / tt;
+                    inBetweenTotal = tt;
+                    continue;
+                }
+
                 var total = pointsPerDate.Sum(p => p.TotalValue);
                 if (total <= 0) continue;
-                relativeValue *= pointsPerDate.Sum(p => p.RelativeValue * p.TotalValue / total);
+                var tmpTot = total + inBetweenTotal;
+                relativeValue *= pointsPerDate.Sum(p => p.RelativeValue * p.TotalValue / total) * total / tmpTot + inBetweenRv * inBetweenTotal / tmpTot;
                 var div = pointsPerDate.Sum(p => p.Dividend * p.Quantity);
                 var dto = new ValuePointDto(relativeValue, pointsPerDate.First().Date, div);
-                dto.TotalValue = total;
+                dto.TotalValue = tmpTot;
                 resultList.Add(dto);
+                previousDate = pointsPerDate.First().Date;
+                inBetweenRv = 0;
+                inBetweenTotal = 0;
             }
 
             return ScalePointsForGraph(resultList);
@@ -83,11 +107,11 @@ namespace Services.Ui
             bool fromStart = dateFrom == null;
             var allPitValues = GetAllPitStockValues(dateFrom, dateTo, new []{isin});
             var pitValues = allPitValues.GroupBy(p => p.StockId).First().ToList();
-
             var firstDate = pitValues.First().TimeStamp.Date;
             var lastDate = pitValues.Last().TimeStamp.Date;
             var interval = DetermineInterval(firstDate, lastDate);
-            List<ValuePointDto> points = GetPoints(pitValues, interval, firstDate, lastDate);
+            var dates = CreateIntervals(interval, firstDate, dateTo);
+            List<ValuePointDto> points = GetPoints(pitValues, dates);
 
             return ScalePointsForGraph(points);
         }
@@ -129,19 +153,44 @@ namespace Services.Ui
             return allPitValues;
         }
 
-        private List<ValuePointDto> GetPoints(List<PitStockValue> pitValues, PerformanceInterval interval, DateTime dateFrom, DateTime dateTo)
+        private List<DateTime> CreateIntervals(PerformanceInterval interval, DateTime dateFrom, DateTime dateTo)
         {
             var date = dateTo;
+            var dates = new List<DateTime>();
+
+            while (date > dateFrom && date > dateFrom)
+            {
+                var nextDate = SubtractInterval(interval, date);
+                dates.Add(date);
+                date = nextDate;
+            }
+
+            dates.Reverse();
+
+            return dates;
+        }
+
+        private List<ValuePointDto> GetPoints(List<PitStockValue> pitValues, List<DateTime> dates)
+        {
             var stock = pitValues.First().Stock;
             var transactions = stock.Transactions.ToList();
             var divsToAdd = stock.Dividends.ToList();
-            var dates = new List<DateTime>();
             var divAddedValue = new List<double>();
-            while (date > dateFrom)
+            var firstDate = pitValues.First().TimeStamp.Date;
+            var lastDate = pitValues.Last().TimeStamp.Date;
+
+            var adjustedDates = new List<DateTime>();
+            adjustedDates.AddRange(dates);
+            adjustedDates.RemoveAll(d => d.Date <= firstDate);
+            adjustedDates.Insert(0, firstDate);
+            adjustedDates.RemoveAll(d => d.Date >= lastDate);
+            adjustedDates.Add(lastDate);
+
+            for (int i = adjustedDates.Count - 1; i >= 0; i--)
             {
-                var nextDate = SubtractInterval(interval, date);
-                
-                var divsToAddThisSpan = divsToAdd.Where(d => d.TimeStamp.Date >= nextDate.Date).ToList();
+                var date = adjustedDates[i];
+                var divsToAddThisSpan = new List<Dividend>();
+                divsToAddThisSpan.AddRange(i == 0 ? divsToAdd : divsToAdd.Where(d => d.TimeStamp.Date >= adjustedDates[i-1].Date).ToList());
                 if (divsToAddThisSpan.Any())
                 {
                     var quantity = Quantity(transactions, date);
@@ -150,20 +199,15 @@ namespace Services.Ui
                 }
                 else
                     divAddedValue.Add(0);
-
-                dates.Add(date);
-                date = nextDate;
             }
 
             var price = pitValues.First().UserPrice;
-            dates.Add(pitValues.First().TimeStamp.Date);
-            dates.Reverse();
             divAddedValue.Reverse();
 
             var points = new List<ValuePointDto>();
-            for (int i = -1; i < dates.Count - 1; i++)
+            for (int i = -1; i < adjustedDates.Count - 1; i++)
             {
-                var point = i == -1 ? new ValuePointDto(price, dateFrom) : CreatePoint(price, pitValues, dates[i], dates[i + 1], divAddedValue[i]);
+                var point = i == -1 ? new ValuePointDto(price, firstDate) : CreatePoint(price, pitValues, adjustedDates[i], adjustedDates[i + 1], divAddedValue[i]);
                 points.Add(point);
                 price = point.RelativeValue;
             }
@@ -195,7 +239,13 @@ namespace Services.Ui
                 point.Quantity = Quantity(transactions, point.Date);
         }
 
-        private static double Quantity(List<Transaction> transactions, DateTime date) => transactions.Where(t => t.StockValue.TimeStamp.Date <= date).Sum(t => t.Quantity);
+        private static double Quantity(List<Transaction> transactions, DateTime date)
+        {
+            var trs = transactions.Where(t => t.StockValue.TimeStamp.Date <= date).ToList();
+            if (trs.Any() && trs.Last().Quantity < 0 && trs.Last().StockValue.TimeStamp.Date == date)
+                trs.RemoveAt(trs.Count-1); // a sell means you had them till that date
+            return trs.Sum(t => t.Quantity);
+        }
 
         private static void AddTotalValue(List<ValuePointDto> points, List<Transaction> transactions)
         {
@@ -215,8 +265,14 @@ namespace Services.Ui
             if (date != nextDate)
             {
                 // determine the value for this date by interpolation
-                var lastUsedPitValue = inBetweenValues.Last();
-                var firstAfter = pitValues.First(p => p.TimeStamp.Date >= nextDate);
+                var lastUsedPitValue = inBetweenValues.LastOrDefault() ?? pitValues.OrderByDescending(p => p.TimeStamp).FirstOrDefault(p => p.TimeStamp < nextDate);
+                var firstAfter = pitValues.FirstOrDefault(p => p.TimeStamp.Date >= nextDate) ?? pitValues.FirstOrDefault(p => p.TimeStamp.Date > lastUsedPitValue.TimeStamp.Date);
+                if (firstAfter == null)
+                {   // no data point available later or equal to nextDate
+                    var dayDiff = (lastUsedPitValue.TimeStamp.Date - date).Days;
+                    if (dayDiff > 0) value = GrowthHelper.FuturePrice(value, lastUsedPitValue.DailyGrowth, dayDiff);
+                    return new ValuePointDto(value + dividendPerShare, lastUsedPitValue.TimeStamp.Date, dividendPerShare);
+                }
                 var dailyGrowth = GrowthHelper.DailyGrowth(firstAfter.UserPrice / lastUsedPitValue.UserPrice, lastUsedPitValue.TimeStamp,  firstAfter.TimeStamp);
                 int nDays = (int)(nextDate - date).TotalDays;
                 value = GrowthHelper.FuturePrice(value, dailyGrowth, nDays);
@@ -251,5 +307,23 @@ namespace Services.Ui
         Week,
         Month,
         Quarter,
+    }
+
+    public static class PerformanceIntervalHelper
+    {
+        public static int Days(this PerformanceInterval interval)
+        {
+            switch (interval)
+            {
+                case PerformanceInterval.Week:
+                    return 7;
+                case PerformanceInterval.Month:
+                    return 30;
+                case PerformanceInterval.Quarter:
+                    return 91;
+                default:
+                    throw new ArgumentOutOfRangeException($"Unsupported interval {interval}");
+            }
+        }
     }
 }
