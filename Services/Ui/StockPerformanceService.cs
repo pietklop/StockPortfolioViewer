@@ -20,12 +20,12 @@ namespace Services.Ui
             this.db = db;
         }
 
-        public List<ValuePointDto> GetValues(DateTime dateFrom, DateTime dateTo)
+        public List<ValuePointDto> GetValues(DateTime dateFrom, DateTime dateTo, out PerformanceInterval interval)
         {
             var allPitValues = GetAllPitStockValues(dateFrom, dateTo);
             var firstDate = allPitValues.First().TimeStamp.Date;
             var lastDate = allPitValues.Last().TimeStamp.Date;
-            var interval = DetermineInterval(firstDate, lastDate);
+            interval = DetermineInterval(firstDate, lastDate);
             dateFrom = AlignWithInterval(interval, firstDate, lastDate);
 
             var groupedPitValues = allPitValues.GroupBy(p => p.StockId).ToList();
@@ -100,16 +100,16 @@ namespace Services.Ui
             }
         }
 
-        public List<ValuePointDto> GetValues(string isin, DateTime dateFrom , DateTime dateTo)
+        public List<ValuePointDto> GetValues(string isin, DateTime dateFrom , DateTime dateTo, out PerformanceInterval interval)
         {
-            if (isin == null) return GetValues(dateFrom, dateTo);
+            if (isin == null) return GetValues(dateFrom, dateTo, out interval);
 
             bool fromStart = dateFrom == null;
             var allPitValues = GetAllPitStockValues(dateFrom, dateTo, new []{isin});
             var pitValues = allPitValues.GroupBy(p => p.StockId).First().ToList();
             var firstDate = pitValues.First().TimeStamp.Date;
             var lastDate = pitValues.Last().TimeStamp.Date;
-            var interval = DetermineInterval(firstDate, lastDate);
+            interval = DetermineInterval(firstDate, lastDate);
             var dates = CreateIntervals(interval, firstDate, dateTo);
             List<ValuePointDto> points = GetPoints(pitValues, dates);
 

@@ -49,11 +49,15 @@ namespace Dashboard
                     to = DateTime.Today;
                     from = to.AddDays(-365);
                     break;
+                case Period.T3M:
+                    to = DateTime.Today;
+                    from = to.AddDays(-91);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException($"Unsupported {nameof(Period)} {period}");
             }
 
-            var points = stockPerformanceService.GetValues(stockIsin, from, to);
+            var points = stockPerformanceService.GetValues(stockIsin, from, to, out PerformanceInterval interval);
             var performance = points.Last().RelativeValue / points.First().RelativeValue-1;
             var firstDate = points.First().Date;
             var lastDate = points.Last().Date;
@@ -73,7 +77,7 @@ namespace Dashboard
             if (points.Any(p => p.Dividend > 0))
                 chart.AddXySeries(SeriesChartType.Stock, dates, points.Select(p => p.Dividend).ToArray(), "Dividend");
 
-            lblPeriod.Text = PeriodText();
+            lblPeriod.Text = $"{PeriodText()}  ({interval} interval)";
 
             List<ValuePointDto> CreateBaseLine()
             {
@@ -107,6 +111,13 @@ namespace Dashboard
     enum Period
     {
         AllTime,
+        /// <summary>
+        /// Trailing twelve months
+        /// </summary>
         TTM,
+        /// <summary>
+        /// Trailing three months
+        /// </summary>
+        T3M,
     } 
 }
