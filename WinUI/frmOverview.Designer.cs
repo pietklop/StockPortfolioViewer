@@ -64,11 +64,11 @@ namespace Dashboard
             this.dgvStockList.AllowUserToAddRows = false;
             this.dgvStockList.AllowUserToDeleteRows = false;
             this.dgvStockList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvStockList.Location = new System.Drawing.Point(86, 296);
+            this.dgvStockList.Location = new System.Drawing.Point(86, 290);
             this.dgvStockList.Name = "dgvStockList";
             this.dgvStockList.ReadOnly = true;
             this.dgvStockList.RowTemplate.Height = 25;
-            this.dgvStockList.Size = new System.Drawing.Size(741, 305);
+            this.dgvStockList.Size = new System.Drawing.Size(741, 373);
             this.dgvStockList.TabIndex = 0;
             this.dgvStockList.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvStockList_CellClick);
             this.dgvStockList.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvStockList_CellFormatting);
