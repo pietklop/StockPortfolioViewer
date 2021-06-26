@@ -24,12 +24,16 @@ namespace Services.Ui
 
         public List<StockViewModel> GetStockList()
         {
+            int days30Back = 30;
+            var profitDateFrom = DateTime.Now.AddDays(-days30Back).Date;
+
             var stocks = db.Stocks
                 .Include(s => s.AreaShares).ThenInclude(a => a.Area)
                 .Include(s => s.StockRetrieverCompatibilities).ThenInclude(c => c.DataRetriever)
                 .Include(s => s.Dividends)
                 .Include(s => s.LastKnownStockValue.StockValue)
                 .Include(s => s.SectorShares).ThenInclude(ss => ss.Sector)
+                .Include(s => s.StockValues.Where(sv => sv.TimeStamp > profitDateFrom))
                 .Include(s => s.Transactions).ThenInclude(t => t.StockValue)
                 .Where(s => s.Transactions.Sum(t => t.Quantity) > 0)
                 .ToList();
@@ -53,6 +57,8 @@ namespace Services.Ui
                     Value = currentValue,
                     Profit = profit,
                     ProfitFraction = profit / virtualBuyValue,
+                    ProfitFractionLast30Days = ProfitFraction(stock, days30Back, nStocks),
+                    ProfitFractionLast7Days = ProfitFraction(stock, 7, nStocks),
                     LastPriceChange = LastUpdateSince(stock),
                     CompatibleDataRetrievers = string.Join(",", stock.StockRetrieverCompatibilities.OrderBy(c => c.DataRetriever.Priority).Where(c => c.DataRetriever.Priority > 0 && c.Compatibility == RetrieverCompatibility.True).Select(c => c.DataRetriever.Name.Substring(0, 3)))
                 });
@@ -69,6 +75,8 @@ namespace Services.Ui
                 Value = totalValue,
                 Profit = totalProfit,
                 ProfitFraction = totalProfit / totVirtualBuyValue,
+                ProfitFractionLast30Days = double.NaN,
+                ProfitFractionLast7Days = double.NaN,
                 PortFolioFraction = list.Sum(l => l.PortFolioFraction),
             });
             return list.OrderByDescending(l => l.Value).ToList();
@@ -87,6 +95,15 @@ namespace Services.Ui
             }
 
             string StockNameMarkUnknown(Stock stock) => $"{stock.Name} (Unk.)";
+
+            double ProfitFraction(Stock stock, int nDays, double nStocks)
+            {
+                var dateFrom = DateTime.Now.AddDays(-nDays).Date;
+                var historicValue = stock.StockValues.OrderBy(v => v.TimeStamp).FirstOrDefault(v => v.TimeStamp > dateFrom)?.UserPrice ?? 0;
+                if (historicValue <= 0) return 0;
+                var divPerShare = stock.Dividends.Where(d => d.TimeStamp > dateFrom).Sum(d => d.UserValue - d.UserCosts - d.UserTax) / nStocks;
+                return (stock.LastKnownUserPrice + divPerShare - historicValue) / historicValue;
+            }
         }
     }
 }

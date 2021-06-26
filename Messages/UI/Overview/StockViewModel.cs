@@ -16,10 +16,18 @@ namespace Messages.UI.Overview
         [DisplayName("Profit")]
         [DisplayFormat("P1")]
         public double ProfitFraction { get; set; }
-        [DisplayName("Portf. weight")]
+        [DisplayName("Portf.")]
         [DisplayFormat("P1")]
         [Description("Percentage of the complete portfolio value")]
         public double PortFolioFraction { get; set; }
+        [DisplayName("30d")]
+        [DisplayFormat("P1")]
+        [Description("Profit over last 30 days")]
+        public double ProfitFractionLast30Days { get; set; }
+        [DisplayName("7d")]
+        [DisplayFormat("P1")]
+        [Description("Profit over last 7 days")]
+        public double ProfitFractionLast7Days { get; set; }
         [DisplayName("Last change")]
         [Description("Last price change (always behind when exchange is closed)")]
         public string LastPriceChange { get; set; }

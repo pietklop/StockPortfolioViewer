@@ -65,10 +65,18 @@ namespace Dashboard
             {
                 dgvStockList.GetColumn(nameof(StockViewModel.Profit)).Index,
                 dgvStockList.GetColumn(nameof(StockViewModel.ProfitFraction)).Index,
+                dgvStockList.GetColumn(nameof(StockViewModel.ProfitFractionLast30Days)).Index,
+                dgvStockList.GetColumn(nameof(StockViewModel.ProfitFractionLast7Days)).Index,
             };
-            
+
             if (redGreenColumnIndexes.Contains(e.ColumnIndex))
-                e.CellStyle.ForeColor = (double) e.Value < 0 ? Color.Red : Color.LawnGreen;
+            {
+                var value = (double) e.Value;
+                if (value > 0) 
+                    e.CellStyle.ForeColor = Color.LawnGreen;
+                else if (value < 0) 
+                    e.CellStyle.ForeColor = Color.Red;
+            }
 
             var lastUpdateColIndex = dgvStockList.GetColumn(nameof(StockViewModel.LastPriceChange)).Index;
             if (e.ColumnIndex == lastUpdateColIndex && e.Value != null && ((string)e.Value).Contains("days"))
