@@ -40,9 +40,9 @@ namespace Dashboard
         private void PopulatePieChart(PortfolioDistributionDto dto) =>
             ChartHelper.PopulatePieChart(chart, dto.Labels, dto.Fractions);
 
-        private void PopulateStockGrid()
+        private void PopulateStockGrid(bool reload = false)
         {
-            var stockList = stockOverviewService.GetStockList();
+            var stockList = stockOverviewService.GetStockList(reload);
             dgvStockList.DataSource = stockList;
 
             // column configuration
@@ -138,5 +138,7 @@ namespace Dashboard
             var btn = (Button)sender;
             SetDistributionButtons(btn);
         }
+
+        private void btnReloadGrid_Click(object sender, EventArgs e) => PopulateStockGrid(true);
     }
 }

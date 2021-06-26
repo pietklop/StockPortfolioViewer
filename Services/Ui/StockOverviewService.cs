@@ -15,6 +15,7 @@ namespace Services.Ui
     {
         private readonly ILog log;
         private readonly StockDbContext db;
+        private static List<StockViewModel> cachedStockList;
 
         public StockOverviewService(ILog log, StockDbContext db)
         {
@@ -22,8 +23,11 @@ namespace Services.Ui
             this.db = db;
         }
 
-        public List<StockViewModel> GetStockList()
+        public List<StockViewModel> GetStockList(bool reload)
         {
+            if (cachedStockList != null && !reload)
+                return cachedStockList;
+
             int days30Back = 30;
             var profitDateFrom = DateTime.Now.AddDays(-days30Back).Date;
 
@@ -79,7 +83,9 @@ namespace Services.Ui
                 ProfitFractionLast7Days = double.NaN,
                 PortFolioFraction = list.Sum(l => l.PortFolioFraction),
             });
-            return list.OrderByDescending(l => l.Value).ToList();
+
+            cachedStockList = list.OrderByDescending(l => l.Value).ToList();
+            return cachedStockList;
 
             string LastUpdateSince(Stock stock) => (DateTime.Now - stock.LastKnownStockValue.StockValue.TimeStamp).TimeAgo();
 

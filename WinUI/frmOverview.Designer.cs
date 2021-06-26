@@ -38,6 +38,7 @@ namespace Dashboard
             this.btnDistributionArea = new System.Windows.Forms.Button();
             this.btnDistributionSector = new System.Windows.Forms.Button();
             this.btnDistributionContinent = new System.Windows.Forms.Button();
+            this.btnReloadGrid = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvStockList)).BeginInit();
             this.SuspendLayout();
             // 
@@ -126,6 +127,20 @@ namespace Dashboard
             this.btnDistributionContinent.UseVisualStyleBackColor = false;
             this.btnDistributionContinent.Click += new System.EventHandler(this.btnDistributionContinent_Click);
             // 
+            // btnReloadGrid
+            // 
+            this.btnReloadGrid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
+            this.btnReloadGrid.FlatAppearance.BorderSize = 0;
+            this.btnReloadGrid.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnReloadGrid.ForeColor = System.Drawing.Color.Gainsboro;
+            this.btnReloadGrid.Location = new System.Drawing.Point(767, 256);
+            this.btnReloadGrid.Name = "btnReloadGrid";
+            this.btnReloadGrid.Size = new System.Drawing.Size(60, 28);
+            this.btnReloadGrid.TabIndex = 5;
+            this.btnReloadGrid.Text = "Reload";
+            this.btnReloadGrid.UseVisualStyleBackColor = false;
+            this.btnReloadGrid.Click += new System.EventHandler(this.btnReloadGrid_Click);
+            // 
             // frmOverview
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -133,6 +148,7 @@ namespace Dashboard
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(51)))), ((int)(((byte)(73)))));
             this.ClientSize = new System.Drawing.Size(933, 677);
             this.Controls.Add(this.chart);
+            this.Controls.Add(this.btnReloadGrid);
             this.Controls.Add(this.btnDistributionContinent);
             this.Controls.Add(this.btnDistributionSector);
             this.Controls.Add(this.btnDistributionArea);
@@ -155,5 +171,6 @@ namespace Dashboard
         private System.Windows.Forms.Button btnDistributionArea;
         private System.Windows.Forms.Button btnDistributionSector;
         private System.Windows.Forms.Button btnDistributionContinent;
+        private System.Windows.Forms.Button btnReloadGrid;
     }
 }
