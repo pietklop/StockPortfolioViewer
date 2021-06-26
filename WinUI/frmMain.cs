@@ -110,10 +110,7 @@ namespace Dashboard
             {
                 using (OpenFileDialog openFileDialog = new OpenFileDialog())
                 {
-                    if (settings.DebugMode)
-                        openFileDialog.InitialDirectory = settings.DebugPath;
-                    else
-                        openFileDialog.InitialDirectory = new KnownFolder(KnownFolderType.Downloads).Path;
+                    openFileDialog.InitialDirectory = settings.DebugMode ? settings.DebugPath : new KnownFolder(KnownFolderType.Downloads).Path;
                     openFileDialog.Filter = "txt files (*.csv)|*.csv|All files (*.*)|*.*";
                     openFileDialog.Multiselect = true;
                     openFileDialog.Title = "Select files to import";
