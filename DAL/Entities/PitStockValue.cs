@@ -21,6 +21,7 @@ namespace DAL.Entities
         /// <summary>
         /// Daily growth factor from previous PitValue till this one
         /// </summary>
+        [Obsolete ("Value is calculated on the fly")]
         public double DailyGrowth { get; set; }
     }
 }

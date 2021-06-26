@@ -256,6 +256,13 @@ namespace Services.Ui
         private static ValuePointDto CreatePoint(double value, List<PitStockValue> pitValues, DateTime date, DateTime nextDate, double dividendPerShare = 0)
         {
             var inBetweenValues = pitValues.Where(p => p.TimeStamp.Date > date && p.TimeStamp < nextDate).ToList();
+            // DailyGrowth is not used from DB but recalculated
+            for (int i = 0; i < pitValues.Count - 1; i++)
+            {
+                var v = GrowthHelper.DailyGrowth(pitValues[i], pitValues[i+1]);
+                pitValues[i+1].DailyGrowth = v;
+            }
+
             foreach (var pit in inBetweenValues)
             {
                 value = GrowthHelper.FuturePrice(value, pit.DailyGrowth, (pit.TimeStamp.Date.Date - date).Days);
