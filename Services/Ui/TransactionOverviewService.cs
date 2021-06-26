@@ -31,6 +31,7 @@ namespace Services.Ui
             var list = new List<TransactionViewModel>(transactions.Count());
 
             int month = transactions.First().StockValue.TimeStamp.Month;
+            int year = transactions.First().StockValue.TimeStamp.Year;
             var monthlyTransactions = new List<Transaction>();
 
             foreach (var transaction in transactions)
@@ -43,6 +44,7 @@ namespace Services.Ui
                 {
                     AddSubTotal();
                     month = date.Month;
+                    year = date.Year;
                 }
                 list.Add(new TransactionViewModel
                 {
@@ -64,7 +66,7 @@ namespace Services.Ui
                 if (monthlyTransactions.Count == 0 || isin != null) return;
                 list.Add(new TransactionViewModel
                 {
-                    Name = $"{TransactionViewModel.SumOf} {new DateTime(2000, month, 1):MMMM}",
+                    Name = $"{TransactionViewModel.SumOf} {new DateTime(2000, month, 1):MMMM} {year}",
                     Value = monthlyTransactions.Sum(UserValue).FormatUserCurrency(),
                     Quantity = monthlyTransactions.Sum(t => t.Quantity),
                 });
