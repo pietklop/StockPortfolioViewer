@@ -38,14 +38,13 @@ namespace Services.Ui
             {
                 var currSymbol = transaction.Stock.Currency.Symbol;
                 var date = transaction.StockValue.TimeStamp.Date;
-                if (date.Month == month)
-                    monthlyTransactions.Add(transaction);
-                else
+                if (date.Month != month)
                 {
                     AddSubTotal();
                     month = date.Month;
                     year = date.Year;
                 }
+                monthlyTransactions.Add(transaction);
                 list.Add(new TransactionViewModel
                 {
                     Name = transaction.Stock.Name,
