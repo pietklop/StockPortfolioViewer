@@ -306,6 +306,8 @@ namespace Services.Ui
             Date = date;
             Dividend = dividend;
         }
+
+        public override string ToString() => $"Tot:{TotalValue} Rel:{RelativeValue} Div:{Dividend}";
     }
 
     public enum PerformanceInterval
