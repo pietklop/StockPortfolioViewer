@@ -1,4 +1,5 @@
 ﻿using System;
+using Core;
 
 namespace DAL.Entities
 {
@@ -23,5 +24,7 @@ namespace DAL.Entities
         /// </summary>
         [Obsolete ("Value is calculated on the fly")]
         public double DailyGrowth { get; set; }
+
+        public override string ToString() => $"{Constants.UserCurrencySymbol}{UserPrice:F2} {TimeStamp.ToShortDateString()}";
     }
 }
