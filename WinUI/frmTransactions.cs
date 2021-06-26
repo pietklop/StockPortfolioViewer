@@ -50,6 +50,8 @@ namespace Dashboard
             var nameColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.Name)).Index;
             if (nameColumnIndex == e.ColumnIndex && ((string) e.Value).StartsWith(TransactionViewModel.SumOf))
                 dgvTransactions.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.DarkBlue;
+            else if (nameColumnIndex == e.ColumnIndex && ((string) e.Value).StartsWith(TransactionViewModel.AnnualSumOf))
+                dgvTransactions.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.DarkRed;
         }
     }
 }

@@ -33,6 +33,7 @@ namespace Services.Ui
             int month = transactions.First().StockValue.TimeStamp.Month;
             int year = transactions.First().StockValue.TimeStamp.Year;
             var monthlyTransactions = new List<Transaction>();
+            var annualTransactions = new List<Transaction>();
 
             foreach (var transaction in transactions)
             {
@@ -40,11 +41,16 @@ namespace Services.Ui
                 var date = transaction.StockValue.TimeStamp.Date;
                 if (date.Month != month)
                 {
-                    AddSubTotal();
+                    AddMonthlySubTotal();
                     month = date.Month;
+                }
+                if (date.Year != year)
+                {
+                    AddAnnualSubTotal();
                     year = date.Year;
                 }
                 monthlyTransactions.Add(transaction);
+                annualTransactions.Add(transaction);
                 list.Add(new TransactionViewModel
                 {
                     Name = transaction.Stock.Name,
@@ -56,11 +62,12 @@ namespace Services.Ui
                 });
             }
 
-            AddSubTotal();
+            AddMonthlySubTotal();
+            AddAnnualSubTotal();
 
             return list;
 
-            void AddSubTotal()
+            void AddMonthlySubTotal()
             {
                 if (monthlyTransactions.Count == 0 || isin != null) return;
                 list.Add(new TransactionViewModel
@@ -70,6 +77,18 @@ namespace Services.Ui
                     Quantity = monthlyTransactions.Sum(t => t.Quantity),
                 });
                 monthlyTransactions.Clear();
+            }
+
+            void AddAnnualSubTotal()
+            {
+                if (annualTransactions.Count == 0 || isin != null) return;
+                list.Add(new TransactionViewModel
+                {
+                    Name = $"{TransactionViewModel.AnnualSumOf} {year}",
+                    Value = annualTransactions.Sum(UserValue).FormatUserCurrency(),
+                    Quantity = annualTransactions.Sum(t => t.Quantity),
+                });
+                annualTransactions.Clear();
             }
 
             double NativeValue(Transaction transaction) => transaction.StockValue.NativePrice * transaction.Quantity;
