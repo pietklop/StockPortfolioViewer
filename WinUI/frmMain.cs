@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Castle.MicroKernel;
@@ -13,7 +14,7 @@ using Syroot.Windows.IO;
 
 namespace Dashboard
 {
-    public partial class frmMain : Form
+    public partial class frmMain : MetroFramework.Forms.MetroForm
     {
         private readonly ILog log;
         private readonly Settings settings;
@@ -38,6 +39,9 @@ namespace Dashboard
             HandleMenuButtonClick(btnMainOverview, CastleContainer.Instance.Resolve<frmOverview>(new Arguments { { nameof(frmMain), this } }));
 
             void SetWindowRoundCorners(int radius) => Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, radius, radius));
+
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            lblVersion.Text = $"v{version.Major}.{version.Minor}.{version.Build}";
         }
 
         public void ShowStockDetails(string stockName, string isin) =>
