@@ -18,7 +18,7 @@ namespace Services
             this.stockService = stockService;
         }
 
-        public (int, int) Process(ImportDto import)
+        public (int, int) Process(TransactionImportDto import)
         {
             int nAddedTransactions = 0;
             int nAddedDividends = 0;

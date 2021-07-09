@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Castle.MicroKernel;
@@ -126,7 +127,8 @@ namespace Dashboard
                     foreach (var filePath in openFileDialog.FileNames)
                     {
                         log.Debug($"Try import: '{filePath}'");
-                        (int nT, int nDiv) = importProcessor.Process(importer.Import(filePath, settings.DebugMode));
+                        var lines = File.ReadAllLines(filePath);
+                        (int nT, int nDiv) = importProcessor.Process(importer.TransactionImport(lines, settings.DebugMode));
                         nAddedTransactions += nT;
                         nAddedDividends += nDiv;
                     }
