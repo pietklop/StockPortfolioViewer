@@ -59,11 +59,10 @@ namespace Services
             return stock;
         }
 
-        [Obsolete("Make internal")]
         public Stock UpdateStockPrice(string isin, double nativePrice, DateTime? lastPriceUpdate = null) =>
             UpdateStockPrice(GetStockOrThrow(isin), nativePrice, lastPriceUpdate);
 
-        internal Stock UpdateStockPrice(Stock stock, double nativePrice, DateTime? lastPriceUpdate = null)
+        public Stock UpdateStockPrice(Stock stock, double nativePrice, DateTime? lastPriceUpdate = null)
         {
             log.Info($"Set latest stock price: {stock} to: {stock.Currency.Symbol}{nativePrice}");
 

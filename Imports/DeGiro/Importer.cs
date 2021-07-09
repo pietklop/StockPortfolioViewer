@@ -12,6 +12,22 @@ namespace Imports.DeGiro
             this.log = log;
         }
 
+        public ImportType DetermineImportType(string[] lines)
+        {
+            var header = lines[0];
+            switch (header)
+            {
+                case "Datum,Tijd,Valutadatum,Product,ISIN,Omschrijving,FX,Mutatie,,Saldo,,Order Id":
+                    return ImportType.Transaction;
+                case "Product,Symbool/ISIN,Aantal,Slotkoers,Lokale waarde,Waarde in EUR":
+                    return ImportType.StockValue;
+                default:
+                    return ImportType.Unknown;
+            }
+        }
+
         public TransactionImportDto TransactionImport(string[] lines, bool debugMode) => TransactionImporter.Import(lines, debugMode);
+
+        public StockValueImportDto StockValueImport(string[] lines) => StockValueImporter.Import(lines);
     }
 }

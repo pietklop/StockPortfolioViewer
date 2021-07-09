@@ -124,16 +124,35 @@ namespace Dashboard
 
                     int nAddedTransactions = 0;
                     int nAddedDividends = 0;
+                    int nStockValueUpdates = 0;
                     foreach (var filePath in openFileDialog.FileNames)
                     {
                         log.Debug($"Try import: '{filePath}'");
                         var lines = File.ReadAllLines(filePath);
-                        (int nT, int nDiv) = importProcessor.Process(importer.TransactionImport(lines, settings.DebugMode));
-                        nAddedTransactions += nT;
-                        nAddedDividends += nDiv;
+
+                        switch (importer.DetermineImportType(lines))
+                        {
+                            case ImportType.Transaction:
+                                (int nT, int nDiv) = importProcessor.Process(importer.TransactionImport(lines, settings.DebugMode));
+                                nAddedTransactions += nT;
+                                nAddedDividends += nDiv;
+                                break;
+                            case ImportType.StockValue:
+                                nStockValueUpdates = importProcessor.Process(importer.StockValueImport(lines));
+                                break;
+                            default:
+                                MessageBox.Show($"Unrecognized file content", "Import result", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                break;
+                        }
                     }
+
                     if (nAddedTransactions == 0 && nAddedDividends == 0)
-                        MessageBox.Show($"No transactions or dividends are added. Possibly these were already imported earlier", "Import result", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    {
+                        if (nStockValueUpdates > 0)
+                            MessageBox.Show($"Successfully updated {nStockValueUpdates} stocks", "Import result", MessageBoxButtons.OK);
+                        else
+                            MessageBox.Show($"No transactions or dividends are added. Possibly these were already imported earlier", "Import result", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                     else    
                         MessageBox.Show($"Successfully added {nAddedTransactions} transactions and {nAddedDividends} dividends", "Import result", MessageBoxButtons.OK);
                 }

@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using DAL;
 using log4net;
 using Messages.Dtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services
 {
@@ -32,6 +34,31 @@ namespace Services
             log.Debug($"Successful imported {nAddedTransactions} transactions and {nAddedDividends} dividends");
 
             return (nAddedTransactions, nAddedDividends);
+        }
+
+        public int Process(StockValueImportDto import)
+        {
+            var stocks = db.Stocks
+                .Include(s => s.Currency)
+                .Include(s => s.LastKnownStockValue.StockValue)
+                .ToList();
+            int stocksUpdated = 0;
+
+            foreach (var sv in import.StockValues)
+            {
+                var stock = stocks.SingleOrDefault(s => s.Isin == sv.Isin) ?? throw new Exception($"Stock Name:'{sv.Name}' Isin:{sv.Isin} could not be found");
+                if (stock.Currency.Key != sv.Currency) throw new Exception($"Currencies ({stock.Currency.Key} vs {sv.Currency}) do not match for '{sv.Name}' Isin:{sv.Isin}");
+                
+                if (stock.LastKnownStockValue.LastUpdate > sv.TimeStamp)
+                    continue;
+
+                stockService.UpdateStockPrice(stock, sv.ClosePrice, sv.TimeStamp);
+                stocksUpdated++;
+            }
+
+            db.SaveChanges();
+
+            return stocksUpdated;
         }
     }
 }
