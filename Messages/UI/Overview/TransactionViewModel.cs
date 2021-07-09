@@ -12,5 +12,6 @@ namespace Messages.UI.Overview
         public string Price { get; set; }
         public string Value { get; set; }
         public string Costs { get; set; }
+        public string CurrRatio { get; set; }
     }
 }

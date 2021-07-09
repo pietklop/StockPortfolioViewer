@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
 using DAL;
 using DAL.Entities;
 using log4net;
@@ -59,6 +60,7 @@ namespace Services.Ui
                     Price = transaction.StockValue.NativePrice.FormatCurrency(currSymbol, false),
                     Value = NativeValue(transaction).FormatCurrency(currSymbol),
                     Costs = transaction.UserCosts.FormatUserCurrency(),
+                    CurrRatio = CurrencyRatio(transaction),
                 });
             }
 
@@ -66,6 +68,13 @@ namespace Services.Ui
             AddAnnualSubTotal();
 
             return list;
+
+            string CurrencyRatio(Transaction transaction)
+            {
+                if (transaction.Stock.Currency.Key == Constants.UserCurrency) return "=";
+                var ratio = transaction.StockValue.NativePrice / transaction.StockValue.UserPrice;
+                return ratio.FormatCurrency(transaction.Stock.Currency.Symbol, false);
+            }
 
             void AddMonthlySubTotal()
             {
