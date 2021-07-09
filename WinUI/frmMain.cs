@@ -155,6 +155,9 @@ namespace Dashboard
                     }
                     else    
                         MessageBox.Show($"Successfully added {nAddedTransactions} transactions and {nAddedDividends} dividends", "Import result", MessageBoxButtons.OK);
+
+                    var formOverview = pnlFormLoader.Controls[0] as frmOverview;
+                    formOverview?.Reload();
                 }
             }
             catch (Exception ex)

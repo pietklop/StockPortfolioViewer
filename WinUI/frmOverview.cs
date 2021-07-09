@@ -140,5 +140,6 @@ namespace Dashboard
         }
 
         private void btnReloadGrid_Click(object sender, EventArgs e) => PopulateStockGrid(true);
+        public void Reload() => btnReloadGrid_Click(this, EventArgs.Empty);
     }
 }
