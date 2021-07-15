@@ -179,11 +179,11 @@ namespace Services
 
         private void UpdateDailyGrowth(PitStockValue psv, bool initialTransaction)
         {
-            if (initialTransaction)
+            if (initialTransaction || true) // daily growth is obsolete
                 psv.DailyGrowth = 1;
             else
             {
-                var previousPsv = db.PitStockValues.First(p => p.Stock.Isin == psv.Stock.Isin && p.TimeStamp < psv.TimeStamp)
+                var previousPsv = db.PitStockValues.FirstOrDefault(p => p.Stock.Isin == psv.Stock.Isin && p.TimeStamp < psv.TimeStamp)
                                   ?? throw new Exception($"Could not find previous PitStockValue {psv.Stock}");
                 psv.DailyGrowth = GrowthHelper.DailyGrowth(previousPsv, psv);
             }
