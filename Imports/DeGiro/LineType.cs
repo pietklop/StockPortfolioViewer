@@ -2,7 +2,7 @@
 {
     public enum LineType
     {
-        None,
+        Unknown,
         Buy,
         Sell,
         CurrencyConversion,

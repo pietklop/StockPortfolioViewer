@@ -30,7 +30,7 @@ namespace Imports.DeGiro
             foreach (var line in lines.Skip(1))
             {
                 var fields = line.SmartSplit(',');
-                var lineType = GetLineType(fields[actionColIndex]);
+                var lineType = GetLineType(fields[actionColIndex], debugMode);
                 switch (lineType)
                 {
                     case LineType.Buy:
@@ -147,7 +147,7 @@ namespace Imports.DeGiro
             return new DateTime(int.Parse(dateFields[2]), int.Parse(dateFields[1]), int.Parse(dateFields[0]));
         }
 
-        private static LineType GetLineType(string actionField)
+        private static LineType GetLineType(string actionField, bool debugMode)
         {
             // exact matches
             if (actionField == "")
@@ -193,7 +193,10 @@ namespace Imports.DeGiro
             if (actionField.StartsWith("Overboeking van uw"))
                 return LineType.Na;
 
-            throw new Exception($"Unknown action: '{actionField}'");
+            if (debugMode)
+                throw new Exception($"Unknown action: '{actionField}'");
+            
+            return LineType.Unknown;
         }
     }
 }
