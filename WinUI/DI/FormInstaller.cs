@@ -1,6 +1,7 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using Dashboard.Input;
 
 namespace Dashboard.DI
 {
@@ -17,6 +18,7 @@ namespace Dashboard.DI
             container.Register(Component.For<frmStockDetail>().LifestyleTransient());
             container.Register(Component.For<frmStockPerformance>().LifestyleTransient());
             container.Register(Component.For<frmStockRetrievers>().LifestyleTransient());
+            container.Register(Component.For<frmStockSelection>().LifestyleTransient());
             container.Register(Component.For<frmTransactions>().LifestyleTransient());
         }
     }
