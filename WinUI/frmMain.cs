@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -48,7 +49,7 @@ namespace Dashboard
             LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockDetail>(new Arguments{{"stockIsin", isin}}));
 
         public void ShowStockPerformance(string stockName, string isin) =>
-            LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockPerformance>(new Arguments{{"stockIsin", isin}}));
+            LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockPerformance>(new Arguments{{"stockIsins", new List<string>{isin}}}));
 
         public void ShowDividends(string isin) =>
             LoadForm("Dividends", CastleContainer.Instance.Resolve<frmDividends>(new Arguments{{"stockIsin", isin}}));

@@ -60,5 +60,7 @@ namespace Dashboard.Helpers
 
             return series;
         }
+
+        public static void RemoveSeries(this Chart chart, string name) => chart.Series.Remove(chart.Series.SingleOrDefault(s => s.Name == name));
     }
 }

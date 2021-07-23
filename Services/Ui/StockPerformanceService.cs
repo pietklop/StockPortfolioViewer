@@ -20,9 +20,14 @@ namespace Services.Ui
             this.db = db;
         }
 
-        public List<ValuePointDto> GetValues(DateTime dateFrom, DateTime dateTo, out PerformanceInterval interval)
+        public List<ValuePointDto> GetValues(DateTime dateFrom, DateTime dateTo, out PerformanceInterval interval, List<string> isins)
         {
-            var allPitValues = GetAllPitStockValues(dateFrom, dateTo);
+            var allPitValues = GetAllPitStockValues(dateFrom, dateTo, isins?.ToArray());
+            if (allPitValues.Count == 0)
+            {
+                interval = PerformanceInterval.None;
+                return new List<ValuePointDto>();
+            }
             var firstDate = allPitValues.First().TimeStamp.Date;
             var lastDate = allPitValues.Last().TimeStamp.Date;
             interval = DetermineInterval(firstDate, lastDate);
@@ -100,12 +105,12 @@ namespace Services.Ui
             }
         }
 
-        public List<ValuePointDto> GetValues(string isin, DateTime dateFrom , DateTime dateTo, out PerformanceInterval interval)
+        public List<ValuePointDto> GetValues(List<string> isins, DateTime dateFrom , DateTime dateTo, out PerformanceInterval interval)
         {
-            if (isin == null) return GetValues(dateFrom, dateTo, out interval);
+            if (isins == null || isins.Count > 1) return GetValues(dateFrom, dateTo, out interval, isins);
 
             bool fromStart = dateFrom == null;
-            var allPitValues = GetAllPitStockValues(dateFrom, dateTo, new []{isin});
+            var allPitValues = GetAllPitStockValues(dateFrom, dateTo, isins.ToArray());
             var pitValues = allPitValues.GroupBy(p => p.StockId).First().ToList();
             var firstDate = pitValues.First().TimeStamp.Date;
             var lastDate = pitValues.Last().TimeStamp.Date;

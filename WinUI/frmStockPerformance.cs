@@ -5,6 +5,8 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using Core;
 using Dashboard.Helpers;
+using Messages.UI.Overview;
+using Services.DI;
 using Services.Helpers;
 using Services.Ui;
 
@@ -14,25 +16,58 @@ namespace Dashboard
     {
         private readonly Settings settings;
         private readonly StockPerformanceService stockPerformanceService;
-        private readonly string stockIsin;
+        private List<string> stockIsins;
+        private List<string> stockNames = null;
 
-        public frmStockPerformance(Settings settings, StockPerformanceService stockPerformanceService, string stockIsin = null)
+        public frmStockPerformance(Settings settings, StockPerformanceService stockPerformanceService) : this(settings, stockPerformanceService, (List<string>)null)
+        {
+        }
+
+        public frmStockPerformance(Settings settings, StockPerformanceService stockPerformanceService, List<string> stockIsins = null)
         {
             this.settings = settings;
             this.stockPerformanceService = stockPerformanceService;
-            this.stockIsin = stockIsin;
+            this.stockIsins = stockIsins;
             InitializeComponent();
         }
 
         private void frmStockPerformance_Load(object sender, EventArgs e)
         {
+            PopulateStockGrid();
+            if (!MultipleStocks()) 
+                btnSelect.Visible = false;
             cmbPeriod.DataSource = Enum.GetValues(typeof(Period));
             cmbPeriod.SelectedItem = Period.AllTime;
             chart.ConfigXyChart();
             PopulateGraph();
         }
 
-        private bool MultipleStocks() => stockIsin == null;
+        private void PopulateStockGrid()
+        {
+            if (stockNames == null)
+            {
+                dgvStocks.Visible = false;
+                return;
+            }
+            dgvStocks.Visible = true;
+
+            var vm = new List<StockSimpleViewModel>();
+            for (int i = 0; i < stockNames.Count; i++)
+                vm.Add(new StockSimpleViewModel {Isin = stockIsins[i], Name = stockNames[i]});
+
+            dgvStocks.DataSource = vm;
+
+            // column configuration
+            dgvStocks.ApplyColumnDisplayFormatAttributes();
+            dgvStocks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            var nameColumn = dgvStocks.GetColumn(nameof(DividendViewModel.Name));
+            nameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
+            dgvStocks.SetReadOnly();
+            dgvStocks.SetVisualStyling();
+        }
+
+        private bool MultipleStocks() => stockIsins?.Count != 1;
 
         private void PopulateGraph()
         {
@@ -57,7 +92,9 @@ namespace Dashboard
                     throw new ArgumentOutOfRangeException($"Unsupported {nameof(Period)} {period}");
             }
 
-            var points = stockPerformanceService.GetValues(stockIsin, from, to, out PerformanceInterval interval);
+            var points = stockPerformanceService.GetValues(stockIsins, from, to, out PerformanceInterval interval);
+            if (points.Count == 0) 
+                return;
             var performance = points.Last().RelativeValue / points.First().RelativeValue-1;
             var firstDate = points.First().Date;
             var lastDate = points.Last().Date;
@@ -65,9 +102,15 @@ namespace Dashboard
             var dataLabelRelativeValue = $"{performance:P1} ({annualPerformance:P0})";
             var dates = points.Select(p => p.Date).ToArray();
             if (MultipleStocks())
+            {
                 chart.AddXySeries(SeriesChartType.Column, dates, points.Select(p => p.TotalValue).ToArray(), "Total value");
+                chart.RemoveSeries("Number of stocks");
+            }
             else
+            {
                 chart.AddXySeries(SeriesChartType.Column, dates, points.Select(p => p.Quantity).ToArray(), "Number of stocks");
+                chart.RemoveSeries("Total value");
+            }
             chart.AddXySeries(SeriesChartType.Line, dates, points.Select(p => p.RelativeValue).ToArray(), "RelativeValue", dataLabelRelativeValue);
 
             var baseReturnPoints = CreateBaseLine();
@@ -76,6 +119,8 @@ namespace Dashboard
             
             if (points.Any(p => p.Dividend > 0))
                 chart.AddXySeries(SeriesChartType.Stock, dates, points.Select(p => p.Dividend).ToArray(), "Dividend");
+            else
+                chart.RemoveSeries("Dividend");
 
             lblPeriod.Text = $"{PeriodText()}  ({interval} interval)";
 
@@ -105,6 +150,18 @@ namespace Dashboard
         private void cmbPeriod_SelectionChangeCommitted(object sender, EventArgs e)
         {
             PopulateGraph();
+        }
+
+        private void btnSelect_Click(object sender, EventArgs e)
+        {
+            using var form = CastleContainer.Resolve<Input.frmStockSelection>();
+            if (form.ShowDialog(this) == DialogResult.OK)
+            {
+                stockIsins = form.Stocks.Any() ? form.Stocks.Select(s => s.Isin).ToList() : null;
+                stockNames = form.Stocks.Any() ? form.Stocks.Select(s => s.Name).ToList() : null;
+                PopulateGraph();
+                PopulateStockGrid();
+            }
         }
     }
 
