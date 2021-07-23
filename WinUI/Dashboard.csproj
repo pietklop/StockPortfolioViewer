@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CheckBoxComboBox\CheckBoxComboBox.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
 
