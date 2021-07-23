@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Core;
 using Dashboard.Helpers;
 using Messages.UI.Overview;
+using Services.DI;
 using Services.Ui;
 
 namespace Dashboard
@@ -40,9 +41,9 @@ namespace Dashboard
         private void PopulatePieChart(PortfolioDistributionDto dto) =>
             ChartHelper.PopulatePieChart(chart, dto.Labels, dto.Fractions);
 
-        private void PopulateStockGrid(bool reload = false)
+        private void PopulateStockGrid(bool reload = false, List<string> isins = null)
         {
-            var stockList = stockOverviewService.GetStockList(reload);
+            var stockList = stockOverviewService.GetStockList(reload, isins);
             dgvStockList.DataSource = stockList;
 
             // column configuration
@@ -141,5 +142,12 @@ namespace Dashboard
 
         private void btnReloadGrid_Click(object sender, EventArgs e) => PopulateStockGrid(true);
         public void Reload() => btnReloadGrid_Click(this, EventArgs.Empty);
+
+        private void btnSelect_Click(object sender, EventArgs e)
+        {
+            using var form = CastleContainer.Resolve<Input.frmStockSelection>();
+            if (form.ShowDialog(this) == DialogResult.OK && form.Stocks.Any())
+                PopulateStockGrid(true, form.Stocks.Select(s => s.Isin).ToList());
+        }
     }
 }

@@ -23,7 +23,7 @@ namespace Services.Ui
             this.db = db;
         }
 
-        public List<StockViewModel> GetStockList(bool reload)
+        public List<StockViewModel> GetStockList(bool reload, List<string> isins)
         {
             if (cachedStockList != null && !reload)
                 return cachedStockList;
@@ -40,6 +40,7 @@ namespace Services.Ui
                 .Include(s => s.StockValues.Where(sv => sv.TimeStamp > profitDateFrom))
                 .Include(s => s.Transactions).ThenInclude(t => t.StockValue)
                 .Where(s => s.Transactions.Sum(t => t.Quantity) > 0)
+                .Where(s => isins == null || isins.Contains(s.Isin))
                 .ToList();
 
             var list = new List<StockViewModel>(stocks.Count());
