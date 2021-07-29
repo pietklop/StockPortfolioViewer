@@ -45,7 +45,7 @@ namespace Dashboard
             this.lblPeriod.AutoSize = true;
             this.lblPeriod.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblPeriod.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblPeriod.Location = new System.Drawing.Point(200, 300);
+            this.lblPeriod.Location = new System.Drawing.Point(100, 300);
             this.lblPeriod.MaximumSize = new System.Drawing.Size(400, 0);
             this.lblPeriod.Name = "lblPeriod";
             this.lblPeriod.Size = new System.Drawing.Size(120, 20);

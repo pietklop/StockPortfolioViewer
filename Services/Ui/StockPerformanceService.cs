@@ -13,20 +13,22 @@ namespace Services.Ui
     {
         private readonly ILog log;
         private readonly StockDbContext db;
+        private readonly StockOverviewService stockOverviewService;
 
-        public StockPerformanceService(ILog log, StockDbContext db)
+        public StockPerformanceService(ILog log, StockDbContext db, StockOverviewService stockOverviewService)
         {
             this.log = log;
             this.db = db;
+            this.stockOverviewService = stockOverviewService;
         }
 
-        public List<ValuePointDto> GetValues(DateTime dateFrom, DateTime dateTo, out PerformanceInterval interval, List<string> isins)
+        private PerformanceDto GetValues(DateTime dateFrom, DateTime dateTo, out PerformanceInterval interval, List<string> isins)
         {
             var allPitValues = GetAllPitStockValues(dateFrom, dateTo, isins?.ToArray());
             if (allPitValues.Count == 0)
             {
                 interval = PerformanceInterval.None;
-                return new List<ValuePointDto>();
+                return new PerformanceDto(new List<ValuePointDto>(), 0);
             }
             var firstDate = allPitValues.First().TimeStamp.Date;
             var lastDate = allPitValues.Last().TimeStamp.Date;
@@ -89,7 +91,8 @@ namespace Services.Ui
                 inBetweenTotal = 0;
             }
 
-            return ScalePointsForGraph(resultList);
+            var fractionOfTotalPortfolio = isins == null ? 1 : resultList.Last().TotalValue / stockOverviewService.TotalPortfolioValue;
+            return new PerformanceDto(ScalePointsForGraph(resultList), fractionOfTotalPortfolio);
         }
 
         private static DateTime AlignWithInterval(PerformanceInterval interval, DateTime firstDate, DateTime dateTo)
@@ -105,9 +108,10 @@ namespace Services.Ui
             }
         }
 
-        public List<ValuePointDto> GetValues(List<string> isins, DateTime dateFrom , DateTime dateTo, out PerformanceInterval interval)
+        public PerformanceDto GetValues(List<string> isins, DateTime dateFrom , DateTime dateTo, out PerformanceInterval interval)
         {
-            if (isins == null || isins.Count > 1) return GetValues(dateFrom, dateTo, out interval, isins);
+            if (isins == null || isins.Count > 1) 
+                return GetValues(dateFrom, dateTo, out interval, isins);
 
             bool fromStart = dateFrom == null;
             var allPitValues = GetAllPitStockValues(dateFrom, dateTo, isins.ToArray());
@@ -118,7 +122,8 @@ namespace Services.Ui
             var dates = CreateIntervals(interval, firstDate, dateTo);
             List<ValuePointDto> points = GetPoints(pitValues, dates);
 
-            return ScalePointsForGraph(points);
+            var fractionOfTotalPortfolio = points.Last().TotalValue / stockOverviewService.TotalPortfolioValue;
+            return new PerformanceDto(ScalePointsForGraph(points), fractionOfTotalPortfolio);
         }
 
         private PerformanceInterval DetermineInterval(DateTime dateFirst, DateTime dateLast)
@@ -291,6 +296,18 @@ namespace Services.Ui
             }
 
             return new ValuePointDto(value+dividendPerShare, nextDate, dividendPerShare);
+        }
+    }
+
+    public class PerformanceDto
+    {
+        public List<ValuePointDto> Points { get; }
+        public double FractionOfTotalPortfolio { get; }
+
+        public PerformanceDto(List<ValuePointDto> points, double fractionOfTotalPortfolio)
+        {
+            Points = points;
+            FractionOfTotalPortfolio = fractionOfTotalPortfolio;
         }
     }
 

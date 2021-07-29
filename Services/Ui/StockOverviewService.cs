@@ -23,6 +23,8 @@ namespace Services.Ui
             this.db = db;
         }
 
+        public double TotalPortfolioValue => cachedStockList.Where(c => c.Name != Constants.Total).Sum(c => c.Value);
+
         public List<StockViewModel> GetStockList(bool reload, List<string> isins)
         {
             if (cachedStockList != null && !reload)

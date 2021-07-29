@@ -92,7 +92,8 @@ namespace Dashboard
                     throw new ArgumentOutOfRangeException($"Unsupported {nameof(Period)} {period}");
             }
 
-            var points = stockPerformanceService.GetValues(stockIsins, from, to, out PerformanceInterval interval);
+            var performanceDto = stockPerformanceService.GetValues(stockIsins, from, to, out PerformanceInterval interval);
+            var points = performanceDto.Points;
             if (points.Count == 0) 
                 return;
             var performance = points.Last().RelativeValue / points.First().RelativeValue-1;
@@ -122,7 +123,8 @@ namespace Dashboard
             else
                 chart.RemoveSeries("Dividend");
 
-            lblPeriod.Text = $"{PeriodText()}  ({interval} interval)";
+            string percOfPortfolio = performanceDto.FractionOfTotalPortfolio == 1 ? "" : $"{performanceDto.FractionOfTotalPortfolio:P1} of portfolio";
+            lblPeriod.Text = $"{PeriodText()}  ({interval} interval)  {percOfPortfolio}";
 
             List<ValuePointDto> CreateBaseLine()
             {
