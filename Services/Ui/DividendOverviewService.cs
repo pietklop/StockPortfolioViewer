@@ -46,7 +46,7 @@ namespace Services.Ui
                     percString += $" ({divFraction * stock.DividendPayoutInterval.ToYearMultiplier():P1})";
 
                 string dateString = dividend.TimeStamp.ToShortDateString();
-                if (LastDividendOfStock(dividend) && ExpectedNextDividend(stock.DividendPayoutInterval, dividend.TimeStamp))
+                if (LastDividendOfStock(dividend) && ExpectedNextDividendOrUnknown(stock.DividendPayoutInterval, dividend.TimeStamp))
                     dateString += "*";
 
                 list.Add(new DividendViewModel
@@ -63,8 +63,12 @@ namespace Services.Ui
 
             bool LastDividendOfStock(Dividend dividend) => dividends.First(d => d.StockId == dividend.StockId).Id == dividend.Id;
 
-            bool ExpectedNextDividend(DividendPayoutInterval interval, DateTime date)
+            bool ExpectedNextDividendOrUnknown(DividendPayoutInterval interval, DateTime date)
             {
+                if (interval == DividendPayoutInterval.Unknown || interval == DividendPayoutInterval.Accumulated)
+                    return true; // wrong/missing configuration
+                if (interval == DividendPayoutInterval.GrowthStock)
+                    return false;
                 int intervalInDays = (int)(365 / interval.ToYearMultiplier()) + 5;
                 return (DateTime.Now - date).TotalDays > intervalInDays;
             }

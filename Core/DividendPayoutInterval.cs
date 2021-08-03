@@ -5,6 +5,9 @@ namespace Core
     public enum DividendPayoutInterval
     {
         Unknown,
+        /// <summary>
+        /// No or temporary no payout
+        /// </summary>
         GrowthStock,
         Accumulated,
         PerMonth,
