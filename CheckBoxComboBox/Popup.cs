@@ -141,9 +141,7 @@ namespace PresentationControls
         public Popup(Control content)
         {
             if (content == null)
-            {
                 throw new ArgumentNullException("content");
-            }
             this.content = content;
             this.fade = SystemInformation.IsMenuAnimationEnabled && SystemInformation.IsMenuFadeEnabled;
             this._resizable = true;
@@ -157,7 +155,8 @@ namespace PresentationControls
             content.MinimumSize = content.Size;
             MaximumSize = content.MaximumSize;
             content.MaximumSize = content.Size;
-            Size = content.Size;
+            Size = new Size(500, 304);
+            //Size = content.Size;
             content.Location = Point.Empty;
             Items.Add(host);
             content.Disposed += delegate(object sender, EventArgs e)
