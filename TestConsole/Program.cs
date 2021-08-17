@@ -4,6 +4,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Castle.MicroKernel;
 using DAL;
 using DAL.Entities;
@@ -21,6 +23,7 @@ using StockDataApi.General;
 using StockDataApi.IexCloud;
 using StockDataApi.MarketStack;
 using StockDataApi.TwelveData;
+using TestConsole.Infrastructure;
 
 namespace TestConsole
 {
@@ -28,23 +31,29 @@ namespace TestConsole
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             XmlConfigurator.Configure(new FileInfo(@"log4net.config"));
             log.Info("Start");
 
-//            RemoveLargePositions();
-//            Test();
-//            Setup();
-//            Migrate();
+            var menu = new Menu();
 
-            Console.WriteLine("Done");
-            Console.ReadKey();
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+            menu.Add("Migrate", "Migrate", Migrate);
+            menu.Add("Large", "Remove positions", RemovePositions);
+            menu.Add("Test", "Test", Test);
+            menu.Add("Exit", "Exit", () => cancellationTokenSource.Cancel());
+
+            while (!cancellationTokenSource.Token.IsCancellationRequested)
+                await menu.RunAsync();
         }
 
-        public static void RemoveLargePositions(float removeLargerThan)
+        public static void RemovePositions()
         {
+            float? removeLargerThan = ReadLine.ReadValueType<float?>("Remove positions larger than", 1000);
+            if (removeLargerThan == null) return;
             log.Info($"Remove positions larger than: {removeLargerThan}");
             using (var db = new StockDbContext())
             {
@@ -137,7 +146,6 @@ namespace TestConsole
             {
                 log.Info($"Migrate...");
                 db.Database.Migrate();
-
 
                 db.SaveChanges();
             }
