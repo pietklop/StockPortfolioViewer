@@ -48,6 +48,8 @@ namespace Services.Ui
             var list = new List<StockViewModel>(stocks.Count());
 
             double totVirtualBuyValue = 0;
+            var valueProfitProduct7Days = 0d;
+            var valueProfitProduct30Days = 0d;
             foreach (var stock in stocks)
             {
                 var avgBuyPrice = stock.Transactions.DetermineAvgBuyUserPrice();
@@ -57,7 +59,7 @@ namespace Services.Ui
                 var virtualBuyValue = avgBuyPrice * nStocks;
                 totVirtualBuyValue += virtualBuyValue;
                 var profit = stock.Transactions.Sum(t => -t.Quantity * t.StockValue.UserPrice) + currentValue;
-                list.Add(new StockViewModel
+                var svm = new StockViewModel
                 {
                     Name = StockName(stock),
                     Isin = stock.Isin,
@@ -68,7 +70,10 @@ namespace Services.Ui
                     ProfitFractionLast7Days = ProfitFraction(stock, 7, nStocks),
                     LastPriceChange = LastUpdateSince(stock),
                     CompatibleDataRetrievers = string.Join(",", stock.StockRetrieverCompatibilities.OrderBy(c => c.DataRetriever.Priority).Where(c => c.DataRetriever.Priority > 0 && c.Compatibility == RetrieverCompatibility.True).Select(c => c.DataRetriever.Name.Substring(0, 3)))
-                });
+                };
+                list.Add(svm);
+                valueProfitProduct7Days += svm.Value * svm.ProfitFractionLast7Days;
+                valueProfitProduct30Days += svm.Value * svm.ProfitFractionLast30Days;
             }
 
             var totalValue = list.Sum(l => l.Value);
@@ -82,8 +87,8 @@ namespace Services.Ui
                 Value = totalValue,
                 Profit = totalProfit,
                 ProfitFraction = totalProfit / totVirtualBuyValue,
-                ProfitFractionLast30Days = double.NaN,
-                ProfitFractionLast7Days = double.NaN,
+                ProfitFractionLast30Days = valueProfitProduct30Days / totalValue,
+                ProfitFractionLast7Days = valueProfitProduct7Days / totalValue,
                 PortFolioFraction = list.Sum(l => l.PortFolioFraction),
             });
 
