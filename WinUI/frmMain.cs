@@ -105,11 +105,6 @@ namespace Dashboard
 
         private void SetDefaultButtonBackColor(Button button) => button.BackColor = Color.FromArgb(24, 30, 54);
 
-        private void btnClose_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
         private void ImportUsingFileDialog()
         {
             try
