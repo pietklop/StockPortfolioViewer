@@ -123,7 +123,7 @@ namespace Dashboard
             else
                 chart.RemoveSeries("Dividend");
 
-            string percOfPortfolio = performanceDto.FractionOfTotalPortfolio == 1 ? "" : $"{performanceDto.FractionOfTotalPortfolio:P1} of portfolio";
+            string percOfPortfolio = performanceDto.FractionOfTotalPortfolio == 1 ? "" : $"{performanceDto.FractionOfTotalPortfolio:P1} of (selected) portfolio";
             lblPeriod.Text = $"{PeriodText()}  ({interval} interval)  {percOfPortfolio}";
 
             List<ValuePointDto> CreateBaseLine()
