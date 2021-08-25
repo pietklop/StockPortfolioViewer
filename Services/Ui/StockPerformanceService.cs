@@ -204,7 +204,7 @@ namespace Services.Ui
                 if (divsToAddThisSpan.Any())
                 {
                     var quantity = Quantity(transactions, date);
-                    divAddedValue.Add(divsToAddThisSpan.Sum(d => d.UserValue) / quantity);
+                    divAddedValue.Add(divsToAddThisSpan.Sum(d => d.UserValue - d.UserCosts - d.UserTax) / quantity);
                     divsToAddThisSpan.ForEach(d => divsToAdd.Remove(d));
                 }
                 else
