@@ -36,9 +36,9 @@ namespace Services.Ui
             {
                 var stock = dividend.Stock;
                 var psv = ClosestValue(stock.StockValues, dividend.TimeStamp);
-                var currSymbol = dividend.Stock.Currency.Symbol;
                 var nStocksPit = stock.Transactions.Where(t => t.StockValue.TimeStamp < dividend.TimeStamp).Sum(t => t.Quantity);
-                var divFraction = dividend.UserValue / psv.UserPrice / nStocksPit;
+                var nettDividend = dividend.UserValue - dividend.UserTax - dividend.UserCosts;
+                var divFraction = nettDividend / psv.UserPrice / nStocksPit;
                 var percString = $"{divFraction:P2}";
                 if (stock.DividendPayoutInterval == DividendPayoutInterval.Unknown)
                     percString += $" (?)";
@@ -53,7 +53,9 @@ namespace Services.Ui
                 {
                     Name = stock.Name,
                     Date = dateString,
-                    Value = (dividend.UserValue).FormatUserCurrency(),
+                    NettValue = nettDividend.FormatUserCurrency(),
+                    Tax = dividend.UserTax.FormatUserCurrency(),
+                    Costs = dividend.UserCosts.FormatUserCurrency(),
                     PayoutInterval = stock.DividendPayoutInterval.ToString(),
                     Percentage = percString,
                 });
