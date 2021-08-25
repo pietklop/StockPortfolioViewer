@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Messages.UI;
 
@@ -74,6 +76,21 @@ namespace Dashboard.Helpers
             dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(0, 0, 0);
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(0, 126, 249);
             dgv.EnableHeadersVisualStyles = false;
+        }
+
+        public static void DoColumnOrdering<T>(this DataGridView dgv, List<T> dataSourceList, int columnIndex)
+        {
+            var column = dgv.Columns[columnIndex];
+            var colName = column.Name;
+            if (column.Tag == null)
+                column.Tag = SortOrder.Descending;
+            else if (column.Tag.GetType() != typeof(SortOrder))
+                throw new Exception($"Column.Tag is already used, so can not be (ab)used for column ordering state");
+            column.Tag = (SortOrder)column.Tag == SortOrder.Descending ? SortOrder.Ascending : SortOrder.Descending;
+
+            dgv.DataSource = (SortOrder)column.Tag == SortOrder.Ascending
+                ? dataSourceList.OrderBy(x => x.GetType().GetProperty(colName).GetValue(x)).ToList()
+                : dataSourceList.OrderByDescending(x => x.GetType().GetProperty(colName).GetValue(x)).ToList();
         }
     }
 }

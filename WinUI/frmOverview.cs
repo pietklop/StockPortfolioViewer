@@ -106,6 +106,12 @@ namespace Dashboard
                 frmMain.ShowStockDetails(name, isin);
         }
 
+        private void dgvStockList_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            var stockList = stockOverviewService.GetStockList(false, null);
+            dgvStockList.DoColumnOrdering(stockList, e.ColumnIndex);
+        }
+
         private void SetDistributionButtons(Button activeButton)
         {
             distributionButtons.ForEach(b => b.FlatAppearance.BorderSize = 0);

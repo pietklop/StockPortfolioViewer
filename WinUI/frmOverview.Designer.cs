@@ -74,6 +74,7 @@ namespace Dashboard
             this.dgvStockList.TabIndex = 0;
             this.dgvStockList.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvStockList_CellClick);
             this.dgvStockList.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvStockList_CellFormatting);
+            this.dgvStockList.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvStockList_ColumnHeaderMouseClick);
             this.dgvStockList.SelectionChanged += new System.EventHandler(this.dgvStockList_SelectionChanged);
             // 
             // btnDistributionCurrency
