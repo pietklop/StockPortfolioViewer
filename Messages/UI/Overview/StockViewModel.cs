@@ -12,9 +12,11 @@ namespace Messages.UI.Overview
         [ColumnCellsUnderline]
         public double Value { get; set; }
         [DisplayFormat("C0")]
+        [Description("Including nett dividend")]
         public double Profit { get; set; }
         [DisplayName("Profit")]
         [DisplayFormat("P1")]
+        [Description("Including nett dividend")]
         public double ProfitFraction { get; set; }
         [DisplayName("Portf.")]
         [DisplayFormat("P1")]
