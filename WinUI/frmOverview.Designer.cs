@@ -40,6 +40,7 @@ namespace Dashboard
             this.btnDistributionContinent = new System.Windows.Forms.Button();
             this.btnReloadGrid = new System.Windows.Forms.Button();
             this.btnSelect = new System.Windows.Forms.Button();
+            this.txtFilter = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvStockList)).BeginInit();
             this.SuspendLayout();
             // 
@@ -157,6 +158,14 @@ namespace Dashboard
             this.btnSelect.UseVisualStyleBackColor = false;
             this.btnSelect.Click += new System.EventHandler(this.btnSelect_Click);
             // 
+            // txtFilter
+            // 
+            this.txtFilter.Location = new System.Drawing.Point(595, 256);
+            this.txtFilter.Name = "txtFilter";
+            this.txtFilter.Size = new System.Drawing.Size(100, 23);
+            this.txtFilter.TabIndex = 7;
+            this.txtFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtFilter_KeyDown);
+            // 
             // frmOverview
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -164,6 +173,7 @@ namespace Dashboard
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(51)))), ((int)(((byte)(73)))));
             this.ClientSize = new System.Drawing.Size(933, 677);
             this.Controls.Add(this.chart);
+            this.Controls.Add(this.txtFilter);
             this.Controls.Add(this.btnSelect);
             this.Controls.Add(this.btnReloadGrid);
             this.Controls.Add(this.btnDistributionContinent);
@@ -177,6 +187,7 @@ namespace Dashboard
             this.Load += new System.EventHandler(this.frmOverview_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvStockList)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -190,5 +201,6 @@ namespace Dashboard
         private System.Windows.Forms.Button btnDistributionContinent;
         private System.Windows.Forms.Button btnReloadGrid;
         private System.Windows.Forms.Button btnSelect;
+        private System.Windows.Forms.TextBox txtFilter;
     }
 }

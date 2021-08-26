@@ -59,6 +59,15 @@ namespace Services
             return stock;
         }
 
+        public List<StockDto> GetStocks(string searchPattern)
+        {
+            var pattern = $"%{searchPattern}%";
+            return db.Stocks
+                .Where(j => EF.Functions.Like(j.Name, pattern) || EF.Functions.Like(j.Symbol, pattern))
+                .OrderBy(j => j.Name)
+                .Select(s => new StockDto{Name = s.Name, Isin = s.Isin, Symbol = s.Symbol}).ToList();
+        }
+
         public Stock UpdateStockPrice(string isin, double nativePrice, DateTime? lastPriceUpdate = null) =>
             UpdateStockPrice(GetStockOrThrow(isin), nativePrice, lastPriceUpdate);
 

@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Core;
 using Dashboard.Helpers;
 using Messages.UI.Overview;
+using Services;
 using Services.DI;
 using Services.Ui;
 
@@ -15,13 +16,16 @@ namespace Dashboard
     {
         private readonly frmMain frmMain;
         private readonly StockOverviewService stockOverviewService;
+        private readonly StockService stockService;
         private readonly PortfolioDistributionService portfolioDistributionService;
         private List<Button> distributionButtons = new List<Button>();
+        private int nTotalStocks;
 
-        public frmOverview(frmMain frmMain, StockOverviewService stockOverviewService, PortfolioDistributionService portfolioDistributionService)
+        public frmOverview(frmMain frmMain, StockOverviewService stockOverviewService, StockService stockService, PortfolioDistributionService portfolioDistributionService)
         {
             this.frmMain = frmMain;
             this.stockOverviewService = stockOverviewService;
+            this.stockService = stockService;
             this.portfolioDistributionService = portfolioDistributionService;
             InitializeComponent();
 
@@ -36,6 +40,10 @@ namespace Dashboard
             PopulateStockGrid();
             ChartHelper.ConfigPieChart(chart);
             btnDistributionArea_Click(btnDistributionArea, EventArgs.Empty);
+            if (nTotalStocks > 10)
+                txtFilter.BringToFront(); // to not hide behind graph control
+            else
+                txtFilter.Visible = false; // no use to show with little number of stocks
         }
 
         private void PopulatePieChart(PortfolioDistributionDto dto) =>
@@ -44,6 +52,7 @@ namespace Dashboard
         private void PopulateStockGrid(bool reload = false, List<string> isins = null)
         {
             var stockList = stockOverviewService.GetStockList(reload, isins);
+            if (nTotalStocks == 0) nTotalStocks = stockList.Count;
             dgvStockList.DataSource = stockList;
 
             // column configuration
@@ -154,6 +163,13 @@ namespace Dashboard
             using var form = CastleContainer.Resolve<Input.frmStockSelection>();
             if (form.ShowDialog(this) == DialogResult.OK && form.Stocks.Any())
                 PopulateStockGrid(true, form.Stocks.Select(s => s.Isin).ToList());
+        }
+
+        private void txtFilter_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter || txtFilter.TextLength < 2) return;
+            var stocks = stockService.GetStocks(txtFilter.Text);
+            PopulateStockGrid(true, stocks.Select(s => s.Isin).ToList());
         }
     }
 }
