@@ -32,9 +32,7 @@ namespace Dashboard
             var installer = DependencyInstaller.CreateInstaller(new FormInstaller());
             container.AddFacilities().Install(installer);
 
-            var settings = CastleContainer.Resolve<Settings>();
-            if (settings.RetrieveStockValuesAtStartup)
-                DoStartupActions();
+            DoStartupActions();
 
             var mainForm = CastleContainer.Resolve<frmMain>();
             Application.Run(mainForm);
@@ -46,7 +44,9 @@ namespace Dashboard
             {
                 var drMan = CastleContainer.Resolve<DataRetrieverManager>();
                 drMan.TryUpdateCurrencies();
-                drMan.TryUpdateStocks();
+                var settings = CastleContainer.Resolve<Settings>();
+                if (settings.RetrieveStockValuesAtStartup)
+                    drMan.TryUpdateStocks();
             }
             catch (Exception ex)
             {
