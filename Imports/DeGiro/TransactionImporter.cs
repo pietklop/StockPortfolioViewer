@@ -190,7 +190,7 @@ namespace Imports.DeGiro
                 return LineType.Na;
             if (actionField.StartsWith("Koersverandering"))
                 return LineType.Na;
-            if (actionField.StartsWith("Overboeking van uw"))
+            if (actionField.StartsWith("Overboeking "))
                 return LineType.Na;
 
             if (debugMode)
