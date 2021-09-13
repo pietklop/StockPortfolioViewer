@@ -10,6 +10,7 @@ namespace Services.DI
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(Component.For<StockDbContext>()
+                .LifestyleTransient()
                 .ImplementedBy<StockDbContext>()
                 .UsingFactoryMethod(() =>
                     new StockDbContext()));
