@@ -42,10 +42,13 @@ namespace Dashboard
 
         private void dgvTransactions_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            var qColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.Quantity)).Index;
+            var qColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.Value)).Index;
 
             if (qColumnIndex == e.ColumnIndex)
-                dgvTransactions.Rows[e.RowIndex].DefaultCellStyle.ForeColor = (double) e.Value > 0 ? Color.Gainsboro : Color.LightSlateGray;
+            {
+                var negative = ((string)e.Value).IndexOf('-') >= 0;
+                dgvTransactions.Rows[e.RowIndex].DefaultCellStyle.ForeColor = negative ? Color.LightSlateGray : Color.Gainsboro;
+            }
 
             var nameColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.Name)).Index;
             if (nameColumnIndex == e.ColumnIndex && ((string) e.Value).StartsWith(TransactionViewModel.SumOf))
