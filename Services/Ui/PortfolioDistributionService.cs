@@ -39,7 +39,9 @@ namespace Services.Ui
         public PortfolioDistributionDto GetAreaDistribution(string isin = null, bool groupByContinent = false)
         {
             var data = db.Stocks
+                .Include(s => s.LastKnownStockValue.StockValue)
                 .Include(s => s.StockValues)
+                .Include(s => s.Transactions)
                 .Include(s => s.AreaShares).ThenInclude(a => a.Area.Continent)
                 .Where(s => isin == null || s.Isin == isin)
                 .Where(s => s.Transactions.Sum(t => t.Quantity) > 0)
@@ -72,7 +74,9 @@ namespace Services.Ui
         public PortfolioDistributionDto GetSectorDistribution(string isin = null)
         {
             var data = db.Stocks
+                .Include(s => s.LastKnownStockValue.StockValue)
                 .Include(s => s.StockValues)
+                .Include(s => s.Transactions)
                 .Include(s => s.SectorShares).ThenInclude(a => a.Sector)
                 .Where(s => isin == null || s.Isin == isin)
                 .Where(s => s.Transactions.Sum(t => t.Quantity) > 0)
