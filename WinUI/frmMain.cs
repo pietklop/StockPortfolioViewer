@@ -19,6 +19,7 @@ namespace Dashboard
     {
         private readonly ILog log;
         private readonly Settings settings;
+        public int nTotalStocks;
 
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn

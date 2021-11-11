@@ -19,7 +19,6 @@ namespace Dashboard
         private readonly StockService stockService;
         private readonly PortfolioDistributionService portfolioDistributionService;
         private List<Button> distributionButtons = new List<Button>();
-        private int nTotalStocks;
 
         public frmOverview(frmMain frmMain, StockOverviewService stockOverviewService, StockService stockService, PortfolioDistributionService portfolioDistributionService)
         {
@@ -40,7 +39,7 @@ namespace Dashboard
             PopulateStockGrid();
             ChartHelper.ConfigPieChart(chart);
             btnDistributionArea_Click(btnDistributionArea, EventArgs.Empty);
-            if (nTotalStocks > 10)
+            if (frmMain.nTotalStocks > 10)
                 txtFilter.BringToFront(); // to not hide behind graph control
             else
                 txtFilter.Visible = false; // no use to show with little number of stocks
@@ -52,7 +51,7 @@ namespace Dashboard
         private void PopulateStockGrid(bool reload = false, List<string> isins = null)
         {
             var stockList = stockOverviewService.GetStockList(reload, isins);
-            if (nTotalStocks == 0) nTotalStocks = stockList.Count;
+            if (frmMain.nTotalStocks == 0) frmMain.nTotalStocks = stockList.Count;
             dgvStockList.DataSource = stockList;
 
             // column configuration
