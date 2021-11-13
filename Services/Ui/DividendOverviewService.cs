@@ -32,11 +32,13 @@ namespace Services.Ui
 
             var list = new List<DividendViewModel>(dividends.Count());
 
+            int nDaysDivExDiff = 14; // payout is always later then ex-div date
+
             foreach (var dividend in dividends)
             {
                 var stock = dividend.Stock;
                 var psv = ClosestValue(stock.StockValues, dividend.TimeStamp);
-                var nStocksPit = stock.Transactions.Where(t => t.StockValue.TimeStamp < dividend.TimeStamp).Sum(t => t.Quantity);
+                var nStocksPit = stock.Transactions.Where(t => t.StockValue.TimeStamp < dividend.TimeStamp.AddDays(-nDaysDivExDiff)).Sum(t => t.Quantity);
                 var nettDividend = dividend.UserValue - dividend.UserTax - dividend.UserCosts;
                 var divFraction = nettDividend / psv.UserPrice / nStocksPit;
                 var percString = $"{divFraction:P2}";
