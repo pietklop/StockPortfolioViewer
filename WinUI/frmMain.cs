@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Castle.Core.Internal;
 using Castle.MicroKernel;
 using Core;
 using Imports.DeGiro;
@@ -20,6 +21,20 @@ namespace Dashboard
         private readonly ILog log;
         private readonly Settings settings;
         public int nTotalStocks;
+        
+        public string SelectedStockName;
+        private string selectedStockIsin;
+        public string SelectedStockIsin
+        {
+            get => selectedStockIsin;
+            set
+            {
+                selectedStockIsin = value;
+                btnSingleTransactions.Visible = !selectedStockIsin.IsNullOrEmpty();
+                btnSingleDividends.Visible = !selectedStockIsin.IsNullOrEmpty();
+                btnSinglePerformance.Visible = !selectedStockIsin.IsNullOrEmpty();
+            }
+        }
 
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         private static extern IntPtr CreateRoundRectRgn
@@ -46,8 +61,12 @@ namespace Dashboard
             lblVersion.Text = $"v{version.Major}.{version.Minor}.{version.Build}";
         }
 
-        public void ShowStockDetails(string stockName, string isin) =>
-            LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockDetail>(new Arguments{{"stockIsin", isin}}));
+        public void ShowStockDetails(string stockName, string isin)
+        {
+            LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockDetail>(new Arguments { { "stockIsin", isin } }));
+            SelectedStockIsin = isin;
+            SelectedStockName = stockName;
+        }
 
         public void ShowStockPerformance(string stockName, string isin) =>
             LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockPerformance>(new Arguments{{"stockIsins", new List<string>{isin}}}));
@@ -66,6 +85,10 @@ namespace Dashboard
         private void btnDividends_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmDividends>());
         private void btnPerformance_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmStockPerformance>());
 
+        private void btnSingleTransactions_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Instance.Resolve<frmTransactions>(new Arguments {{ "stockIsin", SelectedStockIsin }}));
+        private void btnSingleDividends_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Instance.Resolve<frmDividends>(new Arguments {{ "stockIsin", SelectedStockIsin }}));
+        private void btnSinglePerformance_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Instance.Resolve<frmStockPerformance>(new Arguments {{ "stockIsins", new List<string>{ SelectedStockIsin }}}));
+
         private void btnDataRetrieval_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmDataRetrievers>());
         private void btnImport_Click(object sender, EventArgs e) => ImportUsingFileDialog();
 
@@ -81,7 +104,7 @@ namespace Dashboard
 
         private void LoadForm(string viewName, Form form)
         {
-            lblViewName.Text = viewName;
+            lblViewName.Text = viewName == "1" ? SelectedStockName : viewName;
             form.Dock = DockStyle.Fill;
             form.TopLevel = false;
             form.TopMost = true;
