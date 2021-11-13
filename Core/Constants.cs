@@ -23,6 +23,8 @@
         public const string Dividend = "Dividend";
         public const string DividendPayout = "Dividend payout";
         public const string ExpenseRatio = "Expense ratio";
+        public const string AlarmCondition = "Alarm condition";
+        public const string Remarks = "Remarks";
     }
 
 }

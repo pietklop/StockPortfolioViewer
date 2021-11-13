@@ -15,6 +15,12 @@ namespace DAL.Entities
         public LastKnownStockValue LastKnownStockValue { get; set; }
         public DividendPayoutInterval DividendPayoutInterval { get; set; }
         public double ExpenseRatio { get; set; }
+        public AlarmCondition AlarmCondition { get; set; }
+        /// <summary>
+        /// Native currency
+        /// </summary>
+        public double AlarmThreshold { get; set; }
+        public string Remarks { get; set; }
 
         public ICollection<Transaction> Transactions { get; set; }
         public ICollection<Dividend> Dividends { get; set; }

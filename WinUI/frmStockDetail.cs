@@ -116,6 +116,10 @@ namespace Dashboard
                 case StockDetailProperties.ExpenseRatio:
                     ChangeExpenseRatio();
                     break;
+                case StockDetailProperties.AlarmCondition:
+                case StockDetailProperties.Remarks:
+                    ChangeAlarmCondition();
+                    break;
             }
 
             void ChangeName()
@@ -231,6 +235,20 @@ namespace Dashboard
                     MessageBox.Show($"{input:P0}!? Thats expensive, i would take another one", "Wow", MessageBoxButtons.OK, MessageBoxIcon.Question);
                 db.Stocks.Single(s => s.Isin == stockIsin).ExpenseRatio = input.Value;
                 SaveAndUpdate($"{input:P2}");
+            }
+
+            void ChangeAlarmCondition()
+            {
+                var stock = db.Stocks.Single(s => s.Isin == stockIsin);
+
+                using var alarmConditionInputForm = new frmAlarmConditionInput(stock.AlarmCondition, stock.AlarmThreshold, stock.Remarks);
+                alarmConditionInputForm.ShowDialog(this);
+                if (alarmConditionInputForm.DialogResult != DialogResult.OK) return;
+
+                stock.AlarmCondition = alarmConditionInputForm.AlarmCondition;
+                stock.AlarmThreshold = alarmConditionInputForm.Threshold;
+                stock.Remarks = alarmConditionInputForm.Remarks;
+                db.SaveChanges();
             }
 
             void SaveAndUpdate(object newValue)

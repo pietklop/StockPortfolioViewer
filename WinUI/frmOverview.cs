@@ -87,6 +87,15 @@ namespace Dashboard
                     e.CellStyle.ForeColor = Color.Red;
             }
 
+            var nameColIndex = dgvStockList.GetColumn(nameof(StockViewModel.Name)).Index;
+            if (e.ColumnIndex == nameColIndex && e.Value != null)
+            {
+                if (((string)e.Value).EndsWith("-"))
+                    e.CellStyle.ForeColor = Color.Red;
+                else if (((string)e.Value).EndsWith("+"))
+                    e.CellStyle.ForeColor = Color.LawnGreen;
+            }
+
             var lastUpdateColIndex = dgvStockList.GetColumn(nameof(StockViewModel.LastPriceChange)).Index;
             if (e.ColumnIndex == lastUpdateColIndex && e.Value != null && ((string)e.Value).Contains("days"))
                 e.CellStyle.ForeColor = Color.Red;

@@ -61,7 +61,7 @@ namespace Services.Ui
                 var profit = stock.Transactions.Sum(t => -t.Quantity * t.StockValue.UserPrice) + currentValue;
                 var svm = new StockViewModel
                 {
-                    Name = StockName(stock),
+                    Name = $"{StockName(stock)}{AlarmSuffix(stock)}",
                     Isin = stock.Isin,
                     Value = currentValue,
                     Profit = profit,
@@ -117,6 +117,21 @@ namespace Services.Ui
                 if (historicValue <= 0) return 0;
                 var divPerShare = stock.Dividends.Where(d => d.TimeStamp > dateFrom).Sum(d => d.UserValue - d.UserCosts - d.UserTax) / nStocks;
                 return (stock.LastKnownUserPrice + divPerShare - historicValue) / historicValue;
+            }
+        }
+
+        private string AlarmSuffix(Stock stock)
+        {
+            switch (stock.AlarmCondition)
+            {
+                case AlarmCondition.None:
+                    return "";
+                case AlarmCondition.LowerThan:
+                    return stock.LastKnownStockValue.StockValue.NativePrice <= stock.AlarmThreshold ? "-" : "";
+                case AlarmCondition.HigherThan:
+                    return stock.LastKnownStockValue.StockValue.NativePrice >= stock.AlarmThreshold ? "+" : "";
+                default:
+                    throw new ArgumentOutOfRangeException($"Invalid {nameof(AlarmCondition)} {stock.AlarmCondition}");
             }
         }
     }
