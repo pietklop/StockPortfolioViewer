@@ -17,5 +17,6 @@ namespace Imports
         public double CurrencyRatio { get; set; }
         public double Tax { get; set; }
         public double Costs { get; set; }
+        public bool IsCapitalReturn { get; set; }
     }
 }

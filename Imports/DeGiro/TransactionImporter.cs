@@ -40,8 +40,9 @@ namespace Imports.DeGiro
                     case LineType.CurrencyConversion:
                         ProcessCurrencyConversion(fields, ref transactions, ref currConversions);
                         break;
+                    case LineType.CapitalReturn:
                     case LineType.Dividend:
-                        dividends.Add(ProcessDividend(fields));
+                        dividends.Add(ProcessDividend(fields, lineType == LineType.CapitalReturn));
                         break;
                     case LineType.DividendTax:
                         ProcessDividendTax(fields, ref dividends);
@@ -76,7 +77,7 @@ namespace Imports.DeGiro
         {
             var date = ExtractTimestamp(fields[dateColIndex]);
             var dividend = dividends.SingleOrDefault(d => d.Isin == fields[isinColIndex] && d.TimeStamp.Date == date.Date)
-                           ?? throw new Exception($"Could not max dividend tax for {fields[nameColIndex]}");
+                           ?? throw new Exception($"Could not calc dividend tax for {fields[nameColIndex]}");
             dividend.Tax = Math.Abs(fields[valueColIndex].ToDouble());
         }
 
@@ -86,7 +87,7 @@ namespace Imports.DeGiro
             transact.Costs += Math.Abs(fields[valueColIndex].ToDouble());
         }
 
-        private static DividendDto ProcessDividend(string[] fields)
+        private static DividendDto ProcessDividend(string[] fields, bool capitalReturn)
         {
             return new DividendDto
             {
@@ -95,6 +96,7 @@ namespace Imports.DeGiro
                 TimeStamp = ExtractTimestamp(fields[dateColIndex]),
                 Value = fields[valueColIndex].ToDouble(),
                 CurrencyRatio = fields[currencyColIndex] == Constants.UserCurrency ? 1 : 0, // ratio will be determined later because it is not provided in the same line
+                IsCapitalReturn = capitalReturn,
             };
         }
 
@@ -168,6 +170,8 @@ namespace Imports.DeGiro
                 return LineType.Na;
             if (actionField == "Flatex Interest")
                 return LineType.Na;
+            if (actionField == "Kapitaalsuitkering")
+                return LineType.CapitalReturn;
             if (actionField == "iDEAL storting")
                 return LineType.Na;
             if (actionField == "iDEAL Deposit")

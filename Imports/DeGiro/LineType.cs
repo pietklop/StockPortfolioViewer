@@ -5,6 +5,10 @@
         Unknown,
         Buy,
         Sell,
+        /// <summary>
+        /// Sort of dividend without tax
+        /// </summary>
+        CapitalReturn,
         CurrencyConversion,
         Dividend,
         DividendTax,
