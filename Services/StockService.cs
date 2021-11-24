@@ -206,6 +206,7 @@ namespace Services
         public bool AddDividend(DividendDto dto)
         {
             var stock = db.Stocks
+                            .Include(s => s.Currency)
                             .Include(s => s.Dividends)
                             .SingleOrDefault(s => s.Isin == dto.Isin) ?? throw new Exception($"Can not find stock {dto.Isin} to book dividend from {dto.TimeStamp.ToShortDateString()}");
             log.Info($"Create dividend for {stock} Value: {dto.Value} on {dto.TimeStamp.ToShortDateString()}");
