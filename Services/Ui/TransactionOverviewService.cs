@@ -58,7 +58,8 @@ namespace Services.Ui
                     Date = date.ToShortDateString(),
                     Quantity = transaction.Quantity,
                     Price = transaction.StockValue.NativePrice.FormatCurrency(currSymbol, false),
-                    Value = NativeValue(transaction).FormatCurrency(currSymbol),
+                    NativeValue = NativeValue(transaction).FormatCurrency(currSymbol),
+                    UserValue = UserValue(transaction).FormatUserCurrency(),
                     Costs = transaction.UserCosts.FormatUserCurrency(),
                     CurrRatio = CurrencyRatio(transaction),
                 });
@@ -82,7 +83,7 @@ namespace Services.Ui
                 list.Add(new TransactionViewModel
                 {
                     Name = $"{TransactionViewModel.SumOf} {new DateTime(2000, month, 1):MMMM} {year}",
-                    Value = monthlyTransactions.Sum(UserValue).FormatUserCurrency(),
+                    NativeValue = monthlyTransactions.Sum(UserValue).FormatUserCurrency(),
                     Quantity = monthlyTransactions.Sum(t => t.Quantity),
                 });
                 monthlyTransactions.Clear();
@@ -94,7 +95,7 @@ namespace Services.Ui
                 list.Add(new TransactionViewModel
                 {
                     Name = $"{TransactionViewModel.AnnualSumOf} {year}",
-                    Value = annualTransactions.Sum(UserValue).FormatUserCurrency(),
+                    NativeValue = annualTransactions.Sum(UserValue).FormatUserCurrency(),
                     Quantity = annualTransactions.Sum(t => t.Quantity),
                 });
                 annualTransactions.Clear();

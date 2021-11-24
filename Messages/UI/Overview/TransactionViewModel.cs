@@ -10,7 +10,8 @@ namespace Messages.UI.Overview
         public string Date { get; set; }
         public double Quantity { get; set; }
         public string Price { get; set; }
-        public string Value { get; set; }
+        public string NativeValue { get; set; }
+        public string UserValue { get; set; }
         public string Costs { get; set; }
         public string CurrRatio { get; set; }
     }

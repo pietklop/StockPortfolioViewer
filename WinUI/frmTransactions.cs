@@ -42,9 +42,8 @@ namespace Dashboard
 
         private void dgvTransactions_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            var qColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.Value)).Index;
-
-            if (qColumnIndex == e.ColumnIndex)
+            var nvColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.NativeValue)).Index;
+            if (nvColumnIndex == e.ColumnIndex)
             {
                 var negative = ((string)e.Value).IndexOf('-') >= 0;
                 dgvTransactions.Rows[e.RowIndex].DefaultCellStyle.ForeColor = negative ? Color.LightSlateGray : Color.Gainsboro;
