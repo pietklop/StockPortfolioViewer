@@ -111,6 +111,7 @@ namespace Dashboard
             this.btnImport.TabIndex = 8;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
             // btnMainOverview
             // 
