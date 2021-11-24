@@ -42,13 +42,15 @@ namespace Services.Ui
                 var nettDividend = dividend.UserValue - dividend.UserTax - dividend.UserCosts;
                 var divFraction = nettDividend / psv.UserPrice / nStocksPit;
                 var percString = $"{divFraction:P2}";
-                if (stock.DividendPayoutInterval == DividendPayoutInterval.Unknown)
+                if (dividend.IsCapitalReturn())
+                {}
+                else if (stock.DividendPayoutInterval == DividendPayoutInterval.Unknown)
                     percString += $" (?)";
                 else
                     percString += $" ({divFraction * stock.DividendPayoutInterval.ToYearMultiplier():P1})";
 
                 string dateString = dividend.TimeStamp.ToShortDateString();
-                if (LastDividendOfStock(dividend) && ExpectedNextDividendOrUnknown(stock.DividendPayoutInterval, dividend.TimeStamp))
+                if (!dividend.IsCapitalReturn() && LastDividendOfStock(dividend) && ExpectedNextDividendOrUnknown(stock.DividendPayoutInterval, dividend.TimeStamp))
                     dateString += "*";
 
                 list.Add(new DividendViewModel
@@ -56,16 +58,16 @@ namespace Services.Ui
                     Name = stock.Name,
                     Date = dateString,
                     NettValue = nettDividend.FormatUserCurrency(),
-                    Tax = dividend.UserTax.FormatUserCurrency(),
+                    Tax = dividend.IsCapitalReturn() ? "" : dividend.UserTax.FormatUserCurrency(),
                     Costs = dividend.UserCosts.FormatUserCurrency(),
-                    PayoutInterval = stock.DividendPayoutInterval.ToString(),
+                    PayoutInterval = dividend.IsCapitalReturn() ? "Cap. return" : stock.DividendPayoutInterval.ToString(),
                     Percentage = percString,
                 });
             }
 
             return list;
 
-            bool LastDividendOfStock(Dividend dividend) => dividends.First(d => d.StockId == dividend.StockId).Id == dividend.Id;
+            bool LastDividendOfStock(Dividend dividend) => dividends.Where(d => d.UserTax > 0).First(d => d.StockId == dividend.StockId).Id == dividend.Id;
 
             bool ExpectedNextDividendOrUnknown(DividendPayoutInterval interval, DateTime date)
             {
