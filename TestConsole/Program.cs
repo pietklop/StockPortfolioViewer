@@ -41,6 +41,7 @@ namespace TestConsole
 
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
+            menu.Add("Setup", "Create initial DB", CreateInitialDb);
             menu.Add("Migrate", "Migrate", Migrate);
             menu.Add("Large", "Remove positions", RemovePositions);
             menu.Add("Test", "Test", Test);
@@ -151,12 +152,15 @@ namespace TestConsole
             }
         }
 
-        public static void Setup()
+        public static void CreateInitialDb()
         {
             using (var db = new StockDbContext())
             {
                 log.Info($"Migrate and setup");
                 db.Database.Migrate();
+
+                if (db.Areas.Any())
+                    throw new Exception($"Seems that de db already contains data!");
 
                 DataRetrieverSetup.AddRetrievers(db);
                 AreaSetup.AddContinents(db);
