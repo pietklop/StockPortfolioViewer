@@ -131,6 +131,9 @@ namespace Services
             }
             ValidateEnoughToSell();
 
+            var giroCurrConvRate = 0.0025;
+            var currConvCosts = dto.Currency == Constants.UserCurrency ? 0 : dto.Price.ToUserCurrency(dto.CurrencyRatio) * giroCurrConvRate;
+
             var pitStockValue = GetOrCreatePitStockValue(stock.LastKnownStockValue == null);
             var trans = new Transaction
             {
@@ -138,7 +141,7 @@ namespace Services
                 StockValue = pitStockValue,
                 Created = DateTime.Now,
                 Quantity = dto.Quantity,
-                UserCosts = dto.Costs.ToUserCurrency(dto.CurrencyRatio, dto.Currency),
+                UserCosts = dto.Costs.ToUserCurrency(dto.CurrencyRatio, dto.Currency) + currConvCosts,
                 ExtRef = dto.Guid,
             };
 
