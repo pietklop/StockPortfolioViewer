@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Dashboard.Helpers;
 using Messages.UI.Overview;
+using Services;
 using Services.Ui;
 
 namespace Dashboard
@@ -9,11 +10,14 @@ namespace Dashboard
     public partial class frmTransactions : Form
     {
         private readonly TransactionOverviewService transactionOverviewService;
+        private readonly StockService stockService;
         private readonly string stockIsin;
+        private double currentPrice;
 
-        public frmTransactions(TransactionOverviewService transactionOverviewService, string stockIsin = null)
+        public frmTransactions(TransactionOverviewService transactionOverviewService, StockService stockService, string stockIsin = null)
         {
             this.transactionOverviewService = transactionOverviewService;
+            this.stockService = stockService;
             this.stockIsin = stockIsin;
             InitializeComponent();
         }
@@ -21,6 +25,18 @@ namespace Dashboard
         private void frmTransactions_Load(object sender, System.EventArgs e)
         {
             PopulateStockGrid();
+            ShowCurrentPrice();
+        }
+
+        private void ShowCurrentPrice()
+        {
+            if (stockIsin == null) return;
+
+            var stock = stockService.GetStockOrThrow(stockIsin);
+            currentPrice = stock.LastKnownStockValue.StockValue.NativePrice;
+            lblCurrentPrice.Text = currentPrice.FormatCurrency(stock.Currency.Symbol, false);
+            lblCurrentPriceT.Visible = true;
+            lblCurrentPrice.Visible = true;
         }
 
         private void PopulateStockGrid()
@@ -47,6 +63,21 @@ namespace Dashboard
             {
                 var negative = ((string)e.Value).IndexOf('-') >= 0;
                 dgvTransactions.Rows[e.RowIndex].DefaultCellStyle.ForeColor = negative ? Color.LightSlateGray : Color.Gainsboro;
+            }
+
+            if (stockIsin != null)
+            {
+                var priceColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.Price)).Index;
+                if (priceColumnIndex == e.ColumnIndex)
+                {
+                    var hiddenPriceColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.HiddenPrice)).Index;
+
+                    var value = (double)dgvTransactions[hiddenPriceColumnIndex, e.RowIndex].Value;
+                    if (value > currentPrice)
+                        e.CellStyle.ForeColor = Color.Red;
+                    else if (value < currentPrice)
+                        e.CellStyle.ForeColor = Color.LawnGreen;
+                }
             }
 
             var nameColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.Name)).Index;

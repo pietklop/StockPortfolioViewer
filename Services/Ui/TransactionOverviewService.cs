@@ -62,6 +62,7 @@ namespace Services.Ui
                     UserValue = UserValue(transaction).FormatUserCurrency(),
                     Costs = transaction.UserCosts.FormatUserCurrency(),
                     CurrRatio = CurrencyRatio(transaction),
+                    HiddenPrice = transaction.StockValue.NativePrice,
                 });
             }
 

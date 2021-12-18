@@ -14,5 +14,7 @@ namespace Messages.UI.Overview
         public string UserValue { get; set; }
         public string Costs { get; set; }
         public string CurrRatio { get; set; }
+        [ColumnHide]
+        public double HiddenPrice { get; set; }
     }
 }
