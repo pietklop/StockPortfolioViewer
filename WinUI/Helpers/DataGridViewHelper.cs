@@ -20,6 +20,12 @@ namespace Dashboard.Helpers
                 var p = properties[column.DataPropertyName];
                 if (p != null)
                 {
+                    var hide = (ColumnHideAttribute)p.Attributes[typeof(ColumnHideAttribute)];
+                    if (hide != null)
+                    {
+                        column.Visible = false;
+                        break;
+                    }
                     var format = (DisplayFormatAttribute)p.Attributes[typeof(DisplayFormatAttribute)];
                     column.ToolTipText = p.Description;
                     column.DefaultCellStyle.Format = format?.Format;
