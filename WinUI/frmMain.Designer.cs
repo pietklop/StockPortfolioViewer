@@ -32,6 +32,7 @@ namespace Dashboard
             this.components = new System.ComponentModel.Container();
             this.pnlMenu = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.btnStockDetails = new System.Windows.Forms.Button();
             this.btnImport = new System.Windows.Forms.Button();
             this.btnMainOverview = new System.Windows.Forms.Button();
             this.btnDataRetrieval = new System.Windows.Forms.Button();
@@ -63,20 +64,20 @@ namespace Dashboard
             this.pnlMenu.Controls.Add(this.pnlNav);
             this.pnlMenu.Controls.Add(this.pnlInfo);
             this.pnlMenu.Dock = System.Windows.Forms.DockStyle.Left;
-            this.pnlMenu.Location = new System.Drawing.Point(0, 64);
-            this.pnlMenu.Margin = new System.Windows.Forms.Padding(6);
+            this.pnlMenu.Location = new System.Drawing.Point(0, 30);
             this.pnlMenu.Name = "pnlMenu";
-            this.pnlMenu.Size = new System.Drawing.Size(345, 1594);
+            this.pnlMenu.Size = new System.Drawing.Size(186, 747);
             this.pnlMenu.TabIndex = 0;
             // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.btnImport, 0, 6);
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+            this.tableLayoutPanel1.Controls.Add(this.btnStockDetails, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.btnImport, 0, 7);
             this.tableLayoutPanel1.Controls.Add(this.btnMainOverview, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.btnDataRetrieval, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.btnDataRetrieval, 0, 6);
             this.tableLayoutPanel1.Controls.Add(this.btnPerformance, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.btnTransactions, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.btnDividends, 0, 2);
@@ -84,18 +85,35 @@ namespace Dashboard
             this.tableLayoutPanel1.Controls.Add(this.btnSingleDividends, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.btnSinglePerformance, 1, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 307);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 144);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 7;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 85F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 85F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 85F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 85F));
+            this.tableLayoutPanel1.RowCount = 8;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 85F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 85F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(345, 1287);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(186, 603);
             this.tableLayoutPanel1.TabIndex = 6;
+            // 
+            // btnStockDetails
+            // 
+            this.btnStockDetails.Enabled = false;
+            this.btnStockDetails.FlatAppearance.BorderSize = 0;
+            this.btnStockDetails.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnStockDetails.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btnStockDetails.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
+            this.btnStockDetails.Location = new System.Drawing.Point(3, 163);
+            this.btnStockDetails.Name = "btnStockDetails";
+            this.btnStockDetails.Size = new System.Drawing.Size(152, 34);
+            this.btnStockDetails.TabIndex = 11;
+            this.btnStockDetails.Text = "Stock details";
+            this.btnStockDetails.UseVisualStyleBackColor = true;
+            this.btnStockDetails.Click += new System.EventHandler(this.btnStockDetails_Click);
             // 
             // btnImport
             // 
@@ -104,10 +122,9 @@ namespace Dashboard
             this.btnImport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnImport.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnImport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
-            this.btnImport.Location = new System.Drawing.Point(6, 1208);
-            this.btnImport.Margin = new System.Windows.Forms.Padding(6);
+            this.btnImport.Location = new System.Drawing.Point(3, 566);
             this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(283, 73);
+            this.btnImport.Size = new System.Drawing.Size(153, 34);
             this.btnImport.TabIndex = 8;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
@@ -119,10 +136,9 @@ namespace Dashboard
             this.btnMainOverview.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnMainOverview.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnMainOverview.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
-            this.btnMainOverview.Location = new System.Drawing.Point(6, 6);
-            this.btnMainOverview.Margin = new System.Windows.Forms.Padding(6);
+            this.btnMainOverview.Location = new System.Drawing.Point(3, 3);
             this.btnMainOverview.Name = "btnMainOverview";
-            this.btnMainOverview.Size = new System.Drawing.Size(283, 73);
+            this.btnMainOverview.Size = new System.Drawing.Size(152, 34);
             this.btnMainOverview.TabIndex = 1;
             this.btnMainOverview.Text = "Main overview";
             this.btnMainOverview.UseVisualStyleBackColor = true;
@@ -135,10 +151,9 @@ namespace Dashboard
             this.btnDataRetrieval.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDataRetrieval.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnDataRetrieval.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
-            this.btnDataRetrieval.Location = new System.Drawing.Point(6, 1123);
-            this.btnDataRetrieval.Margin = new System.Windows.Forms.Padding(6);
+            this.btnDataRetrieval.Location = new System.Drawing.Point(3, 526);
             this.btnDataRetrieval.Name = "btnDataRetrieval";
-            this.btnDataRetrieval.Size = new System.Drawing.Size(283, 73);
+            this.btnDataRetrieval.Size = new System.Drawing.Size(152, 34);
             this.btnDataRetrieval.TabIndex = 3;
             this.btnDataRetrieval.Text = "Data retrieval";
             this.btnDataRetrieval.UseVisualStyleBackColor = true;
@@ -150,10 +165,9 @@ namespace Dashboard
             this.btnPerformance.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPerformance.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnPerformance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
-            this.btnPerformance.Location = new System.Drawing.Point(6, 261);
-            this.btnPerformance.Margin = new System.Windows.Forms.Padding(6);
+            this.btnPerformance.Location = new System.Drawing.Point(3, 123);
             this.btnPerformance.Name = "btnPerformance";
-            this.btnPerformance.Size = new System.Drawing.Size(283, 73);
+            this.btnPerformance.Size = new System.Drawing.Size(152, 34);
             this.btnPerformance.TabIndex = 5;
             this.btnPerformance.Text = "Performance";
             this.btnPerformance.UseVisualStyleBackColor = true;
@@ -165,10 +179,9 @@ namespace Dashboard
             this.btnTransactions.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnTransactions.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnTransactions.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
-            this.btnTransactions.Location = new System.Drawing.Point(6, 91);
-            this.btnTransactions.Margin = new System.Windows.Forms.Padding(6);
+            this.btnTransactions.Location = new System.Drawing.Point(3, 43);
             this.btnTransactions.Name = "btnTransactions";
-            this.btnTransactions.Size = new System.Drawing.Size(280, 73);
+            this.btnTransactions.Size = new System.Drawing.Size(151, 34);
             this.btnTransactions.TabIndex = 1;
             this.btnTransactions.Text = "Transactions";
             this.btnTransactions.UseVisualStyleBackColor = true;
@@ -181,10 +194,9 @@ namespace Dashboard
             this.btnDividends.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDividends.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnDividends.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
-            this.btnDividends.Location = new System.Drawing.Point(6, 176);
-            this.btnDividends.Margin = new System.Windows.Forms.Padding(6);
+            this.btnDividends.Location = new System.Drawing.Point(3, 83);
             this.btnDividends.Name = "btnDividends";
-            this.btnDividends.Size = new System.Drawing.Size(283, 73);
+            this.btnDividends.Size = new System.Drawing.Size(152, 34);
             this.btnDividends.TabIndex = 4;
             this.btnDividends.Text = "Dividends";
             this.btnDividends.UseVisualStyleBackColor = true;
@@ -198,10 +210,9 @@ namespace Dashboard
             this.btnSingleTransactions.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSingleTransactions.Font = new System.Drawing.Font("Nirmala UI", 10.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnSingleTransactions.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
-            this.btnSingleTransactions.Location = new System.Drawing.Point(301, 91);
-            this.btnSingleTransactions.Margin = new System.Windows.Forms.Padding(6);
+            this.btnSingleTransactions.Location = new System.Drawing.Point(162, 43);
             this.btnSingleTransactions.Name = "btnSingleTransactions";
-            this.btnSingleTransactions.Size = new System.Drawing.Size(38, 73);
+            this.btnSingleTransactions.Size = new System.Drawing.Size(21, 34);
             this.btnSingleTransactions.TabIndex = 7;
             this.btnSingleTransactions.Text = "1";
             this.btnSingleTransactions.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -216,10 +227,9 @@ namespace Dashboard
             this.btnSingleDividends.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSingleDividends.Font = new System.Drawing.Font("Nirmala UI", 10.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnSingleDividends.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
-            this.btnSingleDividends.Location = new System.Drawing.Point(301, 176);
-            this.btnSingleDividends.Margin = new System.Windows.Forms.Padding(6);
+            this.btnSingleDividends.Location = new System.Drawing.Point(162, 83);
             this.btnSingleDividends.Name = "btnSingleDividends";
-            this.btnSingleDividends.Size = new System.Drawing.Size(38, 73);
+            this.btnSingleDividends.Size = new System.Drawing.Size(21, 34);
             this.btnSingleDividends.TabIndex = 9;
             this.btnSingleDividends.Text = "1";
             this.btnSingleDividends.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -234,10 +244,9 @@ namespace Dashboard
             this.btnSinglePerformance.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSinglePerformance.Font = new System.Drawing.Font("Nirmala UI", 10.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnSinglePerformance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
-            this.btnSinglePerformance.Location = new System.Drawing.Point(301, 261);
-            this.btnSinglePerformance.Margin = new System.Windows.Forms.Padding(6);
+            this.btnSinglePerformance.Location = new System.Drawing.Point(162, 123);
             this.btnSinglePerformance.Name = "btnSinglePerformance";
-            this.btnSinglePerformance.Size = new System.Drawing.Size(38, 73);
+            this.btnSinglePerformance.Size = new System.Drawing.Size(21, 34);
             this.btnSinglePerformance.TabIndex = 10;
             this.btnSinglePerformance.Text = "1";
             this.btnSinglePerformance.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -248,10 +257,9 @@ namespace Dashboard
             // pnlNav
             // 
             this.pnlNav.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
-            this.pnlNav.Location = new System.Drawing.Point(0, 427);
-            this.pnlNav.Margin = new System.Windows.Forms.Padding(6);
+            this.pnlNav.Location = new System.Drawing.Point(0, 200);
             this.pnlNav.Name = "pnlNav";
-            this.pnlNav.Size = new System.Drawing.Size(9, 213);
+            this.pnlNav.Size = new System.Drawing.Size(5, 100);
             this.pnlNav.TabIndex = 2;
             // 
             // pnlInfo
@@ -260,9 +268,8 @@ namespace Dashboard
             this.pnlInfo.Controls.Add(this.lblVersion);
             this.pnlInfo.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlInfo.Location = new System.Drawing.Point(0, 0);
-            this.pnlInfo.Margin = new System.Windows.Forms.Padding(6);
             this.pnlInfo.Name = "pnlInfo";
-            this.pnlInfo.Size = new System.Drawing.Size(345, 307);
+            this.pnlInfo.Size = new System.Drawing.Size(186, 144);
             this.pnlInfo.TabIndex = 0;
             // 
             // lblSpv
@@ -270,10 +277,9 @@ namespace Dashboard
             this.lblSpv.AutoSize = true;
             this.lblSpv.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.lblSpv.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblSpv.Location = new System.Drawing.Point(6, 0);
-            this.lblSpv.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lblSpv.Location = new System.Drawing.Point(3, 0);
             this.lblSpv.Name = "lblSpv";
-            this.lblSpv.Size = new System.Drawing.Size(84, 37);
+            this.lblSpv.Size = new System.Drawing.Size(44, 20);
             this.lblSpv.TabIndex = 6;
             this.lblSpv.Text = "SPV";
             // 
@@ -282,20 +288,18 @@ namespace Dashboard
             this.lblVersion.AutoSize = true;
             this.lblVersion.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblVersion.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblVersion.Location = new System.Drawing.Point(6, 43);
-            this.lblVersion.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lblVersion.Location = new System.Drawing.Point(3, 20);
             this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(106, 26);
+            this.lblVersion.Size = new System.Drawing.Size(53, 13);
             this.lblVersion.TabIndex = 5;
             this.lblVersion.Text = "version ...";
             // 
             // pnlFormLoader
             // 
             this.pnlFormLoader.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlFormLoader.Location = new System.Drawing.Point(345, 213);
-            this.pnlFormLoader.Margin = new System.Windows.Forms.Padding(6);
+            this.pnlFormLoader.Location = new System.Drawing.Point(186, 100);
             this.pnlFormLoader.Name = "pnlFormLoader";
-            this.pnlFormLoader.Size = new System.Drawing.Size(1792, 1444);
+            this.pnlFormLoader.Size = new System.Drawing.Size(965, 677);
             this.pnlFormLoader.TabIndex = 2;
             // 
             // metroStyleFormManager
@@ -309,10 +313,9 @@ namespace Dashboard
             this.pnlTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(51)))), ((int)(((byte)(73)))));
             this.pnlTitle.Controls.Add(this.lblViewName);
             this.pnlTitle.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlTitle.Location = new System.Drawing.Point(345, 64);
-            this.pnlTitle.Margin = new System.Windows.Forms.Padding(6);
+            this.pnlTitle.Location = new System.Drawing.Point(186, 30);
             this.pnlTitle.Name = "pnlTitle";
-            this.pnlTitle.Size = new System.Drawing.Size(1793, 149);
+            this.pnlTitle.Size = new System.Drawing.Size(965, 70);
             this.pnlTitle.TabIndex = 1;
             // 
             // lblViewName
@@ -320,28 +323,27 @@ namespace Dashboard
             this.lblViewName.AutoSize = true;
             this.lblViewName.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblViewName.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblViewName.Location = new System.Drawing.Point(529, 34);
-            this.lblViewName.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lblViewName.Location = new System.Drawing.Point(285, 16);
             this.lblViewName.Name = "lblViewName";
-            this.lblViewName.Size = new System.Drawing.Size(381, 79);
+            this.lblViewName.Size = new System.Drawing.Size(188, 39);
             this.lblViewName.TabIndex = 4;
             this.lblViewName.Text = "View name";
             // 
             // frmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.ClientSize = new System.Drawing.Size(2138, 1658);
+            this.ClientSize = new System.Drawing.Size(1151, 777);
             this.Controls.Add(this.pnlTitle);
             this.Controls.Add(this.pnlFormLoader);
             this.Controls.Add(this.pnlMenu);
             this.DisplayHeader = false;
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(1);
             this.MaximizeBox = false;
             this.Name = "frmMain";
-            this.Padding = new System.Windows.Forms.Padding(0, 64, 0, 0);
+            this.Padding = new System.Windows.Forms.Padding(0, 30, 0, 0);
             this.Resizable = false;
             this.Text = "SPV";
             this.pnlMenu.ResumeLayout(false);
@@ -376,6 +378,7 @@ namespace Dashboard
         private System.Windows.Forms.Button btnSingleTransactions;
         private System.Windows.Forms.Button btnSingleDividends;
         private System.Windows.Forms.Button btnSinglePerformance;
+        private System.Windows.Forms.Button btnStockDetails;
     }
 }
 

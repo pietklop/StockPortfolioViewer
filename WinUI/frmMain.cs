@@ -14,6 +14,7 @@ using Imports.DeGiro;
 using log4net;
 using Services;
 using Services.DI;
+using Services.Helpers;
 using Syroot.Windows.IO;
 
 namespace Dashboard
@@ -68,6 +69,8 @@ namespace Dashboard
             LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockDetail>(new Arguments { { "stockIsin", isin } }));
             SelectedStockIsin = isin;
             SelectedStockName = stockName;
+            btnStockDetails.Text = $"{stockName.MaxLength(10)} details";
+            btnStockDetails.Enabled = true;
         }
 
         public void ShowStockPerformance(string stockName, string isin) =>
@@ -86,6 +89,7 @@ namespace Dashboard
         private void btnTransactions_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmTransactions>());
         private void btnDividends_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmDividends>());
         private void btnPerformance_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmStockPerformance>());
+        private void btnStockDetails_Click(object sender, EventArgs e) => ShowStockDetails(SelectedStockName, selectedStockIsin);
 
         private void btnSingleTransactions_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Instance.Resolve<frmTransactions>(new Arguments {{ "stockIsin", SelectedStockIsin }}));
         private void btnSingleDividends_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Instance.Resolve<frmDividends>(new Arguments {{ "stockIsin", SelectedStockIsin }}));
