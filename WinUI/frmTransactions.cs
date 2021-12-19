@@ -70,13 +70,19 @@ namespace Dashboard
                 var priceColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.Price)).Index;
                 if (priceColumnIndex == e.ColumnIndex)
                 {
-                    var hiddenPriceColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.HiddenPrice)).Index;
+                    var quantityColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.Quantity)).Index;
+                    var bought = (double)dgvTransactions[quantityColumnIndex, e.RowIndex].Value > 0;
 
-                    var value = (double)dgvTransactions[hiddenPriceColumnIndex, e.RowIndex].Value;
-                    if (value > currentPrice)
-                        e.CellStyle.ForeColor = Color.Red;
-                    else if (value < currentPrice)
-                        e.CellStyle.ForeColor = Color.LawnGreen;
+                    if (bought)
+                    {
+                        var hiddenPriceColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.HiddenPrice)).Index;
+
+                        var value = (double)dgvTransactions[hiddenPriceColumnIndex, e.RowIndex].Value;
+                        if (value > currentPrice)
+                            e.CellStyle.ForeColor = Color.Red;
+                        else if (value < currentPrice)
+                            e.CellStyle.ForeColor = Color.LawnGreen;
+                    }
                 }
             }
 
