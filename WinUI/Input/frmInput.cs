@@ -14,11 +14,16 @@ namespace Dashboard.Input
             InitializeComponent();
             lblInputT.Text = caption;
             this.inputType = inputType;
-            if (inputType == InputType.Confirmation)
+
+            if (caption.Length > 10)
             {
-                txtInput.Visible = false;
-                lblInputT.MaximumSize = new Size(txtInput.Width, 150);
+                Width = 200;
+                if (inputType == InputType.Confirmation) // space for multiline
+                    lblInputT.MaximumSize = new Size(Width - 30, 150);
             }
+
+            if (inputType == InputType.Confirmation)
+                txtInput.Visible = false;
             else if (defaultValue != null)
             {
                 txtInput.Text = defaultValue;
