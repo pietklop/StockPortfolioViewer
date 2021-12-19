@@ -132,7 +132,8 @@ namespace Services
             ValidateEnoughToSell();
 
             var giroCurrConvRate = 0.0025;
-            var currConvCosts = dto.Currency == Constants.UserCurrency ? 0 : dto.Price.ToUserCurrency(dto.CurrencyRatio) * giroCurrConvRate;
+            var giroCurrConvExtraFee = 0.5;
+            var currConvCosts = dto.Currency == Constants.UserCurrency ? 0 : dto.Price.ToUserCurrency(dto.CurrencyRatio) * giroCurrConvRate + giroCurrConvExtraFee;
 
             var pitStockValue = GetOrCreatePitStockValue(stock.LastKnownStockValue == null);
             var trans = new Transaction
