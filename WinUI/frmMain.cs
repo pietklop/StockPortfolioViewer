@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Castle.Core.Internal;
 using Castle.MicroKernel;
 using Core;
+using Dashboard.Input;
 using Imports.DeGiro;
 using log4net;
 using Services;
@@ -90,7 +92,7 @@ namespace Dashboard
         private void btnSinglePerformance_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Instance.Resolve<frmStockPerformance>(new Arguments {{ "stockIsins", new List<string>{ SelectedStockIsin }}}));
 
         private void btnDataRetrieval_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmDataRetrievers>());
-        private void btnImport_Click(object sender, EventArgs e) => ImportUsingFileDialog();
+        private void btnImport_Click(object sender, EventArgs e) => HandleImport();
 
         private void btnMainOverview_Leave(object sender, EventArgs e) => SetDefaultButtonBackColor((Button)sender);
         private void btnTransactions_Leave(object sender, EventArgs e) => SetDefaultButtonBackColor((Button)sender);
@@ -129,6 +131,51 @@ namespace Dashboard
 
         private void SetDefaultButtonBackColor(Button button) => button.BackColor = Color.FromArgb(24, 30, 54);
 
+        private void HandleImport()
+        {
+            if (TryImportNewPortfolio()) return;
+            ImportUsingFileDialog();
+        }
+
+        private bool TryImportNewPortfolio()
+        {
+            try
+            {
+                var lastFileDt = Properties.UserSettings.Default.LastPortfolioImportFileDate;
+
+                string pattern = "*Portfolio*.csv";
+                var downloadsPath = new KnownFolder(KnownFolderType.Downloads).Path;
+                var dirInfo = new DirectoryInfo(downloadsPath);
+                var file = (from f in dirInfo.GetFiles(pattern) orderby f.LastWriteTime descending select f).FirstOrDefault();
+                if (file == null) return false;
+
+                if (file.LastWriteTime.Date <= lastFileDt.Date) return false;
+
+                Properties.UserSettings.Default.LastPortfolioImportFileDate = file.LastWriteTime;
+                Properties.UserSettings.Default.Save();
+
+                bool doImport = InputHelper.GetConfirmation(this, $"Import '{file.Name}'?");
+
+                if (!doImport) return false;
+
+                var importer = CastleContainer.Resolve<Importer>();
+                var importProcessor = CastleContainer.Resolve<ImportProcessor>();
+
+                int nAddedDividends = 0;
+                int nStockValueUpdates = 0;
+                int nAddedTransactions = ImportFile(file.FullName, importer, importProcessor, 0, ref nAddedDividends, ref nStockValueUpdates);
+
+                DoPostImportActions(nAddedTransactions, nAddedDividends, nStockValueUpdates);
+
+            }
+            catch (Exception ex)
+            {
+                ShowImportException(ex);
+            }
+
+            return true;
+        }
+
         private void ImportUsingFileDialog()
         {
             try
@@ -150,45 +197,60 @@ namespace Dashboard
                     int nAddedDividends = 0;
                     int nStockValueUpdates = 0;
                     foreach (var filePath in openFileDialog.FileNames)
-                    {
-                        log.Debug($"Try import: '{filePath}'");
-                        var lines = File.ReadAllLines(filePath);
+                        nAddedTransactions = ImportFile(filePath, importer, importProcessor, nAddedTransactions, ref nAddedDividends, ref nStockValueUpdates);
 
-                        switch (importer.DetermineImportType(lines))
-                        {
-                            case ImportType.Transaction:
-                                (int nT, int nDiv) = importProcessor.Process(importer.TransactionImport(lines, settings.DebugMode));
-                                nAddedTransactions += nT;
-                                nAddedDividends += nDiv;
-                                break;
-                            case ImportType.StockValue:
-                                nStockValueUpdates = importProcessor.Process(importer.StockValueImport(lines));
-                                break;
-                            default:
-                                MessageBox.Show($"Unrecognized file content", "Import result", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                break;
-                        }
-                    }
-
-                    if (nAddedTransactions == 0 && nAddedDividends == 0)
-                    {
-                        if (nStockValueUpdates > 0)
-                            MessageBox.Show($"Successfully updated {nStockValueUpdates} stocks", "Import result", MessageBoxButtons.OK);
-                        else
-                            MessageBox.Show($"No transactions or dividends are added. Possibly these were already imported earlier", "Import result", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
-                    else    
-                        MessageBox.Show($"Successfully added {nAddedTransactions} transactions and {nAddedDividends} dividends", "Import result", MessageBoxButtons.OK);
-
-                    var formOverview = pnlFormLoader.Controls[0] as frmOverview;
-                    formOverview?.Reload();
+                    DoPostImportActions(nAddedTransactions, nAddedDividends, nStockValueUpdates);
                 }
             }
             catch (Exception ex)
             {
-                log.Error($"Error during import", ex);
-                MessageBox.Show($"Error occured during file import: '{ex.Message}'. See log for more details", "Import results", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowImportException(ex);
             }
+        }
+
+        private void ShowImportException(Exception ex)
+        {
+            log.Error($"Error during import", ex);
+            MessageBox.Show($"Error occured during file import: '{ex.Message}'. See log for more details", "Import results", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void DoPostImportActions(int nAddedTransactions, int nAddedDividends, int nStockValueUpdates)
+        {
+            if (nAddedTransactions == 0 && nAddedDividends == 0)
+            {
+                if (nStockValueUpdates > 0)
+                    MessageBox.Show($"Successfully updated {nStockValueUpdates} stocks", "Import result", MessageBoxButtons.OK);
+                else
+                    MessageBox.Show($"No transactions or dividends are added. Possibly these were already imported earlier", "Import result", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else
+                MessageBox.Show($"Successfully added {nAddedTransactions} transactions and {nAddedDividends} dividends", "Import result", MessageBoxButtons.OK);
+
+            var formOverview = pnlFormLoader.Controls[0] as frmOverview;
+            formOverview?.Reload();
+        }
+
+        private int ImportFile(string filePath, Importer importer, ImportProcessor importProcessor, int nAddedTransactions, ref int nAddedDividends, ref int nStockValueUpdates)
+        {
+            log.Debug($"Try import: '{filePath}'");
+            var lines = File.ReadAllLines(filePath);
+
+            switch (importer.DetermineImportType(lines))
+            {
+                case ImportType.Transaction:
+                    (int nT, int nDiv) = importProcessor.Process(importer.TransactionImport(lines, settings.DebugMode));
+                    nAddedTransactions += nT;
+                    nAddedDividends += nDiv;
+                    break;
+                case ImportType.StockValue:
+                    nStockValueUpdates = importProcessor.Process(importer.StockValueImport(lines));
+                    break;
+                default:
+                    MessageBox.Show($"Unrecognized file content", "Import result", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+            }
+
+            return nAddedTransactions;
         }
     }
 }
