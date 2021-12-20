@@ -156,6 +156,8 @@ namespace Imports.DeGiro
                 return LineType.Na;
             if (actionField == "DEGIRO transactiekosten")
                 return LineType.TransactionCosts;
+            if (actionField == "DEGIRO Transactiekosten en/of kosten van derden")
+                return LineType.TransactionCosts;
             if (actionField == "DEGIRO Corporate Action Kosten")
                 return LineType.CorporateActionCosts;
             if (actionField == "Degiro Cash Sweep Transfer")
