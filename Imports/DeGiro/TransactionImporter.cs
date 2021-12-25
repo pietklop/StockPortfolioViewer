@@ -154,6 +154,8 @@ namespace Imports.DeGiro
             // exact matches
             if (actionField == "")
                 return LineType.Na;
+            if (actionField == "ADR/GDR Externe Kosten")
+                return LineType.Na;
             if (actionField == "DEGIRO transactiekosten")
                 return LineType.TransactionCosts;
             if (actionField == "DEGIRO Transactiekosten en/of kosten van derden")
