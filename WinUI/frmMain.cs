@@ -48,6 +48,27 @@ namespace Dashboard
             lblVersion.Text = $"v{version.Major}.{version.Minor}.{version.Build}";
         }
 
+        private void frmMain_Load(object sender, EventArgs e)
+        {
+            if (Properties.UserSettings.Default.Maximized)
+            {
+                Location = Properties.UserSettings.Default.Location;
+                WindowState = FormWindowState.Maximized;
+                Size = Properties.UserSettings.Default.Size;
+            }
+            else if (Properties.UserSettings.Default.Minimized)
+            {
+                Location = Properties.UserSettings.Default.Location;
+                WindowState = FormWindowState.Minimized;
+                Size = Properties.UserSettings.Default.Size;
+            }
+            else if (Properties.UserSettings.Default.Location.X > 0 && Properties.UserSettings.Default.Size.Width > 100)
+            {
+                Location = Properties.UserSettings.Default.Location;
+                Size = Properties.UserSettings.Default.Size;
+            }
+        }
+
         public void ShowStockDetails(string stockName, string isin)
         {
             LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockDetail>(new Arguments { { "stockIsin", isin } }));
@@ -221,6 +242,32 @@ namespace Dashboard
             }
 
             return nAddedTransactions;
+        }
+
+        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (WindowState == FormWindowState.Maximized)
+            {
+                Properties.UserSettings.Default.Location = RestoreBounds.Location;
+                Properties.UserSettings.Default.Size = RestoreBounds.Size;
+                Properties.UserSettings.Default.Maximized = true;
+                Properties.UserSettings.Default.Minimized = false;
+            }
+            else if (WindowState == FormWindowState.Normal)
+            {
+                Properties.UserSettings.Default.Location = Location;
+                Properties.UserSettings.Default.Size = Size;
+                Properties.UserSettings.Default.Maximized = false;
+                Properties.UserSettings.Default.Minimized = false;
+            }
+            else
+            {
+                Properties.UserSettings.Default.Location = RestoreBounds.Location;
+                Properties.UserSettings.Default.Size = RestoreBounds.Size;
+                Properties.UserSettings.Default.Maximized = false;
+                Properties.UserSettings.Default.Minimized = true;
+            }
+            Properties.UserSettings.Default.Save();
         }
     }
 }

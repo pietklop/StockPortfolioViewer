@@ -335,6 +335,8 @@ namespace Dashboard
             this.Name = "frmMain";
             this.Padding = new System.Windows.Forms.Padding(0, 30, 5, 5);
             this.Text = "SPV";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
+            this.Load += new System.EventHandler(this.frmMain_Load);
             this.pnlMenu.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.pnlInfo.ResumeLayout(false);
