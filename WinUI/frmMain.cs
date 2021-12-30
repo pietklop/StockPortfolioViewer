@@ -69,17 +69,25 @@ namespace Dashboard
             }
         }
 
-        public void ShowStockDetails(string stockName, string isin)
+        private void EnableStockDetails(string stockName, string isin)
         {
-            LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockDetail>(new Arguments { { "stockIsin", isin } }));
             SelectedStockIsin = isin;
             SelectedStockName = stockName;
             btnStockDetails.Text = $"{stockName.MaxLength(10)} details";
             btnStockDetails.Enabled = true;
         }
 
-        public void ShowStockPerformance(string stockName, string isin) =>
-            LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockPerformance>(new Arguments{{"stockIsins", new List<string>{isin}}}));
+        public void ShowStockDetails(string stockName, string isin)
+        {
+            LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockDetail>(new Arguments { { "stockIsin", isin } }));
+            EnableStockDetails(stockName, isin);
+        }
+
+        public void ShowStockPerformance(string stockName, string isin)
+        {
+            LoadForm(stockName, CastleContainer.Instance.Resolve<frmStockPerformance>(new Arguments { { "stockIsins", new List<string> { isin } } }));
+            EnableStockDetails(stockName, isin);
+        }
 
         public void ShowDividends(string isin) =>
             LoadForm("Dividends", CastleContainer.Instance.Resolve<frmDividends>(new Arguments{{"stockIsin", isin}}));
