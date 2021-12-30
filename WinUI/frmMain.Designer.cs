@@ -42,7 +42,6 @@ namespace Dashboard
             this.btnSingleTransactions = new System.Windows.Forms.Button();
             this.btnSingleDividends = new System.Windows.Forms.Button();
             this.btnSinglePerformance = new System.Windows.Forms.Button();
-            this.pnlNav = new System.Windows.Forms.Panel();
             this.pnlInfo = new System.Windows.Forms.Panel();
             this.lblSpv = new System.Windows.Forms.Label();
             this.lblVersion = new System.Windows.Forms.Label();
@@ -61,7 +60,6 @@ namespace Dashboard
             // 
             this.pnlMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
             this.pnlMenu.Controls.Add(this.tableLayoutPanel1);
-            this.pnlMenu.Controls.Add(this.pnlNav);
             this.pnlMenu.Controls.Add(this.pnlInfo);
             this.pnlMenu.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlMenu.Location = new System.Drawing.Point(0, 30);
@@ -143,7 +141,6 @@ namespace Dashboard
             this.btnMainOverview.Text = "Main overview";
             this.btnMainOverview.UseVisualStyleBackColor = true;
             this.btnMainOverview.Click += new System.EventHandler(this.btnMainOverview_Click);
-            this.btnMainOverview.Leave += new System.EventHandler(this.btnMainOverview_Leave);
             // 
             // btnDataRetrieval
             // 
@@ -186,7 +183,6 @@ namespace Dashboard
             this.btnTransactions.Text = "Transactions";
             this.btnTransactions.UseVisualStyleBackColor = true;
             this.btnTransactions.Click += new System.EventHandler(this.btnTransactions_Click);
-            this.btnTransactions.Leave += new System.EventHandler(this.btnTransactions_Leave);
             // 
             // btnDividends
             // 
@@ -201,7 +197,6 @@ namespace Dashboard
             this.btnDividends.Text = "Dividends";
             this.btnDividends.UseVisualStyleBackColor = true;
             this.btnDividends.Click += new System.EventHandler(this.btnDividends_Click);
-            this.btnDividends.Leave += new System.EventHandler(this.btnDividends_Leave);
             // 
             // btnSingleTransactions
             // 
@@ -253,14 +248,6 @@ namespace Dashboard
             this.btnSinglePerformance.UseVisualStyleBackColor = true;
             this.btnSinglePerformance.Visible = false;
             this.btnSinglePerformance.Click += new System.EventHandler(this.btnSinglePerformance_Click);
-            // 
-            // pnlNav
-            // 
-            this.pnlNav.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
-            this.pnlNav.Location = new System.Drawing.Point(0, 200);
-            this.pnlNav.Name = "pnlNav";
-            this.pnlNav.Size = new System.Drawing.Size(5, 100);
-            this.pnlNav.TabIndex = 2;
             // 
             // pnlInfo
             // 
@@ -362,7 +349,6 @@ namespace Dashboard
         private System.Windows.Forms.Panel pnlMenu;
         private System.Windows.Forms.Button btnMainOverview;
         private System.Windows.Forms.Panel pnlInfo;
-        private System.Windows.Forms.Panel pnlNav;
         private System.Windows.Forms.Button btnTransactions;
         private System.Windows.Forms.Panel pnlFormLoader;
         private System.Windows.Forms.Button btnDataRetrieval;

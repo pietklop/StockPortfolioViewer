@@ -98,15 +98,7 @@ namespace Dashboard
         private void btnDataRetrieval_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmDataRetrievers>());
         private void btnImport_Click(object sender, EventArgs e) => HandleImport();
 
-        private void btnMainOverview_Leave(object sender, EventArgs e) => SetDefaultButtonBackColor((Button)sender);
-        private void btnTransactions_Leave(object sender, EventArgs e) => SetDefaultButtonBackColor((Button)sender);
-        private void btnDividends_Leave(object sender, EventArgs e) => SetDefaultButtonBackColor((Button)sender);
-
-        private void HandleMenuButtonClick(Button button, Form formToShow)
-        {
-            SetNavPanel(button);
-            LoadForm(button.Text, formToShow);
-        }
+        private void HandleMenuButtonClick(Button button, Form formToShow) => LoadForm(button.Text, formToShow);
 
         private void LoadForm(string viewName, Form form)
         {
@@ -124,16 +116,6 @@ namespace Dashboard
             pnlFormLoader.Controls.Add(form);
             form.Show();
         }
-
-        private void SetNavPanel(Button button)
-        {
-            pnlNav.Height = button.Height;
-            pnlNav.Top = button.Top;
-            pnlNav.Left = button.Left;
-            button.BackColor = Color.FromArgb(46, 51, 73);
-        }
-
-        private void SetDefaultButtonBackColor(Button button) => button.BackColor = Color.FromArgb(24, 30, 54);
 
         private void HandleImport()
         {
