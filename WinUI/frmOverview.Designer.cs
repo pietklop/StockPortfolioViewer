@@ -46,6 +46,7 @@ namespace Dashboard
             // 
             // chart
             // 
+            this.chart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.chart.BackImageTransparentColor = System.Drawing.Color.Red;
             this.chart.BackSecondaryColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             chartArea1.Name = "ChartArea1";
@@ -66,6 +67,9 @@ namespace Dashboard
             // 
             this.dgvStockList.AllowUserToAddRows = false;
             this.dgvStockList.AllowUserToDeleteRows = false;
+            this.dgvStockList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvStockList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvStockList.Location = new System.Drawing.Point(86, 290);
             this.dgvStockList.Name = "dgvStockList";
@@ -80,6 +84,7 @@ namespace Dashboard
             // 
             // btnDistributionCurrency
             // 
+            this.btnDistributionCurrency.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDistributionCurrency.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
             this.btnDistributionCurrency.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDistributionCurrency.ForeColor = System.Drawing.Color.Gainsboro;
@@ -93,6 +98,7 @@ namespace Dashboard
             // 
             // btnDistributionArea
             // 
+            this.btnDistributionArea.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDistributionArea.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
             this.btnDistributionArea.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDistributionArea.ForeColor = System.Drawing.Color.Gainsboro;
@@ -106,6 +112,7 @@ namespace Dashboard
             // 
             // btnDistributionSector
             // 
+            this.btnDistributionSector.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDistributionSector.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
             this.btnDistributionSector.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDistributionSector.ForeColor = System.Drawing.Color.Gainsboro;
@@ -119,6 +126,7 @@ namespace Dashboard
             // 
             // btnDistributionContinent
             // 
+            this.btnDistributionContinent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDistributionContinent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
             this.btnDistributionContinent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDistributionContinent.ForeColor = System.Drawing.Color.Gainsboro;
@@ -132,6 +140,7 @@ namespace Dashboard
             // 
             // btnReloadGrid
             // 
+            this.btnReloadGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnReloadGrid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
             this.btnReloadGrid.FlatAppearance.BorderSize = 0;
             this.btnReloadGrid.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -146,6 +155,7 @@ namespace Dashboard
             // 
             // btnSelect
             // 
+            this.btnSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSelect.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
             this.btnSelect.FlatAppearance.BorderSize = 0;
             this.btnSelect.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -160,6 +170,7 @@ namespace Dashboard
             // 
             // txtFilter
             // 
+            this.txtFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilter.Location = new System.Drawing.Point(595, 256);
             this.txtFilter.Name = "txtFilter";
             this.txtFilter.Size = new System.Drawing.Size(100, 23);

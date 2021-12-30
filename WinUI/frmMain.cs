@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Castle.Core.Internal;
 using Castle.MicroKernel;
@@ -39,26 +37,12 @@ namespace Dashboard
             }
         }
 
-        [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
-        private static extern IntPtr CreateRoundRectRgn
-        (
-            int nLeftRect,
-            int nTopRect,
-            int nRightRect,
-            int nBottomRect,
-            int nWidthEllipse,
-            int nHeightEllipse
-        );
-
         public frmMain(ILog log, Settings settings)
         {
             this.log = log;
             this.settings = settings;
             InitializeComponent();
-            SetWindowRoundCorners(25);
             HandleMenuButtonClick(btnMainOverview, CastleContainer.Instance.Resolve<frmOverview>(new Arguments { { nameof(frmMain), this } }));
-
-            void SetWindowRoundCorners(int radius) => Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, radius, radius));
 
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             lblVersion.Text = $"v{version.Major}.{version.Minor}.{version.Build}";

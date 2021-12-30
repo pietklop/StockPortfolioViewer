@@ -37,6 +37,8 @@ namespace Dashboard
             // 
             this.dgvStockDetails.AllowUserToAddRows = false;
             this.dgvStockDetails.AllowUserToDeleteRows = false;
+            this.dgvStockDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.dgvStockDetails.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvStockDetails.Location = new System.Drawing.Point(86, 63);
             this.dgvStockDetails.Name = "dgvStockDetails";

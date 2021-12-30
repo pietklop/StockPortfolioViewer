@@ -64,7 +64,7 @@ namespace Dashboard
             this.pnlMenu.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlMenu.Location = new System.Drawing.Point(0, 30);
             this.pnlMenu.Name = "pnlMenu";
-            this.pnlMenu.Size = new System.Drawing.Size(186, 747);
+            this.pnlMenu.Size = new System.Drawing.Size(186, 742);
             this.pnlMenu.TabIndex = 0;
             // 
             // tableLayoutPanel1
@@ -95,7 +95,7 @@ namespace Dashboard
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(186, 603);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(186, 598);
             this.tableLayoutPanel1.TabIndex = 6;
             // 
             // btnStockDetails
@@ -120,7 +120,7 @@ namespace Dashboard
             this.btnImport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnImport.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnImport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
-            this.btnImport.Location = new System.Drawing.Point(3, 566);
+            this.btnImport.Location = new System.Drawing.Point(3, 561);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(153, 34);
             this.btnImport.TabIndex = 8;
@@ -148,7 +148,7 @@ namespace Dashboard
             this.btnDataRetrieval.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDataRetrieval.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnDataRetrieval.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
-            this.btnDataRetrieval.Location = new System.Drawing.Point(3, 526);
+            this.btnDataRetrieval.Location = new System.Drawing.Point(3, 521);
             this.btnDataRetrieval.Name = "btnDataRetrieval";
             this.btnDataRetrieval.Size = new System.Drawing.Size(152, 34);
             this.btnDataRetrieval.TabIndex = 3;
@@ -283,10 +283,12 @@ namespace Dashboard
             // 
             // pnlFormLoader
             // 
-            this.pnlFormLoader.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlFormLoader.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlFormLoader.Location = new System.Drawing.Point(186, 100);
             this.pnlFormLoader.Name = "pnlFormLoader";
-            this.pnlFormLoader.Size = new System.Drawing.Size(965, 677);
+            this.pnlFormLoader.Size = new System.Drawing.Size(960, 671);
             this.pnlFormLoader.TabIndex = 2;
             // 
             // metroStyleFormManager
@@ -297,17 +299,19 @@ namespace Dashboard
             // 
             // pnlTitle
             // 
+            this.pnlTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(51)))), ((int)(((byte)(73)))));
             this.pnlTitle.Controls.Add(this.lblViewName);
-            this.pnlTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlTitle.Location = new System.Drawing.Point(186, 30);
             this.pnlTitle.Name = "pnlTitle";
-            this.pnlTitle.Size = new System.Drawing.Size(965, 70);
+            this.pnlTitle.Size = new System.Drawing.Size(960, 70);
             this.pnlTitle.TabIndex = 1;
             // 
             // lblViewName
             // 
-            this.lblViewName.AutoSize = true;
+            this.lblViewName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblViewName.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblViewName.ForeColor = System.Drawing.Color.Gainsboro;
             this.lblViewName.Location = new System.Drawing.Point(285, 16);
@@ -328,10 +332,8 @@ namespace Dashboard
             this.DisplayHeader = false;
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Margin = new System.Windows.Forms.Padding(1);
-            this.MaximizeBox = false;
             this.Name = "frmMain";
-            this.Padding = new System.Windows.Forms.Padding(0, 30, 0, 0);
-            this.Resizable = false;
+            this.Padding = new System.Windows.Forms.Padding(0, 30, 5, 5);
             this.Text = "SPV";
             this.pnlMenu.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -339,7 +341,6 @@ namespace Dashboard
             this.pnlInfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.metroStyleFormManager)).EndInit();
             this.pnlTitle.ResumeLayout(false);
-            this.pnlTitle.PerformLayout();
             this.ResumeLayout(false);
 
         }

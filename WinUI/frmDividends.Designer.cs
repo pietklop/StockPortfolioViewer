@@ -37,6 +37,9 @@ namespace Dashboard
             // 
             this.dgvDividends.AllowUserToAddRows = false;
             this.dgvDividends.AllowUserToDeleteRows = false;
+            this.dgvDividends.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvDividends.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvDividends.Location = new System.Drawing.Point(104, 52);
             this.dgvDividends.Name = "dgvDividends";
