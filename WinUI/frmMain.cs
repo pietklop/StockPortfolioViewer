@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -250,6 +251,13 @@ namespace Dashboard
             }
 
             return nAddedTransactions;
+        }
+
+        private void pnlInfo_DoubleClick(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Maximized)
+                WindowState = FormWindowState.Normal;
+            Size = new Size(1200, 1000);
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)

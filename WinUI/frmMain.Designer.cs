@@ -258,6 +258,7 @@ namespace Dashboard
             this.pnlInfo.Name = "pnlInfo";
             this.pnlInfo.Size = new System.Drawing.Size(186, 144);
             this.pnlInfo.TabIndex = 0;
+            this.pnlInfo.DoubleClick += new System.EventHandler(this.pnlInfo_DoubleClick);
             // 
             // lblSpv
             // 
