@@ -89,14 +89,16 @@ namespace Services
 
             stock.LastKnownStockValue.LastUpdate = now;
             lastPriceUpdate ??= now;
-            if (stock.LastKnownStockValue.StockValue.TimeStamp.Date == lastPriceUpdate.Value.Date)
+
+            bool updatedToday = stock.LastKnownStockValue.StockValue.TimeStamp.Date == lastPriceUpdate.Value.Date;
+            bool partOfTransaction = false;
+            if (updatedToday) partOfTransaction = db.Transactions.Any(t => t.StockValue.Id == stock.LastKnownStockValue.StockValueId);
+            if (updatedToday && !partOfTransaction)
             {   // do not save multiple value updates per day
                 stock.LastKnownStockValue.StockValue.TimeStamp = lastPriceUpdate.Value;
                 stock.LastKnownStockValue.StockValue.NativePrice = nativePrice;
                 stock.LastKnownStockValue.StockValue.UserPrice = userPrice;
             }
-            else if (stock.LastKnownStockValue.StockValue.TimeStamp.Date >= lastPriceUpdate.Value.Date)
-                throw new Exception($"Latest stock price of {stock} is older than last saved");
             else
                 stock.LastKnownStockValue.StockValue = CreatePitStockValue();
 
