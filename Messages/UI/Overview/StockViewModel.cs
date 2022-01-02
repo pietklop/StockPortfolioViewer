@@ -6,6 +6,7 @@ namespace Messages.UI.Overview
     {
         [ColumnCellsUnderline]
         public string Name { get; set; }
+        [ColumnHide]
         public string Isin { get; set; }
         [Description("Total value of this currently owned stock")]
         [DisplayFormat("C0")]

@@ -59,8 +59,6 @@ namespace Dashboard
             dgvStockList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             var nameColumn = dgvStockList.GetColumn(nameof(StockViewModel.Name));
             nameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            var isinColumn = dgvStockList.GetColumn(nameof(StockViewModel.Isin));
-            isinColumn.Visible = false;
 
             dgvStockList.SetReadOnly();
             dgvStockList.SetVisualStyling();
