@@ -32,6 +32,7 @@ namespace Dashboard
             this.components = new System.ComponentModel.Container();
             this.pnlMenu = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.btnHistory = new System.Windows.Forms.Button();
             this.btnStockDetails = new System.Windows.Forms.Button();
             this.btnImport = new System.Windows.Forms.Button();
             this.btnMainOverview = new System.Windows.Forms.Button();
@@ -72,10 +73,11 @@ namespace Dashboard
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+            this.tableLayoutPanel1.Controls.Add(this.btnHistory, 0, 5);
             this.tableLayoutPanel1.Controls.Add(this.btnStockDetails, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.btnImport, 0, 7);
+            this.tableLayoutPanel1.Controls.Add(this.btnImport, 0, 8);
             this.tableLayoutPanel1.Controls.Add(this.btnMainOverview, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.btnDataRetrieval, 0, 6);
+            this.tableLayoutPanel1.Controls.Add(this.btnDataRetrieval, 0, 7);
             this.tableLayoutPanel1.Controls.Add(this.btnPerformance, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.btnTransactions, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.btnDividends, 0, 2);
@@ -86,7 +88,8 @@ namespace Dashboard
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 144);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 8;
+            this.tableLayoutPanel1.RowCount = 9;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
@@ -97,6 +100,20 @@ namespace Dashboard
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(186, 598);
             this.tableLayoutPanel1.TabIndex = 6;
+            // 
+            // btnHistory
+            // 
+            this.btnHistory.FlatAppearance.BorderSize = 0;
+            this.btnHistory.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnHistory.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btnHistory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
+            this.btnHistory.Location = new System.Drawing.Point(3, 203);
+            this.btnHistory.Name = "btnHistory";
+            this.btnHistory.Size = new System.Drawing.Size(152, 34);
+            this.btnHistory.TabIndex = 12;
+            this.btnHistory.Text = "Stock History";
+            this.btnHistory.UseVisualStyleBackColor = true;
+            this.btnHistory.Click += new System.EventHandler(this.btnHistory_Click);
             // 
             // btnStockDetails
             // 
@@ -369,6 +386,7 @@ namespace Dashboard
         private System.Windows.Forms.Button btnSingleDividends;
         private System.Windows.Forms.Button btnSinglePerformance;
         private System.Windows.Forms.Button btnStockDetails;
+        private System.Windows.Forms.Button btnHistory;
     }
 }
 

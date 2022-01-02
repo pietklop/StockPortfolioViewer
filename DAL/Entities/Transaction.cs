@@ -6,6 +6,9 @@ namespace DAL.Entities
     {
         public int StockId { get; set; }
         public Stock Stock { get; set; }
+        /// <summary>
+        /// Be aware this is NOT the transaction date, see <see cref="PitStockValue.TimeStamp"/> for that
+        /// </summary>
         public DateTime Created { get; set; }
         /// <summary>
         /// Positive will represent a buy, negative a sell

@@ -11,6 +11,12 @@ namespace DAL.Entities
             return buyTransactions.Sum(t => t.Quantity * t.StockValue.UserPrice) / buyTransactions.Sum(t => t.Quantity);
         }
 
+        public static double DetermineAvgSellUserPrice(this ICollection<Transaction> transactions)
+        {
+            var sellTransactions = transactions.IsSell().ToList();
+            return sellTransactions.Sum(t => t.Quantity * t.StockValue.UserPrice) / sellTransactions.Sum(t => t.Quantity);
+        }
+
         public static double DetermineAvgBuyNativePrice(this ICollection<Transaction> transactions)
         {
             var buyTransactions = transactions.IsBuy().ToList();

@@ -104,6 +104,7 @@ namespace Dashboard
         private void btnDividends_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmDividends>());
         private void btnPerformance_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmStockPerformance>());
         private void btnStockDetails_Click(object sender, EventArgs e) => ShowStockDetails(SelectedStockName, selectedStockIsin);
+        private void btnHistory_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmStockHistoryOverview>());
 
         private void btnSingleTransactions_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Instance.Resolve<frmTransactions>(new Arguments {{ "stockIsin", SelectedStockIsin }}));
         private void btnSingleDividends_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Instance.Resolve<frmDividends>(new Arguments {{ "stockIsin", SelectedStockIsin }}));
