@@ -24,7 +24,7 @@ namespace Dashboard.Helpers
                     if (hide != null)
                     {
                         column.Visible = false;
-                        break;
+                        continue;
                     }
                     var format = (DisplayFormatAttribute)p.Attributes[typeof(DisplayFormatAttribute)];
                     column.ToolTipText = p.Description;
