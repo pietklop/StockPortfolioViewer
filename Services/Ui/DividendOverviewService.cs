@@ -50,7 +50,7 @@ namespace Services.Ui
                     percString += $" ({divFraction * stock.DividendPayoutInterval.ToYearMultiplier():P1})";
 
                 string dateString = dividend.TimeStamp.ToShortDateString();
-                if (!dividend.IsCapitalReturn() && LastDividendOfStock(dividend) && ExpectedNextDividendOrUnknown(stock.DividendPayoutInterval, dividend.TimeStamp))
+                if (!dividend.IsCapitalReturn() && CurrentlyOwned(stock) && LastDividendOfStock(dividend) && ExpectedNextDividendOrUnknown(stock.DividendPayoutInterval, dividend.TimeStamp))
                     dateString += "*";
 
                 list.Add(new DividendViewModel
@@ -66,6 +66,8 @@ namespace Services.Ui
             }
 
             return list;
+
+            bool CurrentlyOwned(Stock stock) => stock.Transactions.Sum(t => t.Quantity) > 0;
 
             bool LastDividendOfStock(Dividend dividend) => dividends.Where(d => d.UserTax > 0).First(d => d.StockId == dividend.StockId).Id == dividend.Id;
 
