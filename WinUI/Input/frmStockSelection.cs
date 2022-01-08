@@ -30,7 +30,7 @@ namespace Dashboard.Input
             PopulateComboBox(cmbSector, db.Sectors.Select(s => s.Name).ToList());
             PopulateComboBox(cmbContinents, db.Areas.Where(a => a.IsContinent).Select(s => s.Name).ToList());
             PopulateComboBox(cmbCountries, db.Areas.Where(a => !a.IsContinent).Select(s => s.Name).ToList());
-            PopulateComboBox(cmbStocks, db.Stocks.Select(s => s.Name).ToList());
+            PopulateComboBox(cmbStocks, db.Stocks.Where(s => s.Transactions.Sum(t => t.Quantity) > 0).Select(s => s.Name).ToList());
         }
 
         private void PopulateComboBox(CheckBoxComboBox cmb, List<string> items)
