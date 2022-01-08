@@ -23,7 +23,7 @@ namespace Services.Ui
             this.db = db;
         }
 
-        public double TotalPortfolioValue => cachedStockList.Where(c => c.Name != Constants.Total).Sum(c => c.Value);
+        public double TotalPortfolioValue { get; private set; }
 
         public List<StockViewModel> GetStockList(bool reload, List<string> isins)
         {
@@ -76,9 +76,10 @@ namespace Services.Ui
                 valueProfitProduct30Days += svm.Value * svm.ProfitFractionLast30Days;
             }
 
+            if (TotalPortfolioValue <= 0 || reload && isins == null) TotalPortfolioValue = list.Sum(l => l.Value);
             var totalValue = list.Sum(l => l.Value);
             foreach (var stockItem in list)
-                stockItem.PortFolioFraction = stockItem.Value / totalValue;
+                stockItem.PortFolioFraction = stockItem.Value / TotalPortfolioValue;
 
             var totalProfit = list.Sum(l => l.Profit);
             list.Add(new StockViewModel
