@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Windows.Forms;
 using DAL;
-using DAL.Entities;
 using Messages.Dtos;
 using PresentationControls;
 
@@ -30,11 +29,20 @@ namespace Dashboard.Input
             PopulateComboBox(cmbSector, db.Sectors.Select(s => s.Name).ToList());
             PopulateComboBox(cmbContinents, db.Areas.Where(a => a.IsContinent).Select(s => s.Name).ToList());
             PopulateComboBox(cmbCountries, db.Areas.Where(a => !a.IsContinent).Select(s => s.Name).ToList());
-            PopulateComboBox(cmbStocks, db.Stocks.Where(s => s.Transactions.Sum(t => t.Quantity) > 0).Select(s => s.Name).ToList());
+            PopulateCbmStocks();
+        }
+
+        private void chkEtfOnly_CheckedChanged(object sender, System.EventArgs e) => PopulateCbmStocks();
+
+        private void PopulateCbmStocks()
+        {
+            var etfOnly = chkEtfOnly.Checked;
+            PopulateComboBox(cmbStocks, db.Stocks.Where(s => s.Transactions.Sum(t => t.Quantity) > 0 && (!etfOnly || s.ExpenseRatio > 0)).Select(s => s.Name).ToList());
         }
 
         private void PopulateComboBox(CheckBoxComboBox cmb, List<string> items)
         {
+            cmb.Items.Clear();
             foreach (var item in items.OrderBy(i => i))
                 cmb.Items.Add(item);
         }
