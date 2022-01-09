@@ -69,6 +69,7 @@ namespace Services.Ui
                     ProfitFractionLast30Days = ProfitFraction(stock, days30Back, nStocks),
                     ProfitFractionLast7Days = ProfitFraction(stock, 7, nStocks),
                     LastPriceChange = LastUpdateSince(stock),
+                    Remark = Remark(stock),
                     //CompatibleDataRetrievers = string.Join(",", stock.StockRetrieverCompatibilities.OrderBy(c => c.DataRetriever.Priority).Where(c => c.DataRetriever.Priority > 0 && c.Compatibility == RetrieverCompatibility.True).Select(c => c.DataRetriever.Name.Substring(0, 3)))
                 };
                 list.Add(svm);
@@ -118,6 +119,17 @@ namespace Services.Ui
                 if (historicValue <= 0) return 0;
                 var divPerShare = stock.Dividends.Where(d => d.TimeStamp > dateFrom).Sum(d => d.UserValue - d.UserCosts - d.UserTax) / nStocks;
                 return (stock.LastKnownUserPrice + divPerShare - historicValue) / historicValue;
+            }
+
+            string Remark(Stock stock)
+            {
+                if (stock.AlarmCondition == AlarmCondition.None)
+                    return stock.Remarks;
+                if (stock.AlarmCondition == AlarmCondition.LowerThan)
+                    return $"<{stock.AlarmThreshold} {stock.Remarks}";
+                if (stock.AlarmCondition == AlarmCondition.HigherThan)
+                    return $">{stock.AlarmThreshold} {stock.Remarks}";
+                return stock.Remarks;
             }
         }
 
