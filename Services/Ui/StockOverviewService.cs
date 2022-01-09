@@ -35,7 +35,7 @@ namespace Services.Ui
 
             var stocks = db.Stocks
                 .Include(s => s.AreaShares).ThenInclude(a => a.Area)
-                .Include(s => s.StockRetrieverCompatibilities).ThenInclude(c => c.DataRetriever)
+                //.Include(s => s.StockRetrieverCompatibilities).ThenInclude(c => c.DataRetriever)
                 .Include(s => s.Dividends)
                 .Include(s => s.LastKnownStockValue.StockValue)
                 .Include(s => s.SectorShares).ThenInclude(ss => ss.Sector)
@@ -69,7 +69,7 @@ namespace Services.Ui
                     ProfitFractionLast30Days = ProfitFraction(stock, days30Back, nStocks),
                     ProfitFractionLast7Days = ProfitFraction(stock, 7, nStocks),
                     LastPriceChange = LastUpdateSince(stock),
-                    CompatibleDataRetrievers = string.Join(",", stock.StockRetrieverCompatibilities.OrderBy(c => c.DataRetriever.Priority).Where(c => c.DataRetriever.Priority > 0 && c.Compatibility == RetrieverCompatibility.True).Select(c => c.DataRetriever.Name.Substring(0, 3)))
+                    //CompatibleDataRetrievers = string.Join(",", stock.StockRetrieverCompatibilities.OrderBy(c => c.DataRetriever.Priority).Where(c => c.DataRetriever.Priority > 0 && c.Compatibility == RetrieverCompatibility.True).Select(c => c.DataRetriever.Name.Substring(0, 3)))
                 };
                 list.Add(svm);
                 valueProfitProduct7Days += svm.Value * svm.ProfitFractionLast7Days;

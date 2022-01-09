@@ -34,8 +34,8 @@ namespace Messages.UI.Overview
         [DisplayName("Last change")]
         [Description("Last price change (always behind when exchange is closed)")]
         public string LastPriceChange { get; set; }
-        [DisplayName("Retrievers")]
-        [Description("Compatible data-retrievers")]
-        public string CompatibleDataRetrievers { get; set; }
+        // [DisplayName("Retrievers")]
+        // [Description("Compatible data-retrievers")]
+        // public string CompatibleDataRetrievers { get; set; }
     }
 }
