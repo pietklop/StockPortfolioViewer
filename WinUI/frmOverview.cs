@@ -19,6 +19,7 @@ namespace Dashboard
         private readonly StockService stockService;
         private readonly PortfolioDistributionService portfolioDistributionService;
         private List<Button> distributionButtons = new List<Button>();
+        private List<string> selectedIsins;
 
         public frmOverview(frmMain frmMain, StockOverviewService stockOverviewService, StockService stockService, PortfolioDistributionService portfolioDistributionService)
         {
@@ -135,40 +136,49 @@ namespace Dashboard
 
         private void btnDistributionArea_Click(object sender, EventArgs e)
         {
-            PopulatePieChart(portfolioDistributionService.GetAreaDistribution());
+            PopulatePieChart(portfolioDistributionService.GetAreaDistribution(selectedIsins));
             var btn = (Button) sender;
             SetDistributionButtons(btn);
         }
 
         private void btnDistributionContinent_Click(object sender, EventArgs e)
         {
-            PopulatePieChart(portfolioDistributionService.GetAreaDistributionByContinent());
+            PopulatePieChart(portfolioDistributionService.GetAreaDistributionByContinent(selectedIsins));
             var btn = (Button)sender;
             SetDistributionButtons(btn);
         }
 
         private void btnDistributionCurrency_Click(object sender, EventArgs e)
         {
-            PopulatePieChart(portfolioDistributionService.GetCurrencyDistribution());
+            PopulatePieChart(portfolioDistributionService.GetCurrencyDistribution(selectedIsins));
             var btn = (Button)sender;
             SetDistributionButtons(btn);
         }
 
         private void btnDistributionSector_Click(object sender, EventArgs e)
         {
-            PopulatePieChart(portfolioDistributionService.GetSectorDistribution());
+            PopulatePieChart(portfolioDistributionService.GetSectorDistribution(selectedIsins));
             var btn = (Button)sender;
             SetDistributionButtons(btn);
         }
 
-        private void btnReloadGrid_Click(object sender, EventArgs e) => PopulateStockGrid(true);
+        private void btnReloadGrid_Click(object sender, EventArgs e)
+        {
+            PopulateStockGrid(true);
+            selectedIsins = null;
+        }
+
         public void Reload() => btnReloadGrid_Click(this, EventArgs.Empty);
 
         private void btnSelect_Click(object sender, EventArgs e)
         {
             using var form = CastleContainer.Resolve<Input.frmStockSelection>();
             if (form.ShowDialog(this) == DialogResult.OK && form.Stocks.Any())
-                PopulateStockGrid(true, form.Stocks.Select(s => s.Isin).ToList());
+            {
+                selectedIsins = form.Stocks.Select(s => s.Isin).ToList();
+                PopulateStockGrid(true, selectedIsins);
+                btnDistributionArea_Click(btnDistributionArea, EventArgs.Empty);
+            }
         }
 
         private void txtFilter_KeyDown(object sender, KeyEventArgs e)

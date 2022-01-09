@@ -15,9 +15,10 @@ namespace Services.Ui
             this.db = db;
         }
 
-        public PortfolioDistributionDto GetCurrencyDistribution()
+        public PortfolioDistributionDto GetCurrencyDistribution(List<string> isins = null)
         {
             var data = db.Stocks
+                .Where(s => isins == null || isins.Contains(s.Isin))
                 .Where(s => s.Transactions.Sum(t => t.Quantity) > 0)
                 .Select(s => new
                 {
@@ -34,16 +35,18 @@ namespace Services.Ui
             return new PortfolioDistributionDto("Currency distribution", grouped.Select(d => d.currency).ToArray(), grouped.Select(g => g.sum).ToArray());
         }
 
-        public PortfolioDistributionDto GetAreaDistributionByContinent() => GetAreaDistribution(null, true);
+        public PortfolioDistributionDto GetAreaDistributionByContinent(string isin) => GetAreaDistribution(new List<string>{isin}, true);
+        public PortfolioDistributionDto GetAreaDistributionByContinent(List<string> isins = null) => GetAreaDistribution(isins, true);
 
-        public PortfolioDistributionDto GetAreaDistribution(string isin = null, bool groupByContinent = false)
+        public PortfolioDistributionDto GetAreaDistribution(string isin) => GetAreaDistribution(new List<string> { isin });
+        public PortfolioDistributionDto GetAreaDistribution(List<string> isins = null, bool groupByContinent = false)
         {
             var data = db.Stocks
                 .Include(s => s.LastKnownStockValue.StockValue)
                 .Include(s => s.StockValues)
                 .Include(s => s.Transactions)
                 .Include(s => s.AreaShares).ThenInclude(a => a.Area.Continent)
-                .Where(s => isin == null || s.Isin == isin)
+                .Where(s => isins == null || isins.Contains(s.Isin))
                 .Where(s => s.Transactions.Sum(t => t.Quantity) > 0)
                 .ToList();
 
@@ -71,14 +74,15 @@ namespace Services.Ui
             return new PortfolioDistributionDto("Area distribution", sorted.Select(d => d.Key).ToArray(), sorted.Select(g => g.Value).ToArray(), true);
         }
 
-        public PortfolioDistributionDto GetSectorDistribution(string isin = null)
+        public PortfolioDistributionDto GetSectorDistribution(string isin) => GetSectorDistribution(new List<string> { isin });
+        public PortfolioDistributionDto GetSectorDistribution(List<string> isins = null)
         {
             var data = db.Stocks
                 .Include(s => s.LastKnownStockValue.StockValue)
                 .Include(s => s.StockValues)
                 .Include(s => s.Transactions)
                 .Include(s => s.SectorShares).ThenInclude(a => a.Sector)
-                .Where(s => isin == null || s.Isin == isin)
+                .Where(s => isins == null || isins.Contains(s.Isin))
                 .Where(s => s.Transactions.Sum(t => t.Quantity) > 0)
                 .ToList();
 
