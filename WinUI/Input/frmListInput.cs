@@ -8,12 +8,12 @@ namespace Dashboard.Input
     {
         public int MemberIndex { get; private set; } = -1;
         
-        public frmListInput(string caption, List<string> listMembers)
+        public frmListInput(string caption, List<string> listMembers, int? defaultIndex)
         {
             InitializeComponent();
             lblInputT.Text = caption;
             cmbMember.DataSource = listMembers;
-            cmbMember.SelectedIndex = -1;
+            cmbMember.SelectedIndex = defaultIndex ?? -1;
         }
 
         private void btnOk_Click(object sender, EventArgs e)
