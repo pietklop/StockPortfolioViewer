@@ -23,7 +23,7 @@ namespace Services.Ui
             this.db = db;
         }
 
-        public double TotalPortfolioValue { get; private set; }
+        public static double TotalPortfolioValue { get; private set; }
 
         public List<StockViewModel> GetStockList(bool reload, List<string> isins)
         {

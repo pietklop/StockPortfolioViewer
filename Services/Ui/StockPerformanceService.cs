@@ -91,7 +91,7 @@ namespace Services.Ui
                 inBetweenTotal = 0;
             }
 
-            var fractionOfTotalPortfolio = isins == null ? 1 : resultList.Last().TotalValue / stockOverviewService.TotalPortfolioValue;
+            var fractionOfTotalPortfolio = isins == null ? 1 : resultList.Last().TotalValue / StockOverviewService.TotalPortfolioValue;
             return new PerformanceDto(ScalePointsForGraph(resultList), fractionOfTotalPortfolio);
         }
 
@@ -122,7 +122,7 @@ namespace Services.Ui
             var dates = CreateIntervals(interval, firstDate, dateTo);
             List<ValuePointDto> points = GetPoints(pitValues, dates);
 
-            var fractionOfTotalPortfolio = points.Last().TotalValue / stockOverviewService.TotalPortfolioValue;
+            var fractionOfTotalPortfolio = points.Last().TotalValue / StockOverviewService.TotalPortfolioValue;
             return new PerformanceDto(ScalePointsForGraph(points), fractionOfTotalPortfolio);
         }
 
