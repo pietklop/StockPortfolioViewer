@@ -33,6 +33,7 @@ namespace Services
             return db.Stocks
                 .Include(s => s.Currency)
                 .Include(s => s.LastKnownStockValue.StockValue)
+                .Include(s => s.Transactions)
                 .SingleOrDefault(s => s.Isin == isin);
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Dashboard.Helpers;
 using Messages.UI.Overview;
@@ -37,6 +38,17 @@ namespace Dashboard
             lblCurrentPrice.Text = currentPrice.FormatCurrency(stock.Currency.Symbol, false);
             lblCurrentPriceT.Visible = true;
             lblCurrentPrice.Visible = true;
+
+            if (stock.Transactions.Count == 1) return;
+            lblAvgBuy.Text = AvgBuy().FormatCurrency(stock.Currency.Symbol, false);
+            lblAvgBuyT.Visible = true;
+            lblAvgBuy.Visible = true;
+
+            double AvgBuy()
+            {
+                var buys = stock.Transactions.Where(t => t.Quantity > 0).ToList();
+                return buys.Sum(t => t.Quantity * t.StockValue.NativePrice) / buys.Sum(b => b.Quantity);
+            }
         }
 
         private void PopulateStockGrid()
