@@ -78,6 +78,9 @@ namespace Dashboard.Input
                 Stocks.AddRange(stocks);
             }
 
+            if (Stocks.Count == 0 && chkEtfOnly.Checked)
+                Stocks = db.Stocks.Where(s => s.ExpenseRatio > 0).Select(st => new StockDto { Isin = st.Isin, Name = st.Name }).ToList();
+
             Stocks = Stocks.Distinct().ToList();
 
             DialogResult = DialogResult.OK;
