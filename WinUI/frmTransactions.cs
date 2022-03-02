@@ -43,12 +43,17 @@ namespace Dashboard
             lblAvgBuy.Text = AvgBuy().FormatCurrency(stock.Currency.Symbol, false);
             lblAvgBuyT.Visible = true;
             lblAvgBuy.Visible = true;
+            lblTotalValue.Text = TotalValue().FormatUserCurrency();
+            lblTotalValue.Visible = true;
+            lblTotalValueT.Visible = true;
 
             double AvgBuy()
             {
                 var buys = stock.Transactions.Where(t => t.Quantity > 0).ToList();
                 return buys.Sum(t => t.Quantity * t.StockValue.NativePrice) / buys.Sum(b => b.Quantity);
             }
+
+            double TotalValue() => stock.LastKnownUserPrice * stock.Transactions.Sum(b => b.Quantity);
         }
 
         private void PopulateStockGrid()
