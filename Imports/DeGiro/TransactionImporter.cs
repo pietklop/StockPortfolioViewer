@@ -188,6 +188,8 @@ namespace Imports.DeGiro
             // starts with...
             if (actionField.StartsWith("DEGIRO Aansluitingskosten"))
                 return LineType.Na;
+            if (actionField.StartsWith("Giro Exchange Connection Fee"))
+                return LineType.Na;
             if (actionField.StartsWith("Valuta "))
                 return LineType.CurrencyConversion;
             if (actionField.StartsWith("Koop"))
