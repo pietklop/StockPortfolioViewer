@@ -239,9 +239,11 @@ namespace Dashboard
 
             void ChangeAlarmCondition()
             {
-                var stock = db.Stocks.Single(s => s.Isin == stockIsin);
+                var stock = db.Stocks
+                    .Include(s => s.Transactions).ThenInclude(t => t.StockValue)
+                    .Single(s => s.Isin == stockIsin);
 
-                using var alarmConditionInputForm = new frmAlarmConditionInput(stock.AlarmCondition, stock.AlarmThreshold, stock.Remarks);
+                using var alarmConditionInputForm = new frmAlarmConditionInput(stock.AlarmCondition, stock.AlarmThreshold, stock.Remarks, stock.Transactions.Last().StockValue.NativePrice);
                 alarmConditionInputForm.ShowDialog(this);
                 if (alarmConditionInputForm.DialogResult != DialogResult.OK) return;
 

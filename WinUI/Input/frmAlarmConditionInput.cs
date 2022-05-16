@@ -7,12 +7,14 @@ namespace Dashboard.Input
 {
     public partial class frmAlarmConditionInput : Form
     {
+        private readonly double lastTransactionNativePrice;
         public AlarmCondition AlarmCondition { get; private set; }
         public double Threshold { get; private set; }
         public string Remarks { get; private set; }
 
-        public frmAlarmConditionInput(AlarmCondition alarmCondition, double stockAlarmThreshold, string stockRemarks)
+        public frmAlarmConditionInput(AlarmCondition alarmCondition, double stockAlarmThreshold, string stockRemarks, double lastTransactionNativePrice)
         {
+            this.lastTransactionNativePrice = lastTransactionNativePrice;
             InitializeComponent();
             cmbConditionAction.DataSource = Enum.GetValues(typeof(AlarmCondition));
             cmbConditionAction.SelectedIndex = (int)alarmCondition;
@@ -35,6 +37,13 @@ namespace Dashboard.Input
 
             DialogResult = DialogResult.OK;
             Close();
+        }
+
+        private void btnMin10Procent_Click(object sender, EventArgs e)
+        {
+            cmbConditionAction.SelectedIndex = (int)AlarmCondition.LowerThan;
+            var digits = Math.Max(2 - (int)Math.Round(Math.Log10(lastTransactionNativePrice)), 0);
+            txtThreshold.Text = $"{Math.Round(lastTransactionNativePrice * 0.9, digits)}";
         }
 
         private void btnClose_Click(object sender, EventArgs e)
