@@ -38,7 +38,7 @@ namespace Dashboard
         private void frmOverview_Load(object sender, EventArgs e)
         {
             PopulateStockGrid();
-            ChartHelper.ConfigPieChart(chart);
+            chart.ConfigPieChart();
             btnDistributionArea_Click(btnDistributionArea, EventArgs.Empty);
             if (frmMain.nTotalStocks > 10)
                 txtFilter.BringToFront(); // to not hide behind graph control
@@ -47,7 +47,7 @@ namespace Dashboard
         }
 
         private void PopulatePieChart(PortfolioDistributionDto dto) =>
-            ChartHelper.PopulatePieChart(chart, dto.Labels, dto.Fractions);
+            chart.PopulatePieChart(dto.Labels, dto.Fractions);
 
         private void PopulateStockGrid(bool reload = false, List<string> isins = null)
         {
