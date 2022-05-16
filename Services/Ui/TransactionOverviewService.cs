@@ -25,6 +25,7 @@ namespace Services.Ui
         {
             var transactions = db.Transactions
                 .Include(t => t.Stock.Currency)
+                .Include(t => t.Stock.LastKnownStockValue.StockValue)
                 .Include(t => t.StockValue)
                 .Where(t => isin == null || t.Stock.Isin == isin)
                 .OrderByDescending(t => t.StockValue.TimeStamp).ToList();
@@ -52,12 +53,17 @@ namespace Services.Ui
                 }
                 monthlyTransactions.Add(transaction);
                 annualTransactions.Add(transaction);
+                var transactionPrice = transaction.StockValue.NativePrice;
+                var currentPrice = transaction.Stock.LastKnownStockValue.StockValue.NativePrice;
+                var diffPerc = (currentPrice - transactionPrice) / transactionPrice*100;
+                var haveAnyStock = transactions.Where(t => t.StockId == transaction.StockId).Sum(t => t.Quantity) > 0;
                 list.Add(new TransactionViewModel
                 {
                     Name = transaction.Stock.Name,
                     Date = date.ToShortDateString(),
                     Quantity = transaction.Quantity,
-                    Price = transaction.StockValue.NativePrice.FormatCurrency(currSymbol, false),
+                    Price = transactionPrice.FormatCurrency(currSymbol, false),
+                    CurrentPrice = haveAnyStock ? $"{currentPrice.FormatCurrency(currSymbol, false)} ({diffPerc:F1}%)" : "",
                     NativeValue = NativeValue(transaction).FormatCurrency(currSymbol),
                     UserValue = UserValue(transaction).FormatUserCurrency(),
                     Costs = transaction.UserCosts.FormatUserCurrency(),

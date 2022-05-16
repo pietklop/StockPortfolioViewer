@@ -75,11 +75,16 @@ namespace Dashboard
 
         private void dgvTransactions_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            var nvColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.NativeValue)).Index;
-            if (nvColumnIndex == e.ColumnIndex)
+            if (dgvTransactions.GetColumn(nameof(TransactionViewModel.NativeValue)).Index == e.ColumnIndex)
             {
                 var negative = ((string)e.Value).IndexOf('-') >= 0;
                 dgvTransactions.Rows[e.RowIndex].DefaultCellStyle.ForeColor = negative ? Color.LightSlateGray : Color.Gainsboro;
+            }
+
+            if (dgvTransactions.GetColumn(nameof(TransactionViewModel.CurrentPrice)).Index == e.ColumnIndex)
+            {
+                var negative = ((string)e.Value)?.IndexOf('-') >= 0;
+                e.CellStyle.ForeColor = negative ? Color.Red : Color.LawnGreen;
             }
 
             if (stockIsin != null)

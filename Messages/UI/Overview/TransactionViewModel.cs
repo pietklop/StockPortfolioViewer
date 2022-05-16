@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace Messages.UI.Overview
 {
@@ -8,8 +9,11 @@ namespace Messages.UI.Overview
         public const string AnnualSumOf = "Annual sum of";
         public string Name { get; set; }
         public string Date { get; set; }
+        [DisplayName("N")]
         public double Quantity { get; set; }
         public string Price { get; set; }
+        [DisplayName("Current")]
+        public string CurrentPrice { get; set; }
         public string NativeValue { get; set; }
         public string UserValue { get; set; }
         public string Costs { get; set; }

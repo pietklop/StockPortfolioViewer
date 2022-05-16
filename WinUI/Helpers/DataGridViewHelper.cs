@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Castle.Core.Internal;
 using Messages.UI;
 
 namespace Dashboard.Helpers
@@ -15,6 +16,7 @@ namespace Dashboard.Helpers
             var type = ListBindingHelper.GetListItemType(dgv.DataSource);
             var properties = TypeDescriptor.GetProperties(type);
 
+            bool anyHeaderTooltip = false;
             foreach (DataGridViewColumn column in dgv.Columns)
             {
                 var p = properties[column.DataPropertyName];
@@ -28,12 +30,16 @@ namespace Dashboard.Helpers
                     }
                     var format = (DisplayFormatAttribute)p.Attributes[typeof(DisplayFormatAttribute)];
                     column.ToolTipText = p.Description;
+                    if (!p.Description.IsNullOrEmpty()) anyHeaderTooltip = true;
                     column.DefaultCellStyle.Format = format?.Format;
                     var underline = (ColumnCellsUnderlineAttribute)p.Attributes[typeof(ColumnCellsUnderlineAttribute)];
                     if (underline != null)
                         column.DefaultCellStyle.Font = new Font(dgv.DefaultCellStyle.Font, FontStyle.Underline);
                 }
             }
+
+            if (!anyHeaderTooltip)
+                dgv.ShowCellToolTips = false;
         }
 
         public static DataGridViewColumn GetColumn(this DataGridView dgv, string columnName)
@@ -67,6 +73,7 @@ namespace Dashboard.Helpers
             dgv.BackgroundColor = Color.FromArgb(46, 51, 73);
             dgv.ForeColor = Color.Gainsboro;
             dgv.BorderStyle = BorderStyle.None;
+            dgv.ShowCellToolTips = false;
 
             // Set the selection background color for all the cells.
             dgv.DefaultCellStyle.SelectionBackColor = Color.White;
