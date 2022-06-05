@@ -5,6 +5,9 @@ namespace Imports.DeGiro
 {
     public static class StringHelper
     {
+        /// <summary>
+        /// Ignores text within double quotes (")
+        /// </summary>
         public static string[] SmartSplit(this string text, char separator)
         {
             var fields = new List<string>();
