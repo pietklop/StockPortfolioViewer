@@ -54,6 +54,8 @@ namespace Services.DataCollection
             db.SaveChanges();
         }
 
+        public double EuroPrice() => db.Currencies.Single(c => c.Key == "USD").Ratio;
+
         public void TryUpdateStocks() => TryUpdateStocks(TimeSpan.FromMinutes(settings.StockUpdateAfterMinutes));
 
         public void TryUpdateStocks(TimeSpan olderThan)

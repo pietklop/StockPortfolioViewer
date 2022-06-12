@@ -2,11 +2,11 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using Castle.MicroKernel;
 using Core;
 using Dashboard.DI;
 using log4net;
 using log4net.Config;
-using Services;
 using Services.DataCollection;
 using Services.DI;
 
@@ -15,6 +15,7 @@ namespace Dashboard
     static class Program
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static double eurInUsd;
 
         /// <summary>
         ///  The main entry point for the application.
@@ -34,7 +35,7 @@ namespace Dashboard
 
             DoStartupActions();
 
-            var mainForm = CastleContainer.Resolve<frmMain>();
+            var mainForm = CastleContainer.Instance.Resolve<frmMain>(new Arguments { { "eurInUsd", eurInUsd } }); 
             Application.Run(mainForm);
         }
 
@@ -44,6 +45,7 @@ namespace Dashboard
             {
                 var drMan = CastleContainer.Resolve<DataRetrieverManager>();
                 drMan.TryUpdateCurrencies();
+                eurInUsd = drMan.EuroPrice();
                 var settings = CastleContainer.Resolve<Settings>();
                 if (settings.RetrieveStockValuesAtStartup)
                     drMan.TryUpdateStocks();

@@ -50,6 +50,7 @@ namespace Dashboard
             this.metroStyleFormManager = new MetroFramework.Components.MetroStyleManager(this.components);
             this.pnlTitle = new System.Windows.Forms.Panel();
             this.lblViewName = new System.Windows.Forms.Label();
+            this.lblEuroInDollars = new System.Windows.Forms.Label();
             this.pnlMenu.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.pnlInfo.SuspendLayout();
@@ -320,6 +321,7 @@ namespace Dashboard
             this.pnlTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(51)))), ((int)(((byte)(73)))));
+            this.pnlTitle.Controls.Add(this.lblEuroInDollars);
             this.pnlTitle.Controls.Add(this.lblViewName);
             this.pnlTitle.Location = new System.Drawing.Point(186, 30);
             this.pnlTitle.Name = "pnlTitle";
@@ -337,6 +339,16 @@ namespace Dashboard
             this.lblViewName.Size = new System.Drawing.Size(188, 39);
             this.lblViewName.TabIndex = 4;
             this.lblViewName.Text = "View name";
+            // 
+            // lblEuroInDollars
+            // 
+            this.lblEuroInDollars.AutoSize = true;
+            this.lblEuroInDollars.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lblEuroInDollars.Location = new System.Drawing.Point(6, 52);
+            this.lblEuroInDollars.Name = "lblEuroInDollars";
+            this.lblEuroInDollars.Size = new System.Drawing.Size(38, 15);
+            this.lblEuroInDollars.TabIndex = 5;
+            this.lblEuroInDollars.Text = "Euro $";
             // 
             // frmMain
             // 
@@ -361,6 +373,7 @@ namespace Dashboard
             this.pnlInfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.metroStyleFormManager)).EndInit();
             this.pnlTitle.ResumeLayout(false);
+            this.pnlTitle.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -387,6 +400,7 @@ namespace Dashboard
         private System.Windows.Forms.Button btnSinglePerformance;
         private System.Windows.Forms.Button btnStockDetails;
         private System.Windows.Forms.Button btnHistory;
+        private System.Windows.Forms.Label lblEuroInDollars;
     }
 }
 

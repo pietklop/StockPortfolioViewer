@@ -14,6 +14,7 @@ using log4net;
 using Services;
 using Services.DI;
 using Services.Helpers;
+using Services.Ui;
 using Syroot.Windows.IO;
 
 namespace Dashboard
@@ -22,6 +23,7 @@ namespace Dashboard
     {
         private readonly ILog log;
         private readonly Settings settings;
+        private readonly double eurInUsd;
         public int nTotalStocks;
         
         public string SelectedStockName;
@@ -38,10 +40,11 @@ namespace Dashboard
             }
         }
 
-        public frmMain(ILog log, Settings settings)
+        public frmMain(ILog log, Settings settings, double eurInUsd)
         {
             this.log = log;
             this.settings = settings;
+            this.eurInUsd = eurInUsd;
             InitializeComponent();
             HandleMenuButtonClick(btnMainOverview, CastleContainer.Instance.Resolve<frmOverview>(new Arguments { { nameof(frmMain), this } }));
 
@@ -68,6 +71,8 @@ namespace Dashboard
                 Location = Properties.UserSettings.Default.Location;
                 Size = Properties.UserSettings.Default.Size;
             }
+
+            lblEuroInDollars.Text = $"EUR {eurInUsd.FormatCurrency("$", false)}";
         }
 
         private void EnableStockDetails(string stockName, string isin)
