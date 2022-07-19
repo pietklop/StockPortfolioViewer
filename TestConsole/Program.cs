@@ -44,11 +44,39 @@ namespace TestConsole
             menu.Add("Setup", "Create initial DB", CreateInitialDb);
             menu.Add("Migrate", "Migrate", Migrate);
             menu.Add("Large", "Remove positions", RemovePositions);
+            menu.Add("Split", "Apply stock-split", ApplyStockSplit);
             menu.Add("Test", "Test", Test);
             menu.Add("Exit", "Exit", () => cancellationTokenSource.Cancel());
 
             while (!cancellationTokenSource.Token.IsCancellationRequested)
                 await menu.RunAsync();
+        }
+
+        /// <summary>
+        /// Apply ratio on all historic quantities and prices for given stock
+        /// </summary>
+        public static void ApplyStockSplit()
+        {
+            string symbol = "GOOGL";
+            double ratio = 20;
+            
+            using var db = new StockDbContext();
+            var stock = db.Stocks
+                .Include(s => s.Transactions).ThenInclude(t => t.StockValue)
+                .Include(s => s.StockValues)
+                .Include(s => s.LastKnownStockValue.StockValue)
+                .Single(s => s.Symbol == symbol);
+
+            foreach (var sValue in stock.StockValues)
+            {
+                sValue.NativePrice /= ratio;
+                sValue.UserPrice /= ratio;
+            }
+
+            foreach (var st in stock.Transactions)
+                st.Quantity *= ratio;
+
+            db.SaveChanges();
         }
 
         public static void RemovePositions()
