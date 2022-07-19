@@ -16,6 +16,7 @@ namespace DAL.Entities
         public double? NativeValue { get; set; }
         /// <summary>
         /// Value in user defined base currency
+        /// Total sum for all stocks owned
         /// </summary>
         public double UserValue { get; set; }
         public double UserCosts { get; set; }
