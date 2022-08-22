@@ -32,7 +32,7 @@ namespace StockDataApi.AlphaVantage
             return new StockQuoteDto(symbol, double.Parse(price.Value, CultureInfo.InvariantCulture), updateDateTime);
         }
 
-        public override bool CanRetrieveCurrencies() => true;
+        public override bool CanRetrieveCurrencies() => false; // only for payed plan these days
         public override double GetCurrencyRate(string foreignCurrency)
         {
             string response = Get($"function=CURRENCY_EXCHANGE_RATE&from_currency={Constants.UserCurrency}&to_currency={foreignCurrency}");
