@@ -58,8 +58,14 @@ namespace StockDataApi.IexCloud
         public override bool DataIsDayBehind() => false;
 
         public override bool CanRetrieveCurrencies() => false;
-        public override double GetCurrencyRate(string foreignCurrency) =>
-            throw new NotSupportedException($"{nameof(GetCurrencyRate)} is not supported for {ConstName}");
+        public override double GetCurrencyRate(string foreignCurrency)
+        {
+            var response = Get($"fx/latest?symbols={Constants.UserCurrency}{foreignCurrency}");
+            dynamic data = JObject.Parse(response);
+            var child = data["data"];
+            var element = child[0];
+            throw new NotImplementedException();
+        }
 
     }
 }
