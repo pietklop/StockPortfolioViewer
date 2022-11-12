@@ -117,7 +117,7 @@ namespace Dashboard
             Close();
 
             if (e.ColumnIndex == valueColumnIndex)
-                frmMain.ShowStockPerformance(name, isin);
+                frmMain.ShowStockTransactions(isin);
             else
                 frmMain.ShowStockDetails(name, isin);
         }
