@@ -11,6 +11,7 @@ namespace Imports.DeGiro
         private const int isinColIndex = 1;
         private const int priceColIndex = 3;
         private const int valueColIndex = 4;
+        private const int valueInUserCurrColIndex = 5;
 
         public static StockValueImportDto Import(string[] lines)
         {
@@ -28,6 +29,11 @@ namespace Imports.DeGiro
                 stockVal.TimeStamp = DateTime.Today.AddDays(-1).AddHours(20); // end of yesterday
                 stockVal.ClosePrice = fields[priceColIndex].ToDouble();
                 stockVal.Currency = fields[valueColIndex].Substring(0, 3);
+
+                var valueUsd = fields[valueColIndex].Substring(4).ToDouble();
+                var valueUserCurr = fields[valueInUserCurrColIndex].ReplaceComma().ToDouble();
+
+                stockVal.CurrencyRatio = valueUsd / valueUserCurr;
 
                 stockValues.Add(stockVal);
             }

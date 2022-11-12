@@ -56,9 +56,24 @@ namespace Services
                 stocksUpdated++;
             }
 
+            UpdateCurrencies(import);
+
             db.SaveChanges();
 
             return stocksUpdated;
+        }
+
+        private void UpdateCurrencies(StockValueImportDto import)
+        {
+            var currKeys = import.StockValues.Select(s => s.Currency).Distinct().ToList();
+
+            var currenciesDb = db.Currencies.ToList();
+            foreach (var currKey in currKeys)
+            {
+                var currencyDb = currenciesDb.Single(c => c.Key == currKey);
+                currencyDb.Ratio = import.StockValues.First(s => s.Currency == currKey).CurrencyRatio;
+                currencyDb.LastUpdate = DateTime.Now;
+            }
         }
     }
 }

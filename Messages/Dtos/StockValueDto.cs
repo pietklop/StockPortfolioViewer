@@ -7,6 +7,10 @@ namespace Messages.Dtos
         public string Name { get; set; }
         public string Isin { get; set; }
         public string Currency { get; set; }
+        /// <summary>
+        /// Divide by ratio to convert to UserCurrency
+        /// </summary>
+        public double CurrencyRatio { get; set; }
         public DateTime TimeStamp { get; set; }
         /// <summary>
         /// [Stock native currency]

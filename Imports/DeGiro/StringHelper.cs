@@ -29,6 +29,8 @@ namespace Imports.DeGiro
             return fields.ToArray();
         }
 
+        public static string ReplaceComma(this string text) => text.Replace(",", ".");
+
         public static double ToDouble(this string text) => 
             double.Parse(text.Replace(".", "").Replace(",", "."), CultureInfo.InvariantCulture);
 
