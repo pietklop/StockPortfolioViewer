@@ -34,6 +34,9 @@ namespace Services.Ui
 
             int nDaysDivExDiff = 14; // payout is always later then ex-div date
 
+            int year = dividends.First().Created.Year;
+            var annualDividends = new List<DividendViewModel>();
+
             foreach (var dividend in dividends)
             {
                 var stock = dividend.Stock;
@@ -53,7 +56,13 @@ namespace Services.Ui
                 if (!dividend.IsCapitalReturn() && CurrentlyOwned(stock) && LastDividendOfStock(dividend) && ExpectedNextDividendOrUnknown(stock.DividendPayoutInterval, dividend.TimeStamp))
                     dateString += "*";
 
-                list.Add(new DividendViewModel
+                if (dividend.TimeStamp.Year != year)
+                {
+                    AddAnnualSubTotal();
+                    year = dividend.TimeStamp.Year;
+                }
+
+                var divViewModels = new DividendViewModel
                 {
                     Name = stock.Name,
                     Date = dateString,
@@ -62,8 +71,15 @@ namespace Services.Ui
                     Costs = dividend.UserCosts.FormatUserCurrency(),
                     PayoutInterval = dividend.IsCapitalReturn() ? "Cap. return" : stock.DividendPayoutInterval.ToString(),
                     Percentage = percString,
-                });
+                    DNetValue = nettDividend,
+                    DTax = dividend.IsCapitalReturn() ? 0 : dividend.UserTax,
+                    DCosts = dividend.UserCosts,
+                };
+                list.Add(divViewModels);
+                annualDividends.Add(divViewModels);
             }
+
+            AddAnnualSubTotal();
 
             return list;
 
@@ -83,6 +99,20 @@ namespace Services.Ui
 
             PitStockValue ClosestValue(ICollection<PitStockValue> stockStockValues, DateTime date) =>
                 stockStockValues.OrderBy(s => (date - s.TimeStamp).Duration()).First();
+
+            void AddAnnualSubTotal()
+            {
+                if (annualDividends.Count == 0 || isin != null) return;
+                list.Add(new DividendViewModel
+                {
+                    Name = $"{DividendViewModel.AnnualSumOf} {year}",
+                    Date = year.ToString(),
+                    NettValue = annualDividends.Sum(t => t.DNetValue).FormatUserCurrency(),
+                    Tax = annualDividends.Sum(t => t.DTax).FormatUserCurrency(),
+                    Costs = annualDividends.Sum(t => t.DCosts).FormatUserCurrency(),
+                });
+                annualDividends.Clear();
+            }
         }
 
     }

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Dashboard.Helpers;
 using Messages.UI.Overview;
@@ -51,6 +47,10 @@ namespace Dashboard
 
             if (dateColumnIndex == e.ColumnIndex)
                 dgvDividends[dateColumnIndex, e.RowIndex].Style.ForeColor = ((string)e.Value).EndsWith("*") ? Color.Red : Color.Gainsboro;
+            
+            var nameColumnIndex = dgvDividends.GetColumn(nameof(DividendViewModel.Name)).Index;
+            if (nameColumnIndex == e.ColumnIndex && ((string)e.Value).StartsWith(DividendViewModel.AnnualSumOf))
+                dgvDividends.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.DarkRed;
         }
     }
 }
