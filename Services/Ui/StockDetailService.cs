@@ -39,7 +39,7 @@ namespace Services.Ui
             var userSalesValue = transactions.IsSell().Sum(t => -t.Quantity * t.StockValue.UserPrice);
             var userTransactionCosts = transactions.Sum(t => t.UserCosts);
             var currentUserValue = stock.LastKnownUserPrice * nStocks;
-            var userDividendValue = stock.Dividends.Sum(d => d.UserValue - d.UserCosts - d.UserTax);
+            var userDividendValue = stock.Dividends.Sum(d => d.UserValue - d.UserCosts);
             var profit = currentUserValue + userSalesValue - userBuyValue - userTransactionCosts + userDividendValue;
             var alarmCondition = stock.AlarmCondition.ToString();
             if (stock.AlarmCondition != AlarmCondition.None)

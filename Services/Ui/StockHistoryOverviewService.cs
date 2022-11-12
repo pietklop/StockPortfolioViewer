@@ -37,7 +37,7 @@ namespace Services.Ui
                 var totalBuyValue = avgBuyPrice * nStocks;
                 var totalSellValue = avgSellPrice * nStocks;
                 var profit = totalSellValue - totalBuyValue 
-                             + stock.Dividends.Sum(d => d.UserValue - d.UserCosts - d.UserTax)
+                             + stock.Dividends.Sum(d => d.UserValue - d.UserCosts)
                              - transactions.Sum(t => t.UserCosts);
 
                 var svm = new StockHistoryViewModel()

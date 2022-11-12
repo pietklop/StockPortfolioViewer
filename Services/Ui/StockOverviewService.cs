@@ -54,8 +54,7 @@ namespace Services.Ui
             {
                 var avgBuyPrice = stock.Transactions.DetermineAvgBuyUserPrice();
                 var nStocks = stock.Transactions.Sum(t => t.Quantity);
-                var currentValue = stock.LastKnownUserPrice * nStocks
-                                   + stock.Dividends.Sum(d => d.UserValue - d.UserCosts - d.UserTax);
+                var currentValue = stock.LastKnownUserPrice * nStocks + stock.Dividends.Sum(d => d.UserValue - d.UserCosts);
                 var virtualBuyValue = avgBuyPrice * nStocks;
                 totVirtualBuyValue += virtualBuyValue;
                 var profit = stock.Transactions.Sum(t => -t.Quantity * t.StockValue.UserPrice) + currentValue;
@@ -117,7 +116,7 @@ namespace Services.Ui
                 var dateFrom = DateTime.Now.AddDays(-nDays).Date;
                 var historicValue = stock.StockValues.OrderBy(v => v.TimeStamp).FirstOrDefault(v => v.TimeStamp > dateFrom)?.UserPrice ?? 0;
                 if (historicValue <= 0) return 0;
-                var divPerShare = stock.Dividends.Where(d => d.TimeStamp > dateFrom).Sum(d => d.UserValue - d.UserCosts - d.UserTax) / nStocks;
+                var divPerShare = stock.Dividends.Where(d => d.TimeStamp > dateFrom).Sum(d => d.UserValue - d.UserCosts) / nStocks;
                 return (stock.LastKnownUserPrice + divPerShare - historicValue) / historicValue;
             }
 
