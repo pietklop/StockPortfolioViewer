@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Castle.Core.Internal;
 using Castle.MicroKernel;
 using Core;
+using DAL;
 using Dashboard.Input;
 using Imports.DeGiro;
 using log4net;
@@ -23,7 +24,6 @@ namespace Dashboard
     {
         private readonly ILog log;
         private readonly Settings settings;
-        private readonly double eurInUsd;
         public int nTotalStocks;
         
         public string SelectedStockName;
@@ -40,11 +40,10 @@ namespace Dashboard
             }
         }
 
-        public frmMain(ILog log, Settings settings, double eurInUsd)
+        public frmMain(ILog log, Settings settings)
         {
             this.log = log;
             this.settings = settings;
-            this.eurInUsd = eurInUsd;
             InitializeComponent();
             HandleMenuButtonClick(btnMainOverview, CastleContainer.Instance.Resolve<frmOverview>(new Arguments { { nameof(frmMain), this } }));
 
@@ -72,7 +71,14 @@ namespace Dashboard
                 Size = Properties.UserSettings.Default.Size;
             }
 
-            lblEuroInDollars.Text = $"EUR {eurInUsd.FormatCurrency("$", false)}";
+            ShowDollarValue();
+        }
+
+        private void ShowDollarValue()
+        {
+            using var db = new StockDbContext();
+            var usd = db.Currencies.Single(c => c.Key == "USD");
+            lblEuroInDollars.Text = $"EUR {usd.Ratio.FormatCurrency("$", false)} ({usd.LastUpdate.ToShortDateString()})";
         }
 
         private void EnableStockDetails(string stockName, string isin)

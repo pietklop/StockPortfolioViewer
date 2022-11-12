@@ -35,7 +35,7 @@ namespace Dashboard
 
             DoStartupActions();
 
-            var mainForm = CastleContainer.Instance.Resolve<frmMain>(new Arguments { { "eurInUsd", eurInUsd } }); 
+            var mainForm = CastleContainer.Instance.Resolve<frmMain>(); 
             Application.Run(mainForm);
         }
 

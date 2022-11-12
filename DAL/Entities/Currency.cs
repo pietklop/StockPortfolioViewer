@@ -9,7 +9,7 @@ namespace DAL.Entities
         public string Key { get; set; }
         public string Symbol { get; set; }
         /// <summary>
-        /// Ratio = this / user currency
+        /// Ratio => price of 1EUR
         /// This is only used to calculate actual values
         /// </summary>
         public double Ratio { get; set; }
