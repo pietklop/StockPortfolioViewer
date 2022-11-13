@@ -49,8 +49,9 @@ namespace Dashboard
             this.pnlFormLoader = new System.Windows.Forms.Panel();
             this.metroStyleFormManager = new MetroFramework.Components.MetroStyleManager(this.components);
             this.pnlTitle = new System.Windows.Forms.Panel();
-            this.lblViewName = new System.Windows.Forms.Label();
             this.lblEuroInDollars = new System.Windows.Forms.Label();
+            this.lblViewName = new System.Windows.Forms.Label();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.pnlMenu.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.pnlInfo.SuspendLayout();
@@ -328,6 +329,16 @@ namespace Dashboard
             this.pnlTitle.Size = new System.Drawing.Size(960, 70);
             this.pnlTitle.TabIndex = 1;
             // 
+            // lblEuroInDollars
+            // 
+            this.lblEuroInDollars.AutoSize = true;
+            this.lblEuroInDollars.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lblEuroInDollars.Location = new System.Drawing.Point(6, 52);
+            this.lblEuroInDollars.Name = "lblEuroInDollars";
+            this.lblEuroInDollars.Size = new System.Drawing.Size(40, 15);
+            this.lblEuroInDollars.TabIndex = 5;
+            this.lblEuroInDollars.Text = "Euro $";
+            // 
             // lblViewName
             // 
             this.lblViewName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -340,15 +351,11 @@ namespace Dashboard
             this.lblViewName.TabIndex = 4;
             this.lblViewName.Text = "View name";
             // 
-            // lblEuroInDollars
+            // toolTip
             // 
-            this.lblEuroInDollars.AutoSize = true;
-            this.lblEuroInDollars.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblEuroInDollars.Location = new System.Drawing.Point(6, 52);
-            this.lblEuroInDollars.Name = "lblEuroInDollars";
-            this.lblEuroInDollars.Size = new System.Drawing.Size(38, 15);
-            this.lblEuroInDollars.TabIndex = 5;
-            this.lblEuroInDollars.Text = "Euro $";
+            this.toolTip.AutoPopDelay = 20000;
+            this.toolTip.InitialDelay = 500;
+            this.toolTip.ReshowDelay = 100;
             // 
             // frmMain
             // 
@@ -401,6 +408,7 @@ namespace Dashboard
         private System.Windows.Forms.Button btnStockDetails;
         private System.Windows.Forms.Button btnHistory;
         private System.Windows.Forms.Label lblEuroInDollars;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }
 

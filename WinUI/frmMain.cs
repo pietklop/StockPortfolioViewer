@@ -12,6 +12,7 @@ using DAL;
 using Dashboard.Input;
 using Imports.DeGiro;
 using log4net;
+using Microsoft.EntityFrameworkCore;
 using Services;
 using Services.DI;
 using Services.Helpers;
@@ -71,14 +72,35 @@ namespace Dashboard
                 Size = Properties.UserSettings.Default.Size;
             }
 
-            ShowDollarValue();
+            ShowValuesFromDatabase();
         }
 
-        private void ShowDollarValue()
+        private void ShowValuesFromDatabase()
         {
             using var db = new StockDbContext();
-            var usd = db.Currencies.Single(c => c.Key == "USD");
-            lblEuroInDollars.Text = $"EUR {usd.Ratio.FormatCurrency("$", false)} ({usd.LastUpdate.ToShortDateString()})";
+
+            ShowDollarEuroRate();
+            ShowLastDivOrTransactionImportToolTip();
+
+            void ShowDollarEuroRate()
+            {
+                var usd = db.Currencies.Single(c => c.Key == "USD");
+                lblEuroInDollars.Text = $"EUR {usd.Ratio.FormatCurrency("$", false)} ({usd.LastUpdate.ToShortDateString()})";
+            }
+
+            void ShowLastDivOrTransactionImportToolTip()
+            {
+                var lastTransaction = db.Transactions.Include(t => t.StockValue)
+                    .OrderByDescending(t => t.StockValue.TimeStamp).FirstOrDefault()?.StockValue.TimeStamp;
+                var lastDividend = db.Dividends.OrderByDescending(d => d.TimeStamp).FirstOrDefault()?.TimeStamp;
+                
+                var lastImport = lastTransaction.HasValue && lastDividend.HasValue
+                    ? lastTransaction.Value.GetLatest(lastDividend.Value)
+                    : lastTransaction ?? lastDividend;
+                if (lastImport == null) return;
+                
+                toolTip.SetToolTip(btnImport, $"Last transaction or dividend import: {lastImport.Value.ToShortDateString()}");
+            }
         }
 
         private void EnableStockDetails(string stockName, string isin)
