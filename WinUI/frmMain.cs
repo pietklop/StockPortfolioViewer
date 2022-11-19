@@ -220,7 +220,9 @@ namespace Dashboard
                     openFileDialog.Filter = "txt files (*.csv)|*.csv|All files (*.*)|*.*";
                     openFileDialog.Multiselect = true;
                     openFileDialog.Title = "Select files to import";
-
+                    var clipBoardFilePath = TryGetCsvFilePathFromClipBoard();
+                    if (clipBoardFilePath != null) openFileDialog.FileName = clipBoardFilePath;
+                    
                     if (openFileDialog.ShowDialog() != DialogResult.OK)
                         return;
 
@@ -239,6 +241,14 @@ namespace Dashboard
             catch (Exception ex)
             {
                 ShowImportException(ex);
+            }
+
+            string TryGetCsvFilePathFromClipBoard()
+            {
+                var clipText = Clipboard.GetText(TextDataFormat.Text).Trim();
+                if (string.IsNullOrEmpty(clipText)) return null;
+
+                return clipText.EndsWith(".csv") && File.Exists(clipText) ? clipText : null;
             }
         }
 
