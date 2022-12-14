@@ -84,7 +84,12 @@ namespace Dashboard
             if (dgvTransactions.GetColumn(nameof(TransactionViewModel.CurrentPrice)).Index == e.ColumnIndex)
             {
                 var negative = ((string)e.Value)?.IndexOf('-') >= 0;
-                e.CellStyle.ForeColor = negative ? Color.Red : Color.LawnGreen;
+                var quantityColIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.Quantity)).Index;
+                var sell = int.Parse(dgvTransactions[quantityColIndex, e.RowIndex].Value.ToString()) < 0;
+                if (sell)
+                    e.CellStyle.ForeColor = negative ? Color.DarkGreen : Color.Orange;
+                else
+                    e.CellStyle.ForeColor = negative ? Color.Red : Color.LawnGreen;
             }
 
             if (stockIsin != null)
