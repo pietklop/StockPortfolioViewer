@@ -34,7 +34,7 @@ namespace Services.Ui
 
             int nDaysDivExDiff = 14; // payout is always later then ex-div date
 
-            int year = dividends.First().Created.Year;
+            int year = dividends.FirstOrDefault()?.Created.Year ?? 2022;
             var annualDividends = new List<DividendViewModel>();
 
             foreach (var dividend in dividends)
