@@ -9,6 +9,8 @@ namespace Services.Ui
     public class PortfolioDistributionService
     {
         private readonly StockDbContext db;
+        private static PortfolioDistributionDto cachedFullPortfolio;
+        private static int nStocks;
 
         public PortfolioDistributionService(StockDbContext db)
         {
@@ -41,6 +43,8 @@ namespace Services.Ui
         public PortfolioDistributionDto GetAreaDistribution(string isin) => GetAreaDistribution(new List<string> { isin });
         public PortfolioDistributionDto GetAreaDistribution(List<string> isins = null, bool groupByContinent = false)
         {
+            if (isins == null && cachedFullPortfolio != null && !groupByContinent) return cachedFullPortfolio;
+
             var data = db.Stocks
                 .Include(s => s.LastKnownStockValue.StockValue)
                 .Include(s => s.StockValues)
@@ -71,7 +75,10 @@ namespace Services.Ui
                 d.Value,
             }).ToList();
 
-            return new PortfolioDistributionDto("Area distribution", sorted.Select(d => d.Key).ToArray(), sorted.Select(g => g.Value).ToArray(), true);
+            var port = new PortfolioDistributionDto("Area distribution", sorted.Select(d => d.Key).ToArray(), sorted.Select(g => g.Value).ToArray(), true);
+            cachedFullPortfolio ??= port;
+
+            return port;
         }
 
         public PortfolioDistributionDto GetSectorDistribution(string isin) => GetSectorDistribution(new List<string> { isin });
