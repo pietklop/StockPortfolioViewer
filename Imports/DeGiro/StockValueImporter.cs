@@ -29,6 +29,8 @@ namespace Imports.DeGiro
                 stockVal.TimeStamp = DateTime.Today.AddDays(-1).AddHours(20); // end of yesterday
                 stockVal.ClosePrice = fields[priceColIndex].ToDouble();
                 stockVal.Currency = fields[valueColIndex].Substring(0, 3);
+                if (stockVal.Currency == "GBX") 
+                    stockVal.Currency = "GBP";
 
                 var valueUsd = fields[valueColIndex].Substring(4).ToDouble();
                 var valueUserCurr = fields[valueInUserCurrColIndex].ReplaceComma().ToDouble();
