@@ -172,8 +172,6 @@ namespace Imports.DeGiro
                 return LineType.Na;
             if (actionField == "Flatex Cash Sweep Transfer")
                 return LineType.Na;
-            if (actionField == "Flatex Interest")
-                return LineType.Na;
             if (actionField == "Kapitaalsuitkering")
                 return LineType.CapitalReturn;
             if (actionField == "iDEAL storting")
@@ -187,6 +185,8 @@ namespace Imports.DeGiro
 
             // starts with...
             if (actionField.StartsWith("DEGIRO Aansluitingskosten"))
+                return LineType.Na;
+            if (actionField.StartsWith("Flatex Interest"))
                 return LineType.Na;
             if (actionField.StartsWith("Giro Exchange Connection Fee"))
                 return LineType.Na;
