@@ -105,7 +105,8 @@ namespace Dashboard
                 case StockDetailProperties.Bought:
                 case StockDetailProperties.Sold:
                 case StockDetailProperties.TransactionCosts:
-                    frmMain.ShowStockTransactions(stockIsin);
+                    var name = db.Stocks.Single(s => s.Isin == stockIsin).Name;
+                    frmMain.ShowStockTransactions(name, stockIsin);
                     break;
                 case StockDetailProperties.Dividend:
                     frmMain.ShowDividends(stockIsin);
