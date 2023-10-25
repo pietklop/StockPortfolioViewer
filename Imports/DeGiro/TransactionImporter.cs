@@ -27,9 +27,14 @@ namespace Imports.DeGiro
             var dividends = new List<DividendDto>();
             var currConversions = new List<CurrencyConvert>();
 
+            var fieldsList = new List<string[]>(lines.Length-1);
             foreach (var line in lines.Skip(1))
+                fieldsList.Add(line.SmartSplit(','));
+
+            MakeSureTaxFollowsDividend(fieldsList);
+
+            foreach (var fields in fieldsList)
             {
-                var fields = line.SmartSplit(',');
                 var lineType = GetLineType(fields[actionColIndex], debugMode);
                 switch (lineType)
                 {
@@ -68,6 +73,31 @@ namespace Imports.DeGiro
             EnrichDividendData(ref dividends, currConversions);
 
             return new TransactionImportDto(transactions, dividends);
+        }
+
+        /// <summary>
+        /// Make sure the tax line comes after the dividend line
+        /// </summary>
+        private static void MakeSureTaxFollowsDividend(List<string[]> fieldsList)
+        {
+            var divTaxDict = new Dictionary<string, int>(); // <isin, index>
+            for (int i = 0; i < fieldsList.Count; i++)
+            {
+                var lineType = GetLineType(fieldsList[i][actionColIndex], false);
+                var isin = fieldsList[i][isinColIndex];
+                if (lineType == LineType.DividendTax)
+                {
+                    divTaxDict[isin] = i;
+                    continue;
+                }
+                if (lineType != LineType.Dividend)
+                    continue;
+                if (!divTaxDict.ContainsKey(isin)) continue;
+                // div tax is already listed => wrong order
+                var divTaxIndex = divTaxDict[isin];
+                // swap te order
+                (fieldsList[i], fieldsList[divTaxIndex]) = (fieldsList[divTaxIndex], fieldsList[i]);
+            }
         }
 
         private static void EnrichDividendData(ref List<DividendDto> dividends, List<CurrencyConvert> currConversions) => 
