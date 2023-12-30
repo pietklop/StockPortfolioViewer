@@ -202,15 +202,17 @@ namespace Imports.DeGiro
                 return LineType.Na;
             if (actionField == "Flatex Cash Sweep Transfer")
                 return LineType.Na;
+            if (actionField == "flatex terugstorting")
+                return LineType.Na;
             if (actionField == "Kapitaalsuitkering")
                 return LineType.CapitalReturn;
             if (actionField == "iDEAL storting")
                 return LineType.Na;
             if (actionField == "iDEAL Deposit")
                 return LineType.Na;
-            if (actionField == "Reservation iDEAL / Sofort Deposit")
+            if (actionField == "Processed Flatex Withdrawal")
                 return LineType.Na;
-            if (actionField == "Terugstorting")
+            if (actionField == "Reservation iDEAL / Sofort Deposit")
                 return LineType.Na;
             if (actionField == "Rente")
                 return LineType.Na;
