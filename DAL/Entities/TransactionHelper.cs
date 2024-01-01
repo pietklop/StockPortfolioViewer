@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DAL.Entities
@@ -28,5 +29,10 @@ namespace DAL.Entities
 
         public static IEnumerable<Transaction> IsSell(this ICollection<Transaction> transactions) =>
             transactions.Where(t => t.Quantity < 0);
+
+        public static IEnumerable<Transaction> IsBetween(this ICollection<Transaction> transactions, DateTime dateFrom, DateTime dateTo) =>
+            transactions.Where(t => t.StockValue.TimeStamp.Date >= dateFrom && t.StockValue.TimeStamp.Date <= dateTo);
+
+        public static bool IsStockDividend(this Transaction transactions) => transactions.StockValue.UserPrice <= 0.1;
     }
 }

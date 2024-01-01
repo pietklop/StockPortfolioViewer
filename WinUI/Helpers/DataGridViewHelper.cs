@@ -105,5 +105,35 @@ namespace Dashboard.Helpers
                 ? dataSourceList.OrderBy(x => x.GetType().GetProperty(colName).GetValue(x)).ToList()
                 : dataSourceList.OrderByDescending(x => x.GetType().GetProperty(colName).GetValue(x)).ToList();
         }
+
+        public static void ShowRedAtNegativeValue(this DataGridViewCell cell, bool showGreenAsPositiveValue = true)
+        {
+            int sign = 0;
+            if (cell.Value is string s)
+            {
+                if (s?.IndexOf('-') >= 0) sign = -1;
+                else sign = 1;
+            }
+            else if (cell.Value is double d)
+            {
+                if (d < 0) sign = -1;
+                if (d > 0) sign = 1;
+            }
+            else if (cell.Value is float f)
+            {
+                if (f < 0) sign = -1;
+                if (f > 0) sign = 1;
+            }
+            else if (cell.Value is int i)
+            {
+                if (i < 0) sign = -1;
+                if (i > 0) sign = 1;
+            }
+
+            if (sign < 0)
+                cell.Style.ForeColor = Color.Red;
+            else if (showGreenAsPositiveValue && sign > 0)
+                cell.Style.ForeColor = Color.LawnGreen;
+        }
     }
 }

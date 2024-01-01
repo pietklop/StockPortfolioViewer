@@ -338,6 +338,7 @@ namespace Services.Ui
         Week,
         Month,
         Quarter,
+        Year,
     }
 
     public static class PerformanceIntervalHelper

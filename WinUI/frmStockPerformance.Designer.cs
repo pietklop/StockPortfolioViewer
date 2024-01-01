@@ -97,15 +97,18 @@ namespace Dashboard
             // 
             // dgvStocks
             // 
-            this.dgvStocks.AllowUserToAddRows = false;
-            this.dgvStocks.AllowUserToDeleteRows = false;
-            this.dgvStocks.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvStocks.Location = new System.Drawing.Point(50, 344);
-            this.dgvStocks.Name = "dgvStocks";
-            this.dgvStocks.ReadOnly = true;
-            this.dgvStocks.RowTemplate.Height = 25;
-            this.dgvStocks.Size = new System.Drawing.Size(303, 282);
-            this.dgvStocks.TabIndex = 8;
+            dgvStocks.AllowUserToAddRows = false;
+            dgvStocks.AllowUserToDeleteRows = false;
+            dgvStocks.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            dgvStocks.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvStocks.Location = new System.Drawing.Point(50, 344);
+            dgvStocks.Name = "dgvStocks";
+            dgvStocks.ReadOnly = true;
+            dgvStocks.RowTemplate.Height = 25;
+            dgvStocks.Size = new System.Drawing.Size(680, 312);
+            dgvStocks.TabIndex = 8;
+            dgvStocks.CellFormatting += dgvStocks_CellFormatting;
+            dgvStocks.SelectionChanged += dgvStocks_SelectionChanged;
             // 
             // frmStockPerformance
             // 

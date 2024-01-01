@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -16,17 +18,19 @@ namespace Dashboard
     {
         private readonly Settings settings;
         private readonly StockPerformanceService stockPerformanceService;
+        private readonly StockPerformanceOverviewService stockPerformanceOverviewService;
         private List<string> stockIsins;
         private List<string> stockNames = null;
 
-        public frmStockPerformance(Settings settings, StockPerformanceService stockPerformanceService) : this(settings, stockPerformanceService, (List<string>)null)
+        public frmStockPerformance(Settings settings, StockPerformanceService stockPerformanceService, StockPerformanceOverviewService stockPerformanceOverviewService) : this(settings, stockPerformanceService, stockPerformanceOverviewService, (List<string>)null)
         {
         }
 
-        public frmStockPerformance(Settings settings, StockPerformanceService stockPerformanceService, List<string> stockIsins = null)
+        public frmStockPerformance(Settings settings, StockPerformanceService stockPerformanceService, StockPerformanceOverviewService stockPerformanceOverviewService, List<string> stockIsins = null)
         {
             this.settings = settings;
             this.stockPerformanceService = stockPerformanceService;
+            this.stockPerformanceOverviewService = stockPerformanceOverviewService;
             this.stockIsins = stockIsins;
             InitializeComponent();
         }
@@ -34,7 +38,7 @@ namespace Dashboard
         private void frmStockPerformance_Load(object sender, EventArgs e)
         {
             PopulateStockGrid();
-            if (!MultipleStocks()) 
+            if (!MultipleStocks())
                 btnSelect.Visible = false;
             cmbPeriod.DataSource = Enum.GetValues(typeof(Period));
             cmbPeriod.SelectedItem = Period.AllTime;
@@ -44,34 +48,58 @@ namespace Dashboard
 
         private void PopulateStockGrid()
         {
-            if (stockNames == null)
-            {
-                dgvStocks.Visible = false;
-                return;
-            }
-            dgvStocks.Visible = true;
-
-            var vm = new List<StockSimpleViewModel>();
-            for (int i = 0; i < stockNames.Count; i++)
-                vm.Add(new StockSimpleViewModel {Isin = stockIsins[i], Name = stockNames[i]});
-
-            dgvStocks.DataSource = vm;
+            // if (stockNames == null)
+            // {
+            //     dgvStocks.Visible = false;
+            //     return;
+            // }
+            var performanceInterval = PerformanceInterval.Year;
+            dgvStocks.DataSource = stockPerformanceOverviewService.GetStockList(performanceInterval);
 
             // column configuration
             dgvStocks.ApplyColumnDisplayFormatAttributes();
             dgvStocks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-            var nameColumn = dgvStocks.GetColumn(nameof(DividendViewModel.Name));
+            var nameColumn = dgvStocks.GetColumn(nameof(StockPerformanceOverviewModel.Name));
             nameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            var t0Column = dgvStocks.GetColumn(nameof(StockPerformanceOverviewModel.PerformanceFractionT0));
+            var tMin1Column = dgvStocks.GetColumn(nameof(StockPerformanceOverviewModel.PerformanceFractionTMin1));
+            var tMin2Column = dgvStocks.GetColumn(nameof(StockPerformanceOverviewModel.PerformanceFractionTMin2));
+            var tMin3Column = dgvStocks.GetColumn(nameof(StockPerformanceOverviewModel.PerformanceFractionTMin3));
+            var today = DateTime.Today;
+            switch (performanceInterval)
+            {
+                case PerformanceInterval.Month:
+                    t0Column.HeaderText = today.GetMonthShort();
+                    tMin1Column.HeaderText = today.AddMonths(-1).GetMonthShort();
+                    tMin2Column.HeaderText = today.AddMonths(-2).GetMonthShort();
+                    tMin3Column.HeaderText = today.AddMonths(-3).GetMonthShort();
+                    break;
+                case PerformanceInterval.Quarter:
+                    t0Column.HeaderText = today.GetQuarterShort();
+                    tMin1Column.HeaderText = today.AddMonths(-3).GetQuarterShort();
+                    tMin2Column.HeaderText = today.AddMonths(-6).GetQuarterShort();
+                    tMin3Column.HeaderText = today.AddMonths(-9).GetQuarterShort();
+                    break;
+                case PerformanceInterval.Year:
+                    t0Column.HeaderText = today.Year.ToString();
+                    tMin1Column.HeaderText = today.AddYears(-1).Year.ToString();
+                    tMin2Column.HeaderText = today.AddYears(-2).Year.ToString();
+                    tMin3Column.HeaderText = today.AddYears(-3).Year.ToString();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
             dgvStocks.SetReadOnly();
             dgvStocks.SetVisualStyling();
+            dgvStocks.Visible = true;
         }
 
         private bool MultipleStocks() => stockIsins?.Count != 1;
 
         private void PopulateGraph()
         {
-            var period = (Period) cmbPeriod.SelectedItem;
+            var period = (Period)cmbPeriod.SelectedItem;
             DateTime from;
             DateTime to;
             switch (period)
@@ -94,9 +122,9 @@ namespace Dashboard
 
             var performanceDto = stockPerformanceService.GetValues(stockIsins, from, to, out PerformanceInterval interval);
             var points = performanceDto.Points;
-            if (points.Count == 0) 
+            if (points.Count == 0)
                 return;
-            var performance = points.Last().RelativeValue / points.First().RelativeValue-1;
+            var performance = points.Last().RelativeValue / points.First().RelativeValue - 1;
             var firstDate = points.First().Date;
             var lastDate = points.Last().Date;
             var annualPerformance = GrowthHelper.AnnualPerformance(performance, firstDate, lastDate);
@@ -117,7 +145,7 @@ namespace Dashboard
             var baseReturnPoints = CreateBaseLine();
             var baseSeries = chart.AddXySeries(SeriesChartType.Line, dates, baseReturnPoints.Select(p => p.RelativeValue).ToArray(), "BasePerformance", $"Base ({settings.BaseAnnualPerformance:P0})");
             baseSeries.BorderWidth = 1;
-            
+
             if (points.Any(p => p.Dividend > 0))
                 chart.AddXySeries(SeriesChartType.Stock, dates, points.Select(p => p.Dividend).ToArray(), "Dividend");
             else
@@ -132,7 +160,7 @@ namespace Dashboard
                 basePoints.Add(new ValuePointDto(points[0].RelativeValue, points[0].Date));
 
                 foreach (var point in points.Skip(1))
-                    basePoints.Add(new ValuePointDto(points[0].RelativeValue * GrowthHelper.ExpectedPerformance(1+settings.BaseAnnualPerformance, points[0].Date, point.Date), point.Date));
+                    basePoints.Add(new ValuePointDto(points[0].RelativeValue * GrowthHelper.ExpectedPerformance(1 + settings.BaseAnnualPerformance, points[0].Date, point.Date), point.Date));
 
                 return basePoints;
             }
@@ -149,10 +177,7 @@ namespace Dashboard
             }
         }
 
-        private void cmbPeriod_SelectionChangeCommitted(object sender, EventArgs e)
-        {
-            PopulateGraph();
-        }
+        private void cmbPeriod_SelectionChangeCommitted(object sender, EventArgs e) => PopulateGraph();
 
         private void btnSelect_Click(object sender, EventArgs e)
         {
@@ -164,6 +189,20 @@ namespace Dashboard
                 PopulateGraph();
                 PopulateStockGrid();
             }
+        }
+
+        private void dgvStocks_SelectionChanged(object sender, EventArgs e) => dgvStocks.ClearSelection();
+
+        private void dgvStocks_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dgvStocks.Columns[e.ColumnIndex].Name == nameof(StockPerformanceOverviewModel.PerformanceFractionT0))
+                dgvStocks[e.ColumnIndex, e.RowIndex].ShowRedAtNegativeValue();
+            if (dgvStocks.Columns[e.ColumnIndex].Name == nameof(StockPerformanceOverviewModel.PerformanceFractionTMin1))
+                dgvStocks[e.ColumnIndex, e.RowIndex].ShowRedAtNegativeValue();
+            if (dgvStocks.Columns[e.ColumnIndex].Name == nameof(StockPerformanceOverviewModel.PerformanceFractionTMin2))
+                dgvStocks[e.ColumnIndex, e.RowIndex].ShowRedAtNegativeValue();
+            if (dgvStocks.Columns[e.ColumnIndex].Name == nameof(StockPerformanceOverviewModel.PerformanceFractionTMin3))
+                dgvStocks[e.ColumnIndex, e.RowIndex].ShowRedAtNegativeValue();
         }
     }
 
@@ -178,5 +217,5 @@ namespace Dashboard
         /// Trailing three months
         /// </summary>
         T3M,
-    } 
+    }
 }
