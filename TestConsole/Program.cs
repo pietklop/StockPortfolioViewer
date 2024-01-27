@@ -84,7 +84,7 @@ namespace TestConsole
             float? removeLargerThan = ReadLine.ReadValueType<float?>("Remove positions larger than", 1000);
             if (removeLargerThan == null) return;
             log.Info($"Remove positions larger than: {removeLargerThan}");
-            using (var db = new StockDbContext())
+            using (var db = StockDbContextHelper.CreateDbContext())
             {
                 var stocks = db.Stocks
                     .Include(s => s.AreaShares)
@@ -171,7 +171,7 @@ namespace TestConsole
 
         public static void Migrate()
         {
-            using (var db = new StockDbContext())
+            using (var db = StockDbContextHelper.CreateDbContext())
             {
                 log.Info($"Migrate...");
                 db.Database.Migrate();
@@ -182,7 +182,7 @@ namespace TestConsole
 
         public static void CreateInitialDb()
         {
-            using (var db = new StockDbContext())
+            using (var db = StockDbContextHelper.CreateDbContext())
             {
                 log.Info($"Migrate and setup");
                 db.Database.Migrate();

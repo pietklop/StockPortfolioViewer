@@ -15,7 +15,8 @@ namespace Services.DI
             foreach (var externalInstaller in externalInstallers)
                 compositeInstaller.Add(externalInstaller);
 
-            compositeInstaller.Add(new StockDbInstaller());
+            var settings = SettingsHelper.GetSettings();
+            compositeInstaller.Add(new StockDbInstaller(settings));
             compositeInstaller.Add(new ServicesInstaller(SettingsHelper.GetSettings()));
 
             return compositeInstaller;

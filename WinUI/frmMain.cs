@@ -77,7 +77,7 @@ namespace Dashboard
 
         private void ShowValuesFromDatabase()
         {
-            using var db = new StockDbContext();
+            using var db = StockDbContextHelper.CreateDbContext();
 
             ShowDollarEuroRate();
             ShowLastDivOrTransactionImportToolTip();

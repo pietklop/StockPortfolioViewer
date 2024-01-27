@@ -1,6 +1,7 @@
 ﻿using DAL.Entities;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using System.Data.Common;
 
 namespace DAL
 {
@@ -20,6 +21,10 @@ namespace DAL
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
 
+        public StockDbContext(DbContextOptions options) : base(options)
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -31,14 +36,11 @@ namespace DAL
                 .HasKey(ur => new { ur.StockId, ur.DataRetrieverId });
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public static DbConnection Connection(string dbFileNamePath)
         {
-            var settings = SettingsHelper.GetSettings();
-            var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = settings.DbFileNamePath };
+            var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = dbFileNamePath };
             var connectionString = connectionStringBuilder.ToString();
-            var connection = new SqliteConnection(connectionString);
-
-            optionsBuilder.UseSqlite(connection);
+            return new SqliteConnection(connectionString);
         }
     }
 }
