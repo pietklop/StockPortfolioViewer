@@ -41,6 +41,7 @@ namespace Services
             var stocks = db.Stocks
                 .Include(s => s.Currency)
                 .Include(s => s.LastKnownStockValue.StockValue)
+                .Include(s => s.Transactions)
                 .ToList();
             int stocksUpdated = 0;
 
@@ -48,9 +49,11 @@ namespace Services
             {
                 var stock = stocks.SingleOrDefault(s => s.Isin == sv.Isin) ?? throw new Exception($"Stock Name:'{sv.Name}' Isin:{sv.Isin} could not be found");
                 if (stock.Currency.Key != sv.Currency) throw new Exception($"Currencies ({stock.Currency.Key} vs {sv.Currency}) do not match for '{sv.Name}' Isin:{sv.Isin}");
-                
+
                 if (stock.LastKnownStockValue.StockValue.TimeStamp >= sv.TimeStamp)
                     continue;
+
+                if (sv.Quantity > 0 && Math.Abs(stock.Transactions.Sum(t => t.Quantity) - sv.Quantity) > 0.001) throw new Exception($"The total stock quantity for {stock} does not match");
 
                 stockService.UpdateStockPrice(stock, sv.ClosePrice, sv.TimeStamp);
                 stocksUpdated++;

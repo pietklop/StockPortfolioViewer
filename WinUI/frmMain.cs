@@ -10,7 +10,7 @@ using Castle.MicroKernel;
 using Core;
 using DAL;
 using Dashboard.Input;
-using Imports.DeGiro;
+using Imports;
 using log4net;
 using Microsoft.EntityFrameworkCore;
 using Services;
@@ -26,7 +26,7 @@ namespace Dashboard
         private readonly ILog log;
         private readonly Settings settings;
         public int nTotalStocks;
-        
+
         public string SelectedStockName;
         private string selectedStockIsin;
         public string SelectedStockIsin
@@ -93,12 +93,12 @@ namespace Dashboard
                 var lastTransaction = db.Transactions.Include(t => t.StockValue)
                     .OrderByDescending(t => t.StockValue.TimeStamp).FirstOrDefault()?.StockValue.TimeStamp;
                 var lastDividend = db.Dividends.OrderByDescending(d => d.TimeStamp).FirstOrDefault()?.TimeStamp;
-                
+
                 var lastImport = lastTransaction.HasValue && lastDividend.HasValue
                     ? lastTransaction.Value.GetLatest(lastDividend.Value)
                     : lastTransaction ?? lastDividend;
                 if (lastImport == null) return;
-                
+
                 toolTip.SetToolTip(btnImport, $"Last transaction or dividend import: {lastImport.Value.ToShortDateString()}");
             }
         }
@@ -225,7 +225,7 @@ namespace Dashboard
                     openFileDialog.Title = "Select files to import";
                     var clipBoardFilePath = TryGetCsvFilePathFromClipBoard();
                     if (clipBoardFilePath != null) openFileDialog.FileName = clipBoardFilePath;
-                    
+
                     if (openFileDialog.ShowDialog() != DialogResult.OK)
                         return;
 
@@ -284,13 +284,20 @@ namespace Dashboard
 
             switch (importer.DetermineImportType(lines))
             {
-                case ImportType.Transaction:
-                    (int nT, int nDiv) = importProcessor.Process(importer.TransactionImport(lines, settings.DebugMode));
+                case ImportType.DeGiroTransactionsAndDividends:
+                    (int nT, int nDiv) = importProcessor.Process(importer.DeGiroTransactionAndDividendImport(lines, settings.DebugMode));
                     nAddedTransactions += nT;
                     nAddedDividends += nDiv;
                     break;
-                case ImportType.StockValue:
-                    nStockValueUpdates = importProcessor.Process(importer.StockValueImport(lines));
+                case ImportType.DeGiroStockValues:
+                    nStockValueUpdates = importProcessor.Process(importer.DeGiroStockValueImport(lines));
+                    break;
+                case ImportType.IbkrTransactions:
+                    (int nTr, int _) = importProcessor.Process(importer.IbkrTransactionImport(lines, settings.DebugMode));
+                    nAddedTransactions += nTr;
+                    break;
+                case ImportType.IbkrStockValues:
+                    nStockValueUpdates = importProcessor.Process(importer.IbkrStockValueImport(lines));
                     break;
                 default:
                     MessageBox.Show($"Unrecognized file content", "Import result", MessageBoxButtons.OK, MessageBoxIcon.Error);

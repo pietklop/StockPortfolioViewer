@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30804.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34302.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{A34F8B69-C747-4280-A878-9B493DFFC6B9}"
 EndProject
@@ -26,6 +26,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{AA0F2D3F-403C-4EDF-BD89-26D60ECE1045}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckBoxComboBox", "CheckBoxComboBox\CheckBoxComboBox.csproj", "{70A25201-8EA4-48F8-A4A6-ED13ADF8823C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imports.Tests", "Imports.Tests\Imports.Tests.csproj", "{35E5B5DF-9313-43F0-B584-CAE59FD733A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,10 @@ Global
 		{70A25201-8EA4-48F8-A4A6-ED13ADF8823C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70A25201-8EA4-48F8-A4A6-ED13ADF8823C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70A25201-8EA4-48F8-A4A6-ED13ADF8823C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35E5B5DF-9313-43F0-B584-CAE59FD733A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35E5B5DF-9313-43F0-B584-CAE59FD733A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35E5B5DF-9313-43F0-B584-CAE59FD733A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35E5B5DF-9313-43F0-B584-CAE59FD733A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +87,7 @@ Global
 		{DA70CF8F-BD0A-41BF-AE9F-AF65A1B1A7DC} = {A34F8B69-C747-4280-A878-9B493DFFC6B9}
 		{AA1BB6D7-65C3-41CA-BB83-B1948B056394} = {F8857F00-C501-408D-9431-9D2F807016EE}
 		{70A25201-8EA4-48F8-A4A6-ED13ADF8823C} = {AA0F2D3F-403C-4EDF-BD89-26D60ECE1045}
+		{35E5B5DF-9313-43F0-B584-CAE59FD733A3} = {A34F8B69-C747-4280-A878-9B493DFFC6B9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {221F30A0-3A05-4C2B-A365-6CDBD044F74C}

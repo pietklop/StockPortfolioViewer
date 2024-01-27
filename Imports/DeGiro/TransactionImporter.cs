@@ -216,6 +216,8 @@ namespace Imports.DeGiro
                 return LineType.Na;
             if (actionField == "Rente")
                 return LineType.Na;
+            if (actionField == "Terugstorting in behandeling")
+                return LineType.Na;
 
             // starts with...
             if (actionField.StartsWith("DEGIRO Aansluitingskosten"))

@@ -2,7 +2,7 @@
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Core;
-using Imports.DeGiro;
+using Imports;
 using Services.DataCollection;
 using Services.Ui;
 using StockDataApi.AlphaVantage;
