@@ -134,8 +134,8 @@ namespace Services
             }
             ValidateEnoughToSell();
 
-            var giroCurrConvRate = 0.0025;
-            var currConvCosts = dto.Currency == Constants.UserCurrency ? 0 : dto.Price.ToUserCurrency(dto.CurrencyRatio) * giroCurrConvRate;
+            var currConvRate = 0.0001;
+            var currConvCosts = dto.Currency == Constants.UserCurrency ? 0 : dto.Price.ToUserCurrency(dto.CurrencyRatio) * currConvRate + 1;
 
             var pitStockValue = GetOrCreatePitStockValue(stock.LastKnownStockValue == null);
             var trans = new Transaction
@@ -149,7 +149,7 @@ namespace Services
             };
 
             db.Transactions.Add(trans);
-            db.SaveChanges(); // we need to save each transition because a later one can be the sell
+            db.SaveChanges(); // we need to save each transaction because a later one can be the sell
 
             if (stock.LastKnownStockValue == null)
                 stock.LastKnownStockValue = new LastKnownStockValue {StockValue = pitStockValue, LastUpdate = dto.TimeStamp};
