@@ -66,7 +66,7 @@ namespace Services.Ui
                     Profit = profit,
                     ProfitFraction = profit / virtualBuyValue,
                     ProfitFractionLast30Days = ProfitFraction(stock, days30Back, nStocks),
-                    ProfitFractionLast7Days = ProfitFraction(stock, 7, nStocks),
+                    ProfitFractionLast7Days = ProfitFraction(stock, 8, nStocks),
                     LastPriceChange = LastUpdateSince(stock),
                     Remark = Remark(stock),
                     //CompatibleDataRetrievers = string.Join(",", stock.StockRetrieverCompatibilities.OrderBy(c => c.DataRetriever.Priority).Where(c => c.DataRetriever.Priority > 0 && c.Compatibility == RetrieverCompatibility.True).Select(c => c.DataRetriever.Name.Substring(0, 3)))
