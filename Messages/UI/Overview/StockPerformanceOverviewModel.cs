@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace Messages.UI.Overview
 {
@@ -10,6 +11,7 @@ namespace Messages.UI.Overview
         public string Isin { get; set; }
         [Description("Total value of this currently owned stock")]
         [DisplayFormat("C0")]
+        [ColumnHide]
         public double Value { get; set; }
         [DisplayFormat("P1")]
         [Description("(Weighed) Performance")]

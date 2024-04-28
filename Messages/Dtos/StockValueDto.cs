@@ -16,5 +16,6 @@ namespace Messages.Dtos
         /// [Stock native currency]
         /// </summary>
         public double ClosePrice { get; set; }
+        public double Quantity { get; set; }
     }
 }

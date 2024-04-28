@@ -13,13 +13,11 @@ namespace Services.Ui
     {
         private readonly ILog log;
         private readonly StockDbContext db;
-        private readonly StockOverviewService stockOverviewService;
 
-        public StockPerformanceService(ILog log, StockDbContext db, StockOverviewService stockOverviewService)
+        public StockPerformanceService(ILog log, StockDbContext db)
         {
             this.log = log;
             this.db = db;
-            this.stockOverviewService = stockOverviewService;
         }
 
         private PerformanceDto GetValues(DateTime dateFrom, DateTime dateTo, out PerformanceInterval interval, List<string> isins)
@@ -110,7 +108,7 @@ namespace Services.Ui
 
         public PerformanceDto GetValues(List<string> isins, DateTime dateFrom , DateTime dateTo, out PerformanceInterval interval)
         {
-            if (isins == null || isins.Count > 1) 
+            if (isins == null || isins.Count > 1)
                 return GetValues(dateFrom, dateTo, out interval, isins);
 
             bool fromStart = dateFrom == null;
@@ -139,11 +137,11 @@ namespace Services.Ui
         {   // make sure first value of range is 100
             var baseValue = points.First().RelativeValue;
             points.ForEach(p => p.RelativeValue *= 100 / baseValue);
-            
+
             var maxDiv = points.Max(p => p.Dividend);
             if (maxDiv > 0)
                 points.ForEach(p => p.Dividend *= 50 / maxDiv); // max div is scaled to 50% in graph
-            
+
             var maxTotal = points.Max(p => p.TotalValue);
             if (maxTotal > 0)
                 points.ForEach(p => p.TotalValue *= 100 / maxTotal); // max total is scaled to 100% in graph

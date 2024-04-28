@@ -40,6 +40,23 @@ namespace Services.Tests.Factories
             return stockValue;
         }
 
+        public static Dividend AddDividend(this Stock stock, DateTime dateTime, double nativeValue, double currencyRatio = 1)
+        {
+            stock.Dividends ??= new List<Dividend>();
+
+            var div = new Dividend
+            {
+                Created = dateTime,
+                TimeStamp = dateTime,
+                NativeValue = nativeValue,
+                UserValue = nativeValue.ToUserCurrency(currencyRatio),
+            };
+
+            stock.Dividends.Add(div);
+
+            return div;
+        }
+
         public static Transaction AddBuy(this Stock stock, DateTime dateTime, double quantity, double nativePrice, double currencyRatio = 1, double costs = 0)
         {
             if (quantity <= 0) throw new Exception($"{nameof(quantity)} must be larger than 0");

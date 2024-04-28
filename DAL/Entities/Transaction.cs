@@ -23,5 +23,14 @@ namespace DAL.Entities
         /// Can be used for example as ref to import
         /// </summary>
         public string ExtRef { get; set; }
+
+        public override string ToString()
+        {
+            var txt = Stock == null ? $"{ExtRef} " : $"{Stock.Name} ";
+            txt += $"n={Quantity} ";
+            if (StockValue != null) txt += $"{StockValue.NativePrice} {StockValue.TimeStamp.Date}";
+
+            return txt;
+        }
     }
 }

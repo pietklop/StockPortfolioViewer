@@ -15,26 +15,28 @@ namespace Services.Ui
     {
         private readonly ILog log;
         private readonly StockDbContext db;
+        private DateTime dateTo;
 
-        public StockPerformanceOverviewService(ILog log, StockDbContext db)
+        public StockPerformanceOverviewService(ILog log, StockDbContext db, DateTime? dateTo = null)
         {
             this.log = log;
             this.db = db;
+            this.dateTo = dateTo ?? DateTime.Today;
         }
 
         public List<StockPerformanceOverviewModel> GetStockList(PerformanceInterval interval)
         {
             var intervals = new List<Interval>();
-            var dateTo = DateTime.Today;
-            if (interval == PerformanceInterval.Year && dateTo.Month <= 3) dateTo = dateTo.AddMonths(-3);
+            if (interval == PerformanceInterval.Year && dateTo.Month <= 3) dateTo = dateTo.AddMonths(dateTo.Month);
             dateTo = DetermineEndOfPeriod(interval, dateTo);
             var span = interval.ToTimeSpan();
 
+            var tmpDateTo = dateTo;
             for (int i = 0; i < 4; i++)
             {
-                var tmpInterval = new Interval(dateTo, span);
+                var tmpInterval = new Interval(tmpDateTo, span);
                 intervals.Add(tmpInterval);
-                dateTo = tmpInterval.DateFrom;
+                tmpDateTo = tmpInterval.DateFrom;
             }
 
             var dateFrom = intervals.Last().DateFrom;
@@ -44,7 +46,6 @@ namespace Services.Ui
                 .Include(s => s.LastKnownStockValue.StockValue)
                 .Include(s => s.StockValues.Where(sv => sv.TimeStamp > dateFrom.AddDays(-14) && sv.TimeStamp < dateTo.AddDays(14))) // take 14 days margin
                 .Include(s => s.Transactions).ThenInclude(t => t.StockValue)
-                .Where(s => s.LastKnownStockValue.LastUpdate > DateTime.Now.AddMonths(-1))
                 .ToList();
 
             var list = new List<StockPerformanceOverviewModel>(stocks.Count()+1);
@@ -84,7 +85,7 @@ namespace Services.Ui
                 {
                     Name = $"{stock.Name}",
                     Isin = stock.Isin,
-                    Value = stock.LastKnownUserPrice * nStocks,
+                    Value = nStocks == 0 ? 0 : stock.LastKnownUserPrice * nStocks,
                 };
                 list.Add(svm);
                 return svm;
@@ -117,7 +118,8 @@ namespace Services.Ui
         {
             var lastStockQuantity = 0d;
             var moments = new List<Moment>();
-            var fromValue = stock.StockValues.OrderByDescending(v => v.TimeStamp).FirstOrDefault(v => v.TimeStamp <= dateFrom)?.UserPrice ?? 0; // first time run could return wrong value!!!
+
+            var fromValue = stock.StockValues.OrderByDescending(v => v.TimeStamp).FirstOrDefault(v => v.TimeStamp <= dateFrom)?.UserPrice ?? 0;
             if (fromValue > 0)
                 moments.Add(CreateMoment(stock.Transactions.OrderByDescending(t => t.Id).First(t => t.StockValue.TimeStamp <= dateFrom), dateFrom, fromValue));
             else // stocks not in possession before date from
@@ -169,7 +171,7 @@ namespace Services.Ui
 
             var previousMoment = moments.First();
             var lastMomentValue = previousMoment.StockQuantity * previousMoment.UserPrice;
-            performancePeriods.Add(new PerformancePeriod(stock, previousMoment.Date, -10, 1, lastMomentValue, lastMomentValue, previousMoment.UserPrice));
+            performancePeriods.Add(new PerformancePeriod(stock, previousMoment.Date, null, 1, lastMomentValue, lastMomentValue, previousMoment.UserPrice));
             foreach (var moment in moments.Skip(1))
             {
                 var dividend = stock.Dividends.Where(d => d.TimeStamp >= previousMoment.Date && d.TimeStamp <= moment.Date).Sum(d => d.UserValue - d.UserCosts);
@@ -196,15 +198,19 @@ namespace Services.Ui
 
         private double CalculatePerformance(List<PerformancePeriod> periods)
         {
-            if (periods == null || periods.Count == 0) return 0;
+            if (periods == null || periods.Count <= 1) return 0;
 
-            var avgDailyPerformance = periods.Sum(p => p.UserValueEndOfPeriod * p.NDays * p.DailyPerformance) / periods.Sum(p => p.NDays * p.UserValueEndOfPeriod);
+            var per = periods.Where(p => p.NDays.HasValue).ToList();
+            var avgDailyPerformance = per.Sum(p => p.UserValueEndOfPeriod * p.NDays!.Value * p.DailyPerformance) / per.Sum(p => p.NDays!.Value * p.UserValueEndOfPeriod);
 
             var fromDate = periods[0].StartDate;
-            var toDate = periods[^1].EndDate;
+            var toDate = periods[^1].EndDate();
             return GrowthHelper.Performance(avgDailyPerformance, (int)(toDate-fromDate).TotalDays)-1;
         }
 
+        /// <summary>
+        /// todo: This works not correct
+        /// </summary>
         private double GetTotalYearPerformance(List<Stock> stocks, Dictionary<Stock, List<PerformancePeriod>> dict, DateTime dateFrom)
         {
             var monthValues = new double[13];
@@ -218,7 +224,7 @@ namespace Services.Ui
                 foreach (var stock in stocks)
                 {
                     var periods = dict[stock];
-                    if (periods.Count <= 1) continue;
+                    if (periods == null || periods.Count <= 1) continue;
                     if (month == 1)
                     {
                         var lastPeriod = dict[stock].Last();
@@ -231,25 +237,30 @@ namespace Services.Ui
 
                     if (firstPeriod.StartDate.Month == month) // set initial period
                     {
-                        monthValues[month - 1] += periods.Single(p => p.NDays == -10).UserValueEndOfPeriod;
+                        monthValues[month - 1] += periods.Single(p => p.NDays == null).UserValueEndOfPeriod;
                         fromDate = firstPeriod.StartDate.AddDays(1); // make sure initial transaction is out of range
                     }
 
                     var period = FindPeriod(month, periods);
-                    var transactions = stock.Transactions.IsBetween(fromDate, toDate).ToList();
                     if (period == null)
+                        continue; // probably all sold
+
+                    var transactions = stock.Transactions.IsBetween(fromDate, toDate).ToList();
+                    var nMonthsToEndPeriod = period.EndDate().Month - month;
+                    if (nMonthsToEndPeriod > 0)
                     {
                         if (transactions.Any(t => t.StockValue.UserPrice > 0.1)) // excl. stock div
                             throw new Exception($"ERRRR");
-                        monthValues[month] += monthValues[month - 1];
+                        var nDays = (int)(period.EndDate() - period.EndDate().AddMonths(-nMonthsToEndPeriod)).TotalDays;
+                        monthValues[month] += GrowthHelper.PastPrice(period.UserValueEndOfPeriod, period.DailyPerformance, nDays);
                         continue;
                     }
-                    // monthValues[month] = period.NStocksEndOfPeriod * period.UserPriceEndOfPeriod;
                     monthValues[month] += period.UserValueEndOfPeriodInclTransaction;
 
                     var value = transactions.Sum(t => t.Quantity * t.StockValue.UserPrice);
                     transactionValues[month] = value;
                     transactionSum += value;
+                    //monthValues[month] -= transactionSum;
                 }
             }
 
@@ -265,8 +276,13 @@ namespace Services.Ui
 
             return totalPerformance;
 
-            PerformancePeriod FindPeriod(int month, List<PerformancePeriod> periods) =>
-                periods.OrderByDescending(p => p.StartDate).FirstOrDefault(p => p.NDays > 0 && p.EndDate.Month == month);
+            PerformancePeriod FindPeriod(int month, List<PerformancePeriod> periods)
+            {
+                var period = periods.OrderByDescending(p => p.StartDate).FirstOrDefault(p => p.NDays.HasValue && month == p.EndDate().Month);
+                if (period != null) return period;
+                // no period found that ends this month
+                return periods.OrderBy(p => p.StartDate).FirstOrDefault(p => p.NDays.HasValue && month >= p.StartDate.Month && month <= p.EndDate().Month);
+            }
         }
     }
 
@@ -276,7 +292,7 @@ namespace Services.Ui
         public double StockQuantity { get; }
         public double UserPrice { get; }
         /// <summary>
-        /// In case dividend is payed by adding stocks
+        /// In case dividend is paid by adding stocks
         /// </summary>
         public double NStocksAddedByDividend { get; }
 
@@ -299,7 +315,10 @@ namespace Services.Ui
     {
         public Stock Stock { get; }
         public DateTime StartDate { get; }
-        public int NDays { get; set; }
+        /// <summary>
+        /// Null when it is the initial period
+        /// </summary>
+        public int? NDays { get; set; }
         public double DailyPerformance { get; }
         /// <summary>
         /// Including dividend
@@ -310,7 +329,7 @@ namespace Services.Ui
         public double UserValueEndOfPeriodInclTransaction { get; }
         public double UserPriceEndOfPeriod { get; }
 
-        public PerformancePeriod(Stock stock, DateTime startDate, int nDays, double dailyPerformance, double userValueEndOfPeriod, double userValueEndOfPeriodInclTransaction, double userPriceEndOfPeriod)
+        public PerformancePeriod(Stock stock, DateTime startDate, int? nDays, double dailyPerformance, double userValueEndOfPeriod, double userValueEndOfPeriodInclTransaction, double userPriceEndOfPeriod)
         {
             Stock = stock;
             StartDate = startDate;
@@ -321,7 +340,11 @@ namespace Services.Ui
             UserPriceEndOfPeriod = userPriceEndOfPeriod;
         }
 
-        public DateTime EndDate => StartDate.AddDays(NDays);
+        public DateTime EndDate()
+        {
+            if (NDays == null) throw new Exception($"Could not determine the end-date of an initial period");
+            return StartDate.AddDays(NDays.Value);
+        }
 
         public override string ToString() => $"{Stock.Name} {StartDate:dd-MM-yyyy} {UserValueEndOfPeriod:F2}";
     }

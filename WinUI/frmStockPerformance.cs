@@ -81,6 +81,7 @@ namespace Dashboard
                     tMin3Column.HeaderText = today.AddMonths(-9).GetQuarterShort();
                     break;
                 case PerformanceInterval.Year:
+                    if (today.Month <= 3) today = today.AddMonths(-3);
                     t0Column.HeaderText = today.Year.ToString();
                     tMin1Column.HeaderText = today.AddYears(-1).Year.ToString();
                     tMin2Column.HeaderText = today.AddYears(-2).Year.ToString();
