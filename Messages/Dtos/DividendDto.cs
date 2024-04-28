@@ -10,6 +10,9 @@ namespace Imports
         public string Isin { get; set; }
         public DateTime TimeStamp { get; set; }
         public string Currency { get; set; }
+        /// <summary>
+        /// In native currency
+        /// </summary>
         public double Value { get; set; }
         /// <summary>
         /// ratio = stock native / user currency
@@ -18,5 +21,6 @@ namespace Imports
         public double Tax { get; set; }
         public double Costs { get; set; }
         public bool IsCapitalReturn { get; set; }
+        public string ExtRef { get; set; }
     }
 }

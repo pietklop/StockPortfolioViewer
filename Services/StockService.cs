@@ -104,7 +104,7 @@ namespace Services
                 stock.LastKnownStockValue.StockValue = CreatePitStockValue();
 
             UpdateDailyGrowth(stock.LastKnownStockValue.StockValue, false);
-            
+
             return stock;
 
             PitStockValue CreatePitStockValue()
@@ -124,7 +124,7 @@ namespace Services
             log.Info($"Create transaction: {dto.Name} Quantity: {dto.Quantity} on {dto.TimeStamp.ToShortDateString()}");
             var stock = GetOrCreateStock(dto.Name, dto.Isin, dto.Currency);
 
-            if (stock.Currency.Key != dto.Currency) 
+            if (stock.Currency.Key != dto.Currency)
                 throw new Exception($"Stock ({stock}) currency ('{stock.Currency.Key}') should be equal to transaction currency ('{dto.Currency}')");
 
             if (DuplicateTransaction(dto))
@@ -209,7 +209,7 @@ namespace Services
         private bool DuplicateTransaction(TransactionDto dto) =>
             db.Transactions.Any(t => t.ExtRef == dto.Guid && t.Stock.Isin == dto.Isin && t.StockValue.TimeStamp.Date == dto.TimeStamp.Date);
 
-        public bool AddDividend(DividendDto dto)
+        public bool AddDividend(DividendDto dto, List<Currency> currencies)
         {
             var stock = db.Stocks
                             .Include(s => s.Currency)
@@ -223,15 +223,17 @@ namespace Services
                 return false;
             }
 
+            var currencyRatio = dto.CurrencyRatio > 0 ? dto.CurrencyRatio : currencies.Single(c => c.Key == dto.Currency).Ratio;
+
             var div = new Dividend
             {
                 Stock = stock,
                 Created = DateTime.Now,
                 TimeStamp = dto.TimeStamp,
                 NativeValue = Constants.UserCurrency != dto.Currency || stock.Currency.Key == Constants.UserCurrency ? (double?)dto.Value : null,
-                UserValue = dto.Value.ToUserCurrency(dto.CurrencyRatio, dto.Currency),
-                UserCosts = dto.Costs.ToUserCurrency(dto.CurrencyRatio, dto.Currency),
-                UserTax = dto.Tax.ToUserCurrency(dto.CurrencyRatio, dto.Currency),
+                UserValue = dto.Value.ToUserCurrency(currencyRatio, dto.Currency),
+                UserCosts = dto.Costs.ToUserCurrency(currencyRatio, dto.Currency),
+                UserTax = dto.Tax.ToUserCurrency(currencyRatio, dto.Currency),
             };
 
             db.Dividends.Add(div);

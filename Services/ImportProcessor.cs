@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Core;
 using DAL;
+using DAL.Entities;
 using log4net;
 using Messages.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -22,12 +25,16 @@ namespace Services
 
         public (int, int) Process(TransactionImportDto import)
         {
+            var currencies = new List<Currency>();
+            if (import.Dividends.Any(d => d.Currency != Constants.UserCurrency))
+                currencies = db.Currencies.ToList();
+
             int nAddedTransactions = 0;
             int nAddedDividends = 0;
             foreach (var t in import.Transactions.OrderBy(t => t.TimeStamp).ToList())
                 if (stockService.AddTransaction(t)) nAddedTransactions++;
             foreach (var importDividend in import.Dividends)
-                if (stockService.AddDividend(importDividend)) nAddedDividends++;
+                if (stockService.AddDividend(importDividend, currencies)) nAddedDividends++;
 
             db.SaveChanges();
 

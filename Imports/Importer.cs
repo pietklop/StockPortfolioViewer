@@ -23,6 +23,8 @@ namespace Imports
                     return ImportType.DeGiroTransactionsAndDividends;
                 case "Product,Symbool/ISIN,Aantal,Slotkoers,Lokale waarde,Waarde in EUR":
                     return ImportType.DeGiroStockValues;
+                case "CurrencyPrimary|Symbol|Description|ISIN|ExDate|PayDate|Quantity|Tax|Fee|GrossRate|GrossAmount|NetAmount|ActionID|Code":
+                    return ImportType.IbkrDividend;
                 case "Description|Symbol|ISIN|CurrencyPrimary|TradePrice|TradeMoney|Quantity|TradeDate|AssetClass|Buy/Sell|IBCommissionCurrency|IBCommission|TradeID":
                     return ImportType.IbkrTransactions;
                 case "CurrencyPrimary|Symbol|Description|ISIN|ReportDate|Quantity|PositionValue|MarkPrice":
@@ -35,6 +37,8 @@ namespace Imports
         public TransactionImportDto DeGiroTransactionAndDividendImport(string[] lines, bool debugMode) => TransactionImporter.Import(lines, debugMode);
 
         public StockValueImportDto DeGiroStockValueImport(string[] lines) => StockValueImporter.Import(lines);
+
+        public TransactionImportDto IbkrDividendImport(string[] lines) => DividendImporter.Import(lines);
 
         public TransactionImportDto IbkrTransactionImport(string[] lines, bool debugMode) => TradeImporter.Import(lines);
 

@@ -292,6 +292,10 @@ namespace Dashboard
                 case ImportType.DeGiroStockValues:
                     nStockValueUpdates = importProcessor.Process(importer.DeGiroStockValueImport(lines));
                     break;
+                case ImportType.IbkrDividend:
+                    (int _, int nDivIb) = importProcessor.Process(importer.IbkrDividendImport(lines));
+                    nAddedDividends += nDivIb;
+                    break;                
                 case ImportType.IbkrTransactions:
                     (int nTr, int _) = importProcessor.Process(importer.IbkrTransactionImport(lines, settings.DebugMode));
                     nAddedTransactions += nTr;

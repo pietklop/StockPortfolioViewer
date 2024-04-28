@@ -5,6 +5,7 @@
         Unknown,
         DeGiroTransactionsAndDividends,
         DeGiroStockValues,
+        IbkrDividend,
         IbkrTransactions,
         IbkrStockValues,
     }
