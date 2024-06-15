@@ -146,7 +146,8 @@ namespace Dashboard
         private void btnSingleDividends_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Instance.Resolve<frmDividends>(new Arguments {{ "stockIsin", SelectedStockIsin }}));
         private void btnSinglePerformance_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Instance.Resolve<frmStockPerformance>(new Arguments {{ "stockIsins", new List<string>{ SelectedStockIsin }}}));
 
-        private void btnDataRetrieval_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmDataRetrievers>());
+        private void btnBackup_Click(object sender, EventArgs e) => BackupDatabase();
+
         private void btnImport_Click(object sender, EventArgs e) => HandleImport();
 
         private void HandleMenuButtonClick(Button button, Form formToShow) => LoadForm(button.Text, formToShow);
@@ -166,6 +167,16 @@ namespace Dashboard
             pnlFormLoader.Controls.Clear();
             pnlFormLoader.Controls.Add(form);
             form.Show();
+        }
+
+        private void BackupDatabase()
+        {
+            if (settings.DbBackupPath.IsNullOrEmpty()) throw new Exception("BackupPath is not configured");
+            if (!Directory.Exists(settings.DbBackupPath)) throw new Exception($"Can not find {nameof(settings.DbBackupPath)} '{settings.DbBackupPath}'");
+
+            var bakFileName = $"{Path.GetFileNameWithoutExtension(settings.DbFileNamePath)} {DateTime.Today:yyyy-MM-dd}.db";
+            File.Copy(settings.DbFileNamePath, Path.Combine(settings.DbBackupPath, bakFileName));
+            InputHelper.GetConfirmation(this, $"Backup successfully copied");
         }
 
         private void HandleImport()
@@ -295,7 +306,7 @@ namespace Dashboard
                 case ImportType.IbkrDividend:
                     (int _, int nDivIb) = importProcessor.Process(importer.IbkrDividendImport(lines));
                     nAddedDividends += nDivIb;
-                    break;                
+                    break;
                 case ImportType.IbkrTransactions:
                     (int nTr, int _) = importProcessor.Process(importer.IbkrTransactionImport(lines, settings.DebugMode));
                     nAddedTransactions += nTr;
