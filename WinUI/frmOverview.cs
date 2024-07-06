@@ -20,6 +20,8 @@ namespace Dashboard
         private readonly PortfolioDistributionService portfolioDistributionService;
         private List<Button> distributionButtons = new List<Button>();
         private List<string> selectedIsins;
+        private static int? orderedColumnIndex = null;
+        private static SortOrder sortOrder = SortOrder.Ascending;
 
         public frmOverview(frmMain frmMain, StockOverviewService stockOverviewService, StockService stockService, PortfolioDistributionService portfolioDistributionService)
         {
@@ -63,6 +65,9 @@ namespace Dashboard
 
             dgvStockList.SetReadOnly();
             dgvStockList.SetVisualStyling();
+
+            if (orderedColumnIndex.HasValue)
+                dgvStockList.DoColumnOrdering(stockList, orderedColumnIndex.Value, sortOrder);
         }
 
         private void dgvStockList_SelectionChanged(object sender, EventArgs e) => dgvStockList.ClearSelection();
@@ -80,9 +85,9 @@ namespace Dashboard
             if (redGreenColumnIndexes.Contains(e.ColumnIndex))
             {
                 var value = (double) e.Value;
-                if (value > 0) 
+                if (value > 0)
                     e.CellStyle.ForeColor = Color.LawnGreen;
-                else if (value < 0) 
+                else if (value < 0)
                     e.CellStyle.ForeColor = Color.Red;
             }
 
@@ -124,8 +129,13 @@ namespace Dashboard
 
         private void dgvStockList_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            var stockList = stockOverviewService.GetStockList(false, null);
-            dgvStockList.DoColumnOrdering(stockList, e.ColumnIndex);
+            if (orderedColumnIndex.HasValue && orderedColumnIndex == e.ColumnIndex) // same column => swap order
+                sortOrder = sortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+            else
+                sortOrder = SortOrder.Ascending;
+
+            orderedColumnIndex = e.ColumnIndex;
+            PopulateStockGrid();
         }
 
         private void SetDistributionButtons(Button activeButton)

@@ -79,8 +79,8 @@ namespace Dashboard.Helpers
             dgv.DefaultCellStyle.SelectionBackColor = Color.White;
             dgv.DefaultCellStyle.SelectionForeColor = Color.Black;
 
-            // Set the background color for all rows and for alternating rows. 
-            // The value for alternating rows overrides the value for all rows. 
+            // Set the background color for all rows and for alternating rows.
+            // The value for alternating rows overrides the value for all rows.
             dgv.RowsDefaultCellStyle.BackColor = Color.FromArgb(24, 30, 54);
             dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.Black;
 
@@ -91,7 +91,7 @@ namespace Dashboard.Helpers
             dgv.EnableHeadersVisualStyles = false;
         }
 
-        public static void DoColumnOrdering<T>(this DataGridView dgv, List<T> dataSourceList, int columnIndex)
+        public static void DoColumnOrdering<T>(this DataGridView dgv, List<T> dataSourceList, int columnIndex, SortOrder sortOrder = SortOrder.None)
         {
             var column = dgv.Columns[columnIndex];
             var colName = column.Name;
@@ -99,7 +99,21 @@ namespace Dashboard.Helpers
                 column.Tag = SortOrder.Descending;
             else if (column.Tag.GetType() != typeof(SortOrder))
                 throw new Exception($"Column.Tag is already used, so can not be (ab)used for column ordering state");
-            column.Tag = (SortOrder)column.Tag == SortOrder.Descending ? SortOrder.Ascending : SortOrder.Descending;
+
+            switch (sortOrder)
+            {
+                case SortOrder.None:
+                    column.Tag = (SortOrder)column.Tag == SortOrder.Descending ? SortOrder.Ascending : SortOrder.Descending;
+                    break;
+                case SortOrder.Ascending:
+                    column.Tag = SortOrder.Ascending;
+                    break;
+                case SortOrder.Descending:
+                    column.Tag = SortOrder.Descending;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(sortOrder), sortOrder, null);
+            }
 
             dgv.DataSource = (SortOrder)column.Tag == SortOrder.Ascending
                 ? dataSourceList.OrderBy(x => x.GetType().GetProperty(colName).GetValue(x)).ToList()
