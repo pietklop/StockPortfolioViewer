@@ -31,12 +31,17 @@ namespace Imports.IBKR
             for (; lineNr < fieldsList.Count; lineNr++)
             {
                 var fields = fieldsList[lineNr];
+
+                var name = fields[nameColIndex];
+                if (name.Contains("DIVIDEND RIGHTS"))
+                    continue; // skip, is not really a position
+
                 if (fields[0] == TradeImporter.currencyFirstColumnHeader)
                     break;
 
                 var stockVal = new StockValueDto();
 
-                stockVal.Name = fields[nameColIndex];
+                stockVal.Name = name;
                 stockVal.Isin = fields[isinColIndex];
                 stockVal.TimeStamp = fields[dateColIndex].ExtractDate().AddHours(20); // end of day
                 stockVal.ClosePrice = fields[priceColIndex].ToDouble();
