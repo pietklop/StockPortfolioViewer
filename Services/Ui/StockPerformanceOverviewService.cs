@@ -49,9 +49,8 @@ namespace Services.Ui
                 .ToList();
 
             var list = new List<StockPerformanceOverviewModel>(stocks.Count()+1);
-
-            if (interval == PerformanceInterval.Year)
-                list.Add(new StockPerformanceOverviewModel { Name = Constants.Total });
+            list.Add(new StockPerformanceOverviewModel { Name = Constants.Total });
+            list.Add(new StockPerformanceOverviewModel { Name = Constants.TotalValue });
 
             var startPrices = new Dictionary<Stock, double>(stocks.Count);
             for (int i = 0; i < intervals.Count; i++)
@@ -70,11 +69,10 @@ namespace Services.Ui
                     svm.SetPerformance(i, pp.Performance-1);
                 }
 
-                if (interval == PerformanceInterval.Year)
-                {
-                    var svm = list.Single(x => x.Name == Constants.Total);
-                    svm.SetPerformance(i, GetTotalYearPerformance(stockList));
-                }
+                var svmTot = list.Single(x => x.Name == Constants.Total);
+                svmTot.SetPerformance(i, GetTotalPerformance(stockList));
+                var svmTotValue = list.Single(x => x.Name == Constants.TotalValue);
+                svmTotValue.SetPerformance(i, stockList.Sum(s => s.UserValueEndOfPeriod));
             }
 
             return list;
@@ -134,7 +132,7 @@ namespace Services.Ui
             return new PerformancePeriod(stock, dateFrom, interval, startValue, endValue, startPrice, valueBought, valueSold, dividend);
         }
 
-        private double GetTotalYearPerformance(List<PerformancePeriod> stockList) =>
+        private double GetTotalPerformance(List<PerformancePeriod> stockList) =>
             (stockList.Sum(s => s.UserValueEndOfPeriod) + stockList.Sum(s => s.UserValueSold) + stockList.Sum(s => s.UserDividend)) / (stockList.Sum(s => s.UserValueStartOfPeriod) + stockList.Sum(s => s.UserValueBought))-1;
     }
 

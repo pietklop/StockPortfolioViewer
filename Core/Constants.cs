@@ -3,6 +3,7 @@
     public static class Constants
     {
         public const string Total = "Total";
+        public const string TotalValue = "Total value";
         public const string UserCurrency = "EUR";
         public const string UserCurrencySymbol = "€";
         public const string Unknown = "Unknown";

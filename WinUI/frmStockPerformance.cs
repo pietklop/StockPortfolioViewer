@@ -196,6 +196,8 @@ namespace Dashboard
 
         private void dgvStocks_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
+            if (e.ColumnIndex >= 3 && e.ColumnIndex <= 6 && e.RowIndex == 1)
+                dgvStocks[e.ColumnIndex, 1].Style.Format = "C0";
             if (dgvStocks.Columns[e.ColumnIndex].Name == nameof(StockPerformanceOverviewModel.PerformanceFractionT0))
                 dgvStocks[e.ColumnIndex, e.RowIndex].ShowRedAtNegativeValue();
             if (dgvStocks.Columns[e.ColumnIndex].Name == nameof(StockPerformanceOverviewModel.PerformanceFractionTMin1))
