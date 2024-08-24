@@ -138,7 +138,8 @@ namespace Dashboard
             }
             else
             {
-                chart.AddXySeries(SeriesChartType.Column, dates, points.Select(p => p.Quantity).ToArray(), "Number of stocks");
+                var qts = TryScaleDownStockQuantity(points.Select(p => p.Quantity).ToList());
+                chart.AddXySeries(SeriesChartType.Column, dates, qts, "Number of stocks");
                 chart.RemoveSeries("Total value");
             }
             chart.AddXySeries(SeriesChartType.Line, dates, points.Select(p => p.RelativeValue).ToArray(), "RelativeValue", dataLabelRelativeValue);
@@ -175,6 +176,23 @@ namespace Dashboard
                 var nMonths = (int)Math.Round(nDays / 30d);
                 if (nMonths <= 12) return $"Period: {nMonths} months";
                 return $"Period: {nMonths / 12} years and {nMonths % 12} months";
+            }
+
+            // scale down quantities when they are more than 100% to get a better ratio with performance graph
+            double[] TryScaleDownStockQuantity(List<double> qts)
+            {
+                var max = qts.Max();
+                double ratio;
+                if (max > 10_000) ratio = 200;
+                else if (max > 3000) ratio = 50;
+                else if (max > 1000) ratio = 20;
+                else if (max > 200) ratio = 10;
+                else return qts.ToArray();
+
+                for (int i = 0; i < qts.Count; i++)
+                    qts[i] /= ratio;
+
+                return qts.ToArray();
             }
         }
 
