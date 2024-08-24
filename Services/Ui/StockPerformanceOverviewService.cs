@@ -24,7 +24,7 @@ namespace Services.Ui
             this.dateTo = dateTo ?? DateTime.Today;
         }
 
-        public List<StockPerformanceOverviewModel> GetStockList(PerformanceInterval interval)
+        public List<StockPerformanceOverviewModel> GetStockList(List<string> isins, PerformanceInterval interval)
         {
             var intervals = new List<Interval>();
             if (interval == PerformanceInterval.Year && dateTo.Month <= 3) dateTo = dateTo.AddMonths(dateTo.Month);
@@ -46,10 +46,12 @@ namespace Services.Ui
                 .Include(s => s.LastKnownStockValue.StockValue)
                 .Include(s => s.StockValues.Where(sv => sv.TimeStamp > dateFrom.AddDays(-14) && sv.TimeStamp < dateTo.AddDays(14))) // take 14 days margin
                 .Include(s => s.Transactions).ThenInclude(t => t.StockValue)
+                .Where(p => isins == null || isins.Contains(p.Isin))
                 .ToList();
 
             var list = new List<StockPerformanceOverviewModel>(stocks.Count()+1);
-            list.Add(new StockPerformanceOverviewModel { Name = Constants.Total });
+            if (AllStocks())
+                list.Add(new StockPerformanceOverviewModel { Name = Constants.Total });
             list.Add(new StockPerformanceOverviewModel { Name = Constants.TotalValue });
 
             var startPrices = new Dictionary<Stock, double>(stocks.Count);
@@ -68,9 +70,11 @@ namespace Services.Ui
 
                     svm.SetPerformance(i, pp.Performance-1);
                 }
-
-                var svmTot = list.Single(x => x.Name == Constants.Total);
-                svmTot.SetPerformance(i, GetTotalPerformance(stockList));
+                if (AllStocks())
+                {
+                    var svmTot = list.Single(x => x.Name == Constants.Total);
+                    svmTot.SetPerformance(i, GetTotalPerformance(stockList));
+                }
                 var svmTotValue = list.Single(x => x.Name == Constants.TotalValue);
                 svmTotValue.SetPerformance(i, stockList.Sum(s => s.UserValueEndOfPeriod));
             }
@@ -88,9 +92,15 @@ namespace Services.Ui
                     Isin = stock.Isin,
                     Value = nStocks == 0 ? 0 : stock.LastKnownUserPrice * nStocks,
                 };
-                list.Add(svm);
+                if (AllStocks())
+                    list.Add(svm);
+                else
+                    list.Insert(0, svm); // put the single stock at the spot of the total performance (due to $ and % formatting)
                 return svm;
             }
+
+            bool SingleStock() => isins != null;
+            bool AllStocks() => isins == null;
         }
 
         private static DateTime DetermineEndOfPeriod(PerformanceInterval interval, DateTime dateTo)

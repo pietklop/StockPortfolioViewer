@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -54,7 +53,7 @@ namespace Dashboard
             //     return;
             // }
             var performanceInterval = PerformanceInterval.Year;
-            dgvStocks.DataSource = stockPerformanceOverviewService.GetStockList(performanceInterval);
+            dgvStocks.DataSource = stockPerformanceOverviewService.GetStockList(stockIsins, performanceInterval);
 
             // column configuration
             dgvStocks.ApplyColumnDisplayFormatAttributes();
@@ -214,8 +213,9 @@ namespace Dashboard
 
         private void dgvStocks_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e.ColumnIndex >= 3 && e.ColumnIndex <= 6 && e.RowIndex == 1)
-                dgvStocks[e.ColumnIndex, 1].Style.Format = "C0";
+            var valueRowIndex = 1;
+            if (e.ColumnIndex >= 3 && e.ColumnIndex <= 6 && e.RowIndex == valueRowIndex)
+                dgvStocks[e.ColumnIndex, valueRowIndex].Style.Format = "C0";
             if (dgvStocks.Columns[e.ColumnIndex].Name == nameof(StockPerformanceOverviewModel.PerformanceFractionT0))
                 dgvStocks[e.ColumnIndex, e.RowIndex].ShowRedAtNegativeValue();
             if (dgvStocks.Columns[e.ColumnIndex].Name == nameof(StockPerformanceOverviewModel.PerformanceFractionTMin1))
