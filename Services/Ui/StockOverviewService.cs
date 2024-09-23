@@ -66,7 +66,7 @@ namespace Services.Ui
                     Profit = profit,
                     ProfitFraction = profit / virtualBuyValue,
                     ProfitFractionLast30Days = ProfitFraction(stock, days30Back, nStocks),
-                    ProfitFractionLast7Days = ProfitFraction(stock, 8, nStocks),
+                    ProfitFractionLast7Days = ProfitFraction(stock, DaysBackForWeek(), nStocks),
                     LastPriceChange = LastUpdateSince(stock),
                     Remark = Remark(stock),
                     //CompatibleDataRetrievers = string.Join(",", stock.StockRetrieverCompatibilities.OrderBy(c => c.DataRetriever.Priority).Where(c => c.DataRetriever.Priority > 0 && c.Compatibility == RetrieverCompatibility.True).Select(c => c.DataRetriever.Name.Substring(0, 3)))
@@ -129,6 +129,21 @@ namespace Services.Ui
                 if (stock.AlarmCondition == AlarmCondition.HigherThan)
                     return $">{stock.AlarmThreshold} {stock.Remarks}";
                 return stock.Remarks;
+            }
+
+            int DaysBackForWeek()
+            {
+                switch (DateTime.Now.DayOfWeek)
+                {
+                    case DayOfWeek.Sunday:
+                        return 9;
+                    case DayOfWeek.Monday:
+                        return 10;
+                    case DayOfWeek.Saturday:
+                        return 8;
+                    default:
+                        return 7;
+                }
             }
         }
 
