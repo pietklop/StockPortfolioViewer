@@ -14,6 +14,7 @@ using log4net;
 using log4net.Config;
 using Messages.StockDataApi;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Newtonsoft.Json.Linq;
 using Services;
 using Services.DI;
@@ -50,6 +51,22 @@ namespace TestConsole
 
             while (!cancellationTokenSource.Token.IsCancellationRequested)
                 await menu.RunAsync();
+        }
+
+        /// <summary>
+        /// EF uses this creating the migrations
+        /// </summary>
+        public class ClockDbContextFactory : IDesignTimeDbContextFactory<StockDbContext>
+        {
+            public StockDbContext CreateDbContext(string[] args)
+            {
+                var settings = SettingsHelper.GetSettings();
+
+                var optionsBuilder = new DbContextOptionsBuilder<StockDbContext>();
+                optionsBuilder.UseSqlite(StockDbContext.Connection(settings.DbFileNamePath));
+
+                return new StockDbContext(optionsBuilder.Options);
+            }
         }
 
         /// <summary>
