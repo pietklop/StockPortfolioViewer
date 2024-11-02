@@ -159,7 +159,7 @@ namespace Dashboard
                     var frmDr = CastleContainer.Instance.Resolve<frmStockRetrievers>(new Arguments { { "Stock", new StockDto{ Name = stock.Name, Isin = stock.Isin, Symbol = stock.Symbol} } });
                     frmDr.Show(this);
                     return;
-                    
+
                     if (!InputHelper.GetConfirmation(this, $"Auto price update?")) return;
                     var dr = CastleContainer.Resolve<IexDataRetriever>();
                     var priceDto = dr.GetStockQuote(stock.Symbol);
@@ -194,6 +194,8 @@ namespace Dashboard
                 for (int i = 0; i < input.Keys.Length; i++)
                     stock.AreaShares.Add(new AreaShare {Area = areas.Single(a => a.Name == input.Keys[i]), Fraction = input.Fractions[i]});
 
+                stock.LastSectorUpdate = DateTime.Now;
+
                 SaveAndUpdate(input.Keys.Length == 1 ? input.Keys[0] : "(Multiple)");
                 if (stock.AreaShares.Count > 1) // user probably wants to see/check te result
                     ChangeArea();
@@ -204,7 +206,7 @@ namespace Dashboard
                 using var distributionForm = new frmDistribution(portfolioDistributionService.GetSectorDistribution(stockIsin));
                 distributionForm.ShowDialog(this);
                 if (!distributionForm.ResetRequest) return;
-                
+
                 var sectors = db.Sectors.ToList();
                 var input = DistributionInputHelper.GetDistribution(this, "Enter sector share", sectors.Select(a => a.Name).ToList());
                 if (input == null) return;
@@ -212,6 +214,8 @@ namespace Dashboard
                 db.SectorShares.RemoveRange(stock.SectorShares);
                 for (int i = 0; i < input.Keys.Length; i++)
                     stock.SectorShares.Add(new SectorShare {Sector = sectors.Single(a => a.Name == input.Keys[i]), Fraction = input.Fractions[i]});
+
+                stock.LastSectorUpdate = DateTime.Now;
 
                 SaveAndUpdate(input.Keys.Length == 1 ? input.Keys[0] : "(Multiple)");
                 if (stock.SectorShares.Count > 1) // user probably wants to see/check te result

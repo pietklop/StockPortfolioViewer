@@ -66,6 +66,7 @@ namespace Services.Ui
                 new PropertyViewModel{Name = StockDetailProperties.ExpenseRatio, Value = $"{stock.ExpenseRatio:P2}", UnderlineRow = true},
                 new PropertyViewModel{Name = StockDetailProperties.Area, Value = FirstOrMultiple(stock.AreaShares.Select(a => a.Area.Name).ToArray()), UnderlineRow = true},
                 new PropertyViewModel{Name = StockDetailProperties.Sector, Value = FirstOrMultiple(stock.SectorShares.Select(a => a.Sector.Name).ToArray()), UnderlineRow = true},
+                new PropertyViewModel{Name = StockDetailProperties.LastSectorUpdate, Value = $"{stock.LastSectorUpdate:d}"},
                 new PropertyViewModel{Name = StockDetailProperties.AlarmCondition, Value = alarmCondition, UnderlineRow = true},
                 new PropertyViewModel{Name = StockDetailProperties.Remarks, Value = stock.Remarks, UnderlineRow = true},
             };

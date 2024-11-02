@@ -20,6 +20,7 @@
         public const string Sold = "Sold";
         public const string Area = "Area";
         public const string Sector = "Sector";
+        public const string LastSectorUpdate = "Last sector update";
         public const string TransactionCosts = "Transaction costs";
         public const string Dividend = "Dividend";
         public const string DividendPayout = "Dividend payout";

@@ -27,6 +27,10 @@ namespace DAL.Entities
         public ICollection<PitStockValue> StockValues { get; set; }
         public ICollection<SectorShare> SectorShares { get; set; }
         public ICollection<AreaShare> AreaShares { get; set; }
+        /// <summary>
+        /// Keep track of last (ETF) breakdown (sector/area) update
+        /// </summary>
+        public DateTime LastSectorUpdate { get; set; }
         public ICollection<StockRetrieverCompatibility> StockRetrieverCompatibilities { get; set; }
 
         public double LastKnownUserPrice => LastKnownStockValue.StockValue.UserPrice;
