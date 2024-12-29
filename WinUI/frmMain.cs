@@ -329,6 +329,17 @@ namespace Dashboard
             Size = new Size(1200, 1000);
         }
 
+        protected override void WndProc(ref Message m)
+        {
+            int WM_PARENTNOTIFY = 0x0210;
+            if (!this.Focused && m.Msg == WM_PARENTNOTIFY)
+            {
+                // Make this form auto-grab the focus when menu/controls are clicked
+                this.Activate();
+            }
+            base.WndProc(ref m);
+        }
+
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (WindowState == FormWindowState.Maximized)
