@@ -213,9 +213,9 @@ namespace Dashboard
 
         private void dgvStocks_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            var valueRowIndex = 1;
-            if (e.ColumnIndex >= 3 && e.ColumnIndex <= 6 && e.RowIndex == valueRowIndex)
-                dgvStocks[e.ColumnIndex, valueRowIndex].Style.Format = "C0";
+            var currencyRowIndexes = new []{1, 2, 3, 4, 5};
+            if (e.ColumnIndex >= 3 && e.ColumnIndex <= 6 && currencyRowIndexes.Contains(e.RowIndex))
+                dgvStocks[e.ColumnIndex, e.RowIndex].Style.Format = "C0";
             if (dgvStocks.Columns[e.ColumnIndex].Name == nameof(StockPerformanceOverviewModel.PerformanceFractionT0))
                 dgvStocks[e.ColumnIndex, e.RowIndex].ShowRedAtNegativeValue();
             if (dgvStocks.Columns[e.ColumnIndex].Name == nameof(StockPerformanceOverviewModel.PerformanceFractionTMin1))
