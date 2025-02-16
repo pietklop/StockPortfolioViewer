@@ -114,7 +114,7 @@ namespace Services.Ui
                 var valEnd = stockList.Sum(s => s.UserValueEndOfPeriod);
                 var div = stockList.Sum(s => s.UserDividend);
                 var gainedValue = valEnd - valStart - bought + sold; // excluding dividend
-                var baseVal = valStart + Math.Min(0, (bought - sold) / 2); // when more bought during the year, take average over the year
+                var baseVal = valStart + Math.Max(0, (bought - sold) / 2); // when more bought during the year, take average over the year
 
                 var svmTot = list.Single(x => x.Name == Constants.Total);
                 svmTot.SetPerformance(i, (gainedValue + div) / baseVal);
