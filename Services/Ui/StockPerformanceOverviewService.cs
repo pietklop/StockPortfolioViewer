@@ -46,7 +46,7 @@ namespace Services.Ui
                 .Include(s => s.LastKnownStockValue.StockValue)
                 .Include(s => s.StockValues.Where(sv => sv.TimeStamp > dateFrom.AddDays(-14) && sv.TimeStamp < dateTo.AddDays(14))) // take 14 days margin
                 .Include(s => s.Transactions).ThenInclude(t => t.StockValue)
-                .Where(p => isins == null || isins.Contains(p.Isin))
+                .Where(p => isins == null && (p.Transactions.Sum(t => t.Quantity) > 0 || p.Transactions.OrderByDescending(t => t.Id).First().StockValue.TimeStamp >= dateFrom) || isins != null && isins.Contains(p.Isin))
                 .ToList();
 
             var nTotalValueFields = 5;
