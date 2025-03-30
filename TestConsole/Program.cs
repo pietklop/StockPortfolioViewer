@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 using Castle.MicroKernel;
 using DAL;
 using DAL.Entities;
+using Imports;
 using Imports.DeGiro;
 using log4net;
 using log4net.Config;
+using Messages.Dtos;
 using Messages.StockDataApi;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -162,28 +164,72 @@ namespace TestConsole
             var container = CastleContainer.Instance;
             var installer = DependencyInstaller.CreateInstaller();
             container.AddFacilities().Install(installer);
-            using (var db = new StockDbContext())
+
+            var tranList = new List<TransactionDto>();
+
+            //tranList.AddRange(AddStockBuySell("Aurora", "CAD", new DateTime(2019,2, 12), new DateTime(2020, 6, 1),150,10.1,1.77, 1.51, 1.45));
+            // tranList.AddRange(AddStockBuySell("Microsoft", "USD", new DateTime(2019,4, 9), new DateTime(2020, 2, 1),18,120,170, 1.11, 1.15));
+            // tranList.AddRange(AddStockBuySell("Pepsico", "USD", new DateTime(2019,4, 9), new DateTime(2020, 2, 1),18,122,146.50, 1.11, 1.15));
+            // tranList.AddRange(AddStockBuySell("Nissan", "EUR", new DateTime(2019,4, 9), new DateTime(2020, 2, 1),130,7.53,3.84, 1, 1));
+            // tranList.AddRange(AddStockBuySell("Volker Wessels", "EUR", new DateTime(2019,4, 9), new DateTime(2020, 2, 1),53,18.50,22.13, 1, 1));
+            //
+            // tranList.AddRange(AddStockBuySell("AMD", "USD", new DateTime(2019,7, 23), new DateTime(2020, 4, 1),33,32.80,45.21, 1.11, 1.11));
+            // tranList.AddRange(AddStockBuySell("Nvidia", "USD", new DateTime(2019,7, 23), new DateTime(2020, 4, 1),24,42.50,63.41, 1.11, 1.11));
+            //
+            // tranList.AddRange(AddStockBuySell("Think Global Real Estate", "EUR", new DateTime(2017,4, 13), new DateTime(2017, 10, 24),125,40.60,70.12, 1, 1));
+            //
+            // tranList.AddRange(AddStockBuySell("Arcadis", "EUR", new DateTime(2017,3,29), new DateTime(2017, 4,27), 140, 14.21,16.31, 1, 1));
+            // tranList.AddRange(AddStockBuySell("KPN", "EUR", new DateTime(2017,5,4), new DateTime(2017, 5,24),760,2.66,2.99,1,1));
+            //
+            // tranList.AddRange(AddStockBuySell("", "EUR", new DateTime(2017,4, 13), new DateTime(2017, 10, 24),));
+
+
+            var importProcessor = CastleContainer.Resolve<ImportProcessor>();
+            importProcessor.Process(new TransactionImportDto(tranList, new List<DividendDto>
             {
-                //            var dr = CastleContainer.Resolve<IexDataRetriever>();
+                new DividendDto
+                {
+                    Isin = $"Think Global Real Estate_2017",
+                    TimeStamp = new DateTime(2017,9,17),
+                    Currency = "EUR",
+                    Value = 72.12,
+                    CurrencyRatio = 1,
+                    Tax = 10,
+                    Costs = 1,
+                }
+            }));
+        }
 
-//                var pp = db.PitStockValues.ToList();
-//                var pitGroups = pp.GroupBy(p => p.StockId).ToList();
-//                foreach (var pits in pitGroups)
-//                {
-//                    var dd = DateTime.Now.AddDays(2).Date;
-//                    foreach (var p in pits.OrderByDescending(p => p.TimeStamp))
-//                    {
-//                        if (p.TimeStamp.Date == dd)
-//                            db.Remove(p);
-//                            //log.Info($"Remove Pit: {p.Id}");
-//                        else
-//                            dd = p.TimeStamp.Date;
-//                    }
-//                }
-
-                db.SaveChanges();
-
-            }
+        private static List<TransactionDto> AddStockBuySell(string name, string currency, DateTime dateBuy, DateTime dateSell, int quantity, double priceBuy, double priceSell, double currRatioBuy, double currRatioSell)
+        {
+            var isin = $"{name}_{dateBuy.Year}";
+            return new List<TransactionDto>
+            {
+                new TransactionDto
+                {
+                    Name = name,
+                    Isin = isin,
+                    Currency = currency,
+                    TimeStamp = dateBuy,
+                    Quantity = quantity,
+                    Price = priceBuy,
+                    Costs = 15,
+                    CurrencyRatio = currRatioBuy,
+                    Guid = Guid.NewGuid().ToString(),
+                },
+                new TransactionDto
+                {
+                    Name = name,
+                    Isin = isin,
+                    Currency = currency,
+                    TimeStamp = dateSell,
+                    Quantity = -quantity,
+                    Price = priceSell,
+                    Costs = 15,
+                    CurrencyRatio = currRatioSell,
+                    Guid = Guid.NewGuid().ToString(),
+                },
+            };
         }
 
         public static void Migrate()
