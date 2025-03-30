@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Castle.Core.Internal;
+using Core;
 using Messages.UI;
 
 namespace Dashboard.Helpers
@@ -30,7 +30,7 @@ namespace Dashboard.Helpers
                     }
                     var format = (DisplayFormatAttribute)p.Attributes[typeof(DisplayFormatAttribute)];
                     column.ToolTipText = p.Description;
-                    if (!p.Description.IsNullOrEmpty()) anyHeaderTooltip = true;
+                    if (p.Description.HasValue()) anyHeaderTooltip = true;
                     column.DefaultCellStyle.Format = format?.Format;
                     var underline = (ColumnCellsUnderlineAttribute)p.Attributes[typeof(ColumnCellsUnderlineAttribute)];
                     if (underline != null)

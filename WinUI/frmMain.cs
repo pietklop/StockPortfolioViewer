@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using Castle.Core.Internal;
 using Castle.MicroKernel;
 using Core;
 using DAL;
@@ -35,9 +34,9 @@ namespace Dashboard
             set
             {
                 selectedStockIsin = value;
-                btnSingleTransactions.Visible = !selectedStockIsin.IsNullOrEmpty();
-                btnSingleDividends.Visible = !selectedStockIsin.IsNullOrEmpty();
-                btnSinglePerformance.Visible = !selectedStockIsin.IsNullOrEmpty();
+                btnSingleTransactions.Visible = selectedStockIsin.HasValue();
+                btnSingleDividends.Visible = selectedStockIsin.HasValue();
+                btnSinglePerformance.Visible = selectedStockIsin.HasValue();
             }
         }
 
@@ -171,7 +170,7 @@ namespace Dashboard
 
         private void BackupDatabase()
         {
-            if (settings.DbBackupPath.IsNullOrEmpty()) throw new Exception("BackupPath is not configured");
+            if (!settings.DbBackupPath.HasValue()) throw new Exception("BackupPath is not configured");
             if (!Directory.Exists(settings.DbBackupPath)) throw new Exception($"Can not find {nameof(settings.DbBackupPath)} '{settings.DbBackupPath}'");
 
             var bakFileName = $"{Path.GetFileNameWithoutExtension(settings.DbFileNamePath)} {DateTime.Today:yyyy-MM-dd}.db";
