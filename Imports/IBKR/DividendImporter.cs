@@ -1,4 +1,5 @@
-﻿using Messages.Dtos;
+﻿using System;
+using Messages.Dtos;
 using System.Collections.Generic;
 using System.Linq;
 using Core;
@@ -40,6 +41,8 @@ namespace Imports.IBKR
         {
             var currency = fields[currencyColIndex];
             var value = fields[grossValueColIndex].ToDouble();
+            // it seems that dividends may appear as negative value at later reports (first appearance seems to be fine)
+            if (value <= 0) throw new Exception($"Dividend must be a positive value. Stock:{fields[nameColIndex]}");
 
             return new DividendDto
             {
