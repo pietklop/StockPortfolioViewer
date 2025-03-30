@@ -74,10 +74,10 @@ namespace TestConsole
         /// </summary>
         public static void ApplyStockSplit()
         {
-            string symbol = "GOOGL";
-            double ratio = 20;
-            
-            using var db = new StockDbContext();
+            string symbol = "NVDA";
+            double ratio = 10;
+
+            using var db = StockDbContextHelper.CreateDbContext();
             var stock = db.Stocks
                 .Include(s => s.Transactions).ThenInclude(t => t.StockValue)
                 .Include(s => s.StockValues)
@@ -91,7 +91,7 @@ namespace TestConsole
             }
 
             foreach (var st in stock.Transactions)
-                st.Quantity *= ratio;
+                st.Quantity = Math.Round(st.Quantity * ratio);
 
             db.SaveChanges();
         }
