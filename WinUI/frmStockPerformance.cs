@@ -127,8 +127,8 @@ namespace Dashboard
             var performance = points.Last().RelativeValue / points.First().RelativeValue - 1;
             var firstDate = points.First().Date;
             var lastDate = points.Last().Date;
-            var annualPerformance = GrowthHelper.AnnualPerformance(performance, firstDate, lastDate);
-            var dataLabelRelativeValue = $"{performance:P1} ({annualPerformance:P0})";
+            var annualPerformance = GrowthHelper.AnnualPerformance(performance+1, firstDate, lastDate);
+            var dataLabelRelativeValue = $"{performance.ToPercentage()} ({(annualPerformance-1).ToPercentage()})";
             var dates = points.Select(p => p.Date).ToArray();
             if (MultipleStocks())
             {

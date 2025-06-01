@@ -27,10 +27,16 @@ namespace Services.Helpers
 
         public static double AnnualPerformance(double dailyPerformance) => Performance(dailyPerformance, 365);
 
-        public static double AnnualPerformance(double performance, DateTime dateStart, DateTime dateEnd)
+        /// <param name="performance">+30% as 1.3</param>
+        /// <param name="dateStart"></param>
+        /// <param name="dateEnd"></param>
+        public static double AnnualPerformance(double performance, DateTime dateStart, DateTime? dateEnd = null)
         {
-            var years = (dateEnd - dateStart).TotalDays / 365;
-            return performance / years;
+            dateEnd ??= DateTime.Today;
+            var years = (dateEnd.Value - dateStart).TotalDays / 365;
+            if (years == 0) return 1;
+            if (years < 0) throw new Exception($"Date diff can not be negative");
+            return Math.Pow(performance, 1/years);
         }
 
         public static double ExpectedPerformance(double annualPerformance, DateTime dateStart, DateTime dateEnd)
