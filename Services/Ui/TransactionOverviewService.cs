@@ -22,13 +22,14 @@ namespace Services.Ui
             this.db = db;
         }
 
-        public List<TransactionViewModel> GetStockList(string isin = null)
+        public List<TransactionViewModel> GetStockList(TransactionViewMode viewMode, string isin = null)
         {
             var transactions = db.Transactions
                 .Include(t => t.Stock.Currency)
                 .Include(t => t.Stock.LastKnownStockValue.StockValue)
                 .Include(t => t.StockValue)
                 .Where(t => isin == null || t.Stock.Isin == isin)
+                .Where(t => viewMode != TransactionViewMode.CurrentYear || isin != null || t.StockValue.TimeStamp.Date >= DateTime.Today.AddYears(-1))
                 .OrderByDescending(t => t.StockValue.TimeStamp).ToList();
 
             var list = new List<TransactionViewModel>(transactions.Count());
@@ -42,7 +43,7 @@ namespace Services.Ui
             {
                 var currSymbol = transaction.Stock.Currency.Symbol;
                 var date = transaction.StockValue.TimeStamp.Date;
-                if (date.Month != month)
+                if (viewMode != TransactionViewMode.GroupedByYear && date.Month != month)
                 {
                     AddMonthlySubTotal();
                     month = date.Month;
@@ -54,33 +55,37 @@ namespace Services.Ui
                 }
                 monthlyTransactions.Add(transaction);
                 annualTransactions.Add(transaction);
-                var transactionPrice = transaction.StockValue.NativePrice;
-                var currentPrice = transaction.Stock.LastKnownStockValue.StockValue.NativePrice;
-                var performance = (currentPrice - transactionPrice) / transactionPrice;
-                string annualPerformanceString = "";
-                if (MoreThanAYear(date))
-                {
-                    var annualPerformance = GrowthHelper.AnnualPerformance(currentPrice / transactionPrice, date)-1;
-                    annualPerformanceString = $" ({annualPerformance.ToPercentage()})";
-                }
-                var haveAnyStock = transactions.Where(t => t.StockId == transaction.StockId).Sum(t => t.Quantity) > 0;
-                var performanceString = haveAnyStock ? $"{performance.ToPercentage()}{annualPerformanceString}" : "";
-                list.Add(new TransactionViewModel
-                {
-                    Name = transaction.Stock.Name,
-                    Date = date.ToShortDateString(),
-                    Quantity = transaction.Quantity,
-                    Price = transactionPrice.FormatCurrency(currSymbol, false),
-                    Performance = performanceString,
-                    NativeValue = NativeValue(transaction).FormatCurrency(currSymbol),
-                    UserValue = UserValue(transaction).FormatUserCurrency(),
-                    Costs = transaction.UserCosts.FormatUserCurrency(),
-                    CurrRatio = CurrencyRatio(transaction),
-                    HiddenPrice = transaction.StockValue.NativePrice,
-                });
-            }
 
-            AddMonthlySubTotal();
+                if (viewMode == TransactionViewMode.CurrentYear || isin != null)
+                {
+                    var transactionPrice = transaction.StockValue.NativePrice;
+                    var currentPrice = transaction.Stock.LastKnownStockValue.StockValue.NativePrice;
+                    var performance = (currentPrice - transactionPrice) / transactionPrice;
+                    string annualPerformanceString = "";
+                    if (MoreThanAYear(date))
+                    {
+                        var annualPerformance = GrowthHelper.AnnualPerformance(currentPrice / transactionPrice, date) - 1;
+                        annualPerformanceString = $" ({annualPerformance.ToPercentage()})";
+                    }
+                    var haveAnyStock = transactions.Where(t => t.StockId == transaction.StockId).Sum(t => t.Quantity) > 0;
+                    var performanceString = haveAnyStock ? $"{performance.ToPercentage()}{annualPerformanceString}" : "";
+                    list.Add(new TransactionViewModel
+                    {
+                        Name = transaction.Stock.Name,
+                        Date = date.ToShortDateString(),
+                        Quantity = transaction.Quantity,
+                        Price = transactionPrice.FormatCurrency(currSymbol, false),
+                        Performance = performanceString,
+                        NativeValue = NativeValue(transaction).FormatCurrency(currSymbol),
+                        UserValue = UserValue(transaction).FormatUserCurrency(),
+                        Costs = transaction.UserCosts.FormatUserCurrency(),
+                        CurrRatio = CurrencyRatio(transaction),
+                        HiddenPrice = transaction.StockValue.NativePrice,
+                    });
+                }
+            }
+            if (viewMode != TransactionViewMode.GroupedByYear)
+                AddMonthlySubTotal();
             AddAnnualSubTotal();
 
             return list;
@@ -106,7 +111,7 @@ namespace Services.Ui
 
             void AddAnnualSubTotal()
             {
-                if (annualTransactions.Count == 0 || isin != null) return;
+                if (annualTransactions.Count == 0 || (isin != null && viewMode != TransactionViewMode.GroupedByYear) || viewMode == TransactionViewMode.CurrentYear) return;
                 list.Add(new TransactionViewModel
                 {
                     Name = $"{TransactionViewModel.AnnualSumOf} {year}",
@@ -121,5 +126,12 @@ namespace Services.Ui
 
             bool MoreThanAYear(DateTime date) => (DateTime.Today - date).TotalDays > 365;
         }
+    }
+
+    public enum TransactionViewMode
+    {
+        CurrentYear,
+        GroupedByYear,
+        GroupedByMonth,
     }
 }

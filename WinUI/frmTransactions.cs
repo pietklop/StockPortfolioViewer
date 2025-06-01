@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Dashboard.Helpers;
@@ -25,6 +26,9 @@ namespace Dashboard
 
         private void frmTransactions_Load(object sender, System.EventArgs e)
         {
+            cmbViewMode.DataSource = Enum.GetValues(typeof(TransactionViewMode));
+            cmbViewMode.SelectedItem = TransactionViewMode.CurrentYear;
+
             PopulateStockGrid();
             ShowCurrentPrice();
         }
@@ -58,7 +62,8 @@ namespace Dashboard
 
         private void PopulateStockGrid()
         {
-            var stockList = transactionOverviewService.GetStockList(stockIsin);
+            var viewMode = (TransactionViewMode)cmbViewMode.SelectedItem;
+            var stockList = transactionOverviewService.GetStockList(viewMode, stockIsin);
             dgvTransactions.DataSource = stockList;
 
             // column configuration
@@ -70,6 +75,8 @@ namespace Dashboard
             dgvTransactions.SetReadOnly();
             dgvTransactions.SetVisualStyling();
         }
+
+        private void cmbViewMode_SelectionChangeCommitted(object sender, EventArgs e) => PopulateStockGrid();
 
         private void dgvTransactions_SelectionChanged(object sender, System.EventArgs e) => dgvTransactions.ClearSelection();
 
@@ -113,11 +120,13 @@ namespace Dashboard
                 }
             }
 
+            var viewMode = (TransactionViewMode)cmbViewMode.SelectedItem;
+
             var nameColumnIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.Name)).Index;
-            if (nameColumnIndex == e.ColumnIndex && ((string) e.Value).StartsWith(TransactionViewModel.SumOf))
+            if (viewMode != TransactionViewMode.GroupedByMonth && nameColumnIndex == e.ColumnIndex && ((string)e.Value).StartsWith(TransactionViewModel.SumOf))
                 dgvTransactions.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.DarkBlue;
-            else if (nameColumnIndex == e.ColumnIndex && ((string) e.Value).StartsWith(TransactionViewModel.AnnualSumOf))
-                dgvTransactions.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.DarkRed;
+            else if ((viewMode != TransactionViewMode.GroupedByYear || stockIsin != null) && nameColumnIndex == e.ColumnIndex && ((string)e.Value).StartsWith(TransactionViewModel.AnnualSumOf))
+                dgvTransactions.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.DodgerBlue;
         }
     }
 }

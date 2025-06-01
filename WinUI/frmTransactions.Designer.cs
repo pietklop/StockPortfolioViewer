@@ -29,132 +29,141 @@ namespace Dashboard
         /// </summary>
         private void InitializeComponent()
         {
-            this.dgvTransactions = new System.Windows.Forms.DataGridView();
-            this.lblCurrentPriceT = new System.Windows.Forms.Label();
-            this.lblCurrentPrice = new System.Windows.Forms.Label();
-            this.lblAvgBuy = new System.Windows.Forms.Label();
-            this.lblAvgBuyT = new System.Windows.Forms.Label();
-            this.lblTotalValue = new System.Windows.Forms.Label();
-            this.lblTotalValueT = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvTransactions)).BeginInit();
-            this.SuspendLayout();
+            dgvTransactions = new System.Windows.Forms.DataGridView();
+            lblCurrentPriceT = new System.Windows.Forms.Label();
+            lblCurrentPrice = new System.Windows.Forms.Label();
+            lblAvgBuy = new System.Windows.Forms.Label();
+            lblAvgBuyT = new System.Windows.Forms.Label();
+            lblTotalValue = new System.Windows.Forms.Label();
+            lblTotalValueT = new System.Windows.Forms.Label();
+            cmbViewMode = new System.Windows.Forms.ComboBox();
+            ((System.ComponentModel.ISupportInitialize)dgvTransactions).BeginInit();
+            SuspendLayout();
             // 
             // dgvTransactions
             // 
-            this.dgvTransactions.AllowUserToAddRows = false;
-            this.dgvTransactions.AllowUserToDeleteRows = false;
-            this.dgvTransactions.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgvTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvTransactions.Location = new System.Drawing.Point(104, 52);
-            this.dgvTransactions.Name = "dgvTransactions";
-            this.dgvTransactions.ReadOnly = true;
-            this.dgvTransactions.RowHeadersWidth = 82;
-            this.dgvTransactions.RowTemplate.Height = 25;
-            this.dgvTransactions.Size = new System.Drawing.Size(741, 584);
-            this.dgvTransactions.TabIndex = 1;
-            this.dgvTransactions.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvTransactions_CellFormatting);
-            this.dgvTransactions.SelectionChanged += new System.EventHandler(this.dgvTransactions_SelectionChanged);
+            dgvTransactions.AllowUserToAddRows = false;
+            dgvTransactions.AllowUserToDeleteRows = false;
+            dgvTransactions.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            dgvTransactions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvTransactions.Location = new System.Drawing.Point(104, 52);
+            dgvTransactions.Name = "dgvTransactions";
+            dgvTransactions.ReadOnly = true;
+            dgvTransactions.RowHeadersWidth = 82;
+            dgvTransactions.Size = new System.Drawing.Size(741, 584);
+            dgvTransactions.TabIndex = 1;
+            dgvTransactions.CellFormatting += dgvTransactions_CellFormatting;
+            dgvTransactions.SelectionChanged += dgvTransactions_SelectionChanged;
             // 
             // lblCurrentPriceT
             // 
-            this.lblCurrentPriceT.AutoSize = true;
-            this.lblCurrentPriceT.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblCurrentPriceT.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblCurrentPriceT.Location = new System.Drawing.Point(104, 20);
-            this.lblCurrentPriceT.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblCurrentPriceT.Name = "lblCurrentPriceT";
-            this.lblCurrentPriceT.Size = new System.Drawing.Size(101, 21);
-            this.lblCurrentPriceT.TabIndex = 2;
-            this.lblCurrentPriceT.Text = "Current price";
-            this.lblCurrentPriceT.Visible = false;
+            lblCurrentPriceT.AutoSize = true;
+            lblCurrentPriceT.Font = new System.Drawing.Font("Segoe UI", 12F);
+            lblCurrentPriceT.ForeColor = System.Drawing.Color.Gainsboro;
+            lblCurrentPriceT.Location = new System.Drawing.Point(104, 20);
+            lblCurrentPriceT.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            lblCurrentPriceT.Name = "lblCurrentPriceT";
+            lblCurrentPriceT.Size = new System.Drawing.Size(101, 21);
+            lblCurrentPriceT.TabIndex = 2;
+            lblCurrentPriceT.Text = "Current price";
+            lblCurrentPriceT.Visible = false;
             // 
             // lblCurrentPrice
             // 
-            this.lblCurrentPrice.AutoSize = true;
-            this.lblCurrentPrice.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblCurrentPrice.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblCurrentPrice.Location = new System.Drawing.Point(211, 20);
-            this.lblCurrentPrice.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblCurrentPrice.Name = "lblCurrentPrice";
-            this.lblCurrentPrice.Size = new System.Drawing.Size(50, 21);
-            this.lblCurrentPrice.TabIndex = 3;
-            this.lblCurrentPrice.Text = "$ 999";
-            this.lblCurrentPrice.Visible = false;
+            lblCurrentPrice.AutoSize = true;
+            lblCurrentPrice.Font = new System.Drawing.Font("Segoe UI", 12F);
+            lblCurrentPrice.ForeColor = System.Drawing.Color.Gainsboro;
+            lblCurrentPrice.Location = new System.Drawing.Point(211, 20);
+            lblCurrentPrice.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            lblCurrentPrice.Name = "lblCurrentPrice";
+            lblCurrentPrice.Size = new System.Drawing.Size(50, 21);
+            lblCurrentPrice.TabIndex = 3;
+            lblCurrentPrice.Text = "$ 999";
+            lblCurrentPrice.Visible = false;
             // 
             // lblAvgBuy
             // 
-            this.lblAvgBuy.AutoSize = true;
-            this.lblAvgBuy.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblAvgBuy.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblAvgBuy.Location = new System.Drawing.Point(389, 20);
-            this.lblAvgBuy.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblAvgBuy.Name = "lblAvgBuy";
-            this.lblAvgBuy.Size = new System.Drawing.Size(50, 21);
-            this.lblAvgBuy.TabIndex = 5;
-            this.lblAvgBuy.Text = "$ 999";
-            this.lblAvgBuy.Visible = false;
+            lblAvgBuy.AutoSize = true;
+            lblAvgBuy.Font = new System.Drawing.Font("Segoe UI", 12F);
+            lblAvgBuy.ForeColor = System.Drawing.Color.Gainsboro;
+            lblAvgBuy.Location = new System.Drawing.Point(389, 20);
+            lblAvgBuy.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            lblAvgBuy.Name = "lblAvgBuy";
+            lblAvgBuy.Size = new System.Drawing.Size(50, 21);
+            lblAvgBuy.TabIndex = 5;
+            lblAvgBuy.Text = "$ 999";
+            lblAvgBuy.Visible = false;
             // 
             // lblAvgBuyT
             // 
-            this.lblAvgBuyT.AutoSize = true;
-            this.lblAvgBuyT.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblAvgBuyT.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblAvgBuyT.Location = new System.Drawing.Point(316, 20);
-            this.lblAvgBuyT.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblAvgBuyT.Name = "lblAvgBuyT";
-            this.lblAvgBuyT.Size = new System.Drawing.Size(67, 21);
-            this.lblAvgBuyT.TabIndex = 4;
-            this.lblAvgBuyT.Text = "Avg buy";
-            this.lblAvgBuyT.Visible = false;
+            lblAvgBuyT.AutoSize = true;
+            lblAvgBuyT.Font = new System.Drawing.Font("Segoe UI", 12F);
+            lblAvgBuyT.ForeColor = System.Drawing.Color.Gainsboro;
+            lblAvgBuyT.Location = new System.Drawing.Point(316, 20);
+            lblAvgBuyT.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            lblAvgBuyT.Name = "lblAvgBuyT";
+            lblAvgBuyT.Size = new System.Drawing.Size(67, 21);
+            lblAvgBuyT.TabIndex = 4;
+            lblAvgBuyT.Text = "Avg buy";
+            lblAvgBuyT.Visible = false;
             // 
             // lblTotalValue
             // 
-            this.lblTotalValue.AutoSize = true;
-            this.lblTotalValue.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblTotalValue.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblTotalValue.Location = new System.Drawing.Point(537, 20);
-            this.lblTotalValue.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblTotalValue.Name = "lblTotalValue";
-            this.lblTotalValue.Size = new System.Drawing.Size(50, 21);
-            this.lblTotalValue.TabIndex = 7;
-            this.lblTotalValue.Text = "$ 999";
-            this.lblTotalValue.Visible = false;
+            lblTotalValue.AutoSize = true;
+            lblTotalValue.Font = new System.Drawing.Font("Segoe UI", 12F);
+            lblTotalValue.ForeColor = System.Drawing.Color.Gainsboro;
+            lblTotalValue.Location = new System.Drawing.Point(537, 20);
+            lblTotalValue.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            lblTotalValue.Name = "lblTotalValue";
+            lblTotalValue.Size = new System.Drawing.Size(50, 21);
+            lblTotalValue.TabIndex = 7;
+            lblTotalValue.Text = "$ 999";
+            lblTotalValue.Visible = false;
             // 
             // lblTotalValueT
             // 
-            this.lblTotalValueT.AutoSize = true;
-            this.lblTotalValueT.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblTotalValueT.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblTotalValueT.Location = new System.Drawing.Point(491, 20);
-            this.lblTotalValueT.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblTotalValueT.Name = "lblTotalValueT";
-            this.lblTotalValueT.Size = new System.Drawing.Size(42, 21);
-            this.lblTotalValueT.TabIndex = 6;
-            this.lblTotalValueT.Text = "Total";
-            this.lblTotalValueT.Visible = false;
+            lblTotalValueT.AutoSize = true;
+            lblTotalValueT.Font = new System.Drawing.Font("Segoe UI", 12F);
+            lblTotalValueT.ForeColor = System.Drawing.Color.Gainsboro;
+            lblTotalValueT.Location = new System.Drawing.Point(491, 20);
+            lblTotalValueT.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            lblTotalValueT.Name = "lblTotalValueT";
+            lblTotalValueT.Size = new System.Drawing.Size(42, 21);
+            lblTotalValueT.TabIndex = 6;
+            lblTotalValueT.Text = "Total";
+            lblTotalValueT.Visible = false;
+            // 
+            // cmbViewMode
+            // 
+            cmbViewMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cmbViewMode.FormattingEnabled = true;
+            cmbViewMode.Location = new System.Drawing.Point(641, 22);
+            cmbViewMode.Name = "cmbViewMode";
+            cmbViewMode.Size = new System.Drawing.Size(118, 23);
+            cmbViewMode.TabIndex = 8;
+            cmbViewMode.SelectionChangeCommitted += cmbViewMode_SelectionChangeCommitted;
             // 
             // frmTransactions
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(51)))), ((int)(((byte)(73)))));
-            this.ClientSize = new System.Drawing.Size(984, 677);
-            this.Controls.Add(this.lblTotalValue);
-            this.Controls.Add(this.lblTotalValueT);
-            this.Controls.Add(this.lblAvgBuy);
-            this.Controls.Add(this.lblAvgBuyT);
-            this.Controls.Add(this.lblCurrentPrice);
-            this.Controls.Add(this.lblCurrentPriceT);
-            this.Controls.Add(this.dgvTransactions);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "frmTransactions";
-            this.Text = "frmTransactions";
-            this.Load += new System.EventHandler(this.frmTransactions_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvTransactions)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            BackColor = System.Drawing.Color.FromArgb(46, 51, 73);
+            ClientSize = new System.Drawing.Size(984, 677);
+            Controls.Add(cmbViewMode);
+            Controls.Add(lblTotalValue);
+            Controls.Add(lblTotalValueT);
+            Controls.Add(lblAvgBuy);
+            Controls.Add(lblAvgBuyT);
+            Controls.Add(lblCurrentPrice);
+            Controls.Add(lblCurrentPriceT);
+            Controls.Add(dgvTransactions);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            Name = "frmTransactions";
+            Text = "frmTransactions";
+            Load += frmTransactions_Load;
+            ((System.ComponentModel.ISupportInitialize)dgvTransactions).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -167,5 +176,6 @@ namespace Dashboard
         private System.Windows.Forms.Label lblAvgBuyT;
         private System.Windows.Forms.Label lblTotalValue;
         private System.Windows.Forms.Label lblTotalValueT;
+        private System.Windows.Forms.ComboBox cmbViewMode;
     }
 }
