@@ -23,7 +23,8 @@ namespace Imports.IBKR
             foreach (var line in lines.Skip(1))
             {
                 var fields = line.SmartSplit('|');
-                unfilteredDividends.Add(CreateDividend(fields));
+                var div = CreateDividend(fields);
+                if (div != null) unfilteredDividends.Add(div);
             }
 
             var dividends = new List<DividendDto>();
@@ -42,7 +43,7 @@ namespace Imports.IBKR
             var currency = fields[currencyColIndex];
             var value = fields[grossValueColIndex].ToDouble();
             // it seems that dividends may appear as negative value at later reports (first appearance seems to be fine)
-            if (value <= 0) throw new Exception($"Dividend must be a positive value. Stock:{fields[nameColIndex]}");
+            if (value <= 0) return null;
 
             return new DividendDto
             {
