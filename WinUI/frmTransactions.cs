@@ -81,7 +81,7 @@ namespace Dashboard
                 dgvTransactions.Rows[e.RowIndex].DefaultCellStyle.ForeColor = negative ? Color.LightSlateGray : Color.Gainsboro;
             }
 
-            if (dgvTransactions.GetColumn(nameof(TransactionViewModel.CurrentPrice)).Index == e.ColumnIndex)
+            if (dgvTransactions.GetColumn(nameof(TransactionViewModel.Performance)).Index == e.ColumnIndex)
             {
                 var negative = ((string)e.Value)?.IndexOf('-') >= 0;
                 var quantityColIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.Quantity)).Index;

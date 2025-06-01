@@ -13,7 +13,7 @@ namespace Messages.UI.Overview
         public double Quantity { get; set; }
         public string Price { get; set; }
         [DisplayName("Current")]
-        public string CurrentPrice { get; set; }
+        public string Performance { get; set; }
         public string NativeValue { get; set; }
         public string UserValue { get; set; }
         public string Costs { get; set; }

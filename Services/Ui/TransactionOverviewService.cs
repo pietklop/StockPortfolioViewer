@@ -7,6 +7,7 @@ using DAL.Entities;
 using log4net;
 using Messages.UI.Overview;
 using Microsoft.EntityFrameworkCore;
+using Services.Helpers;
 
 namespace Services.Ui
 {
@@ -55,15 +56,22 @@ namespace Services.Ui
                 annualTransactions.Add(transaction);
                 var transactionPrice = transaction.StockValue.NativePrice;
                 var currentPrice = transaction.Stock.LastKnownStockValue.StockValue.NativePrice;
-                var diffPerc = (currentPrice - transactionPrice) / transactionPrice*100;
+                var performance = (currentPrice - transactionPrice) / transactionPrice;
+                string annualPerformanceString = "";
+                if (MoreThanAYear(date))
+                {
+                    var annualPerformance = GrowthHelper.AnnualPerformance(currentPrice / transactionPrice, date)-1;
+                    annualPerformanceString = $" ({annualPerformance.ToPercentage()})";
+                }
                 var haveAnyStock = transactions.Where(t => t.StockId == transaction.StockId).Sum(t => t.Quantity) > 0;
+                var performanceString = haveAnyStock ? $"{performance.ToPercentage()}{annualPerformanceString}" : "";
                 list.Add(new TransactionViewModel
                 {
                     Name = transaction.Stock.Name,
                     Date = date.ToShortDateString(),
                     Quantity = transaction.Quantity,
                     Price = transactionPrice.FormatCurrency(currSymbol, false),
-                    CurrentPrice = haveAnyStock ? $"{currentPrice.FormatCurrency(currSymbol, false)} ({diffPerc:F1}%)" : "",
+                    Performance = performanceString,
                     NativeValue = NativeValue(transaction).FormatCurrency(currSymbol),
                     UserValue = UserValue(transaction).FormatUserCurrency(),
                     Costs = transaction.UserCosts.FormatUserCurrency(),
@@ -110,7 +118,8 @@ namespace Services.Ui
 
             double NativeValue(Transaction transaction) => transaction.StockValue.NativePrice * transaction.Quantity;
             double UserValue(Transaction transaction) => transaction.StockValue.UserPrice * transaction.Quantity;
-        }
 
+            bool MoreThanAYear(DateTime date) => (DateTime.Today - date).TotalDays > 365;
+        }
     }
 }
