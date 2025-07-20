@@ -29,7 +29,7 @@ namespace Services.Ui
                 .Include(t => t.Stock.LastKnownStockValue.StockValue)
                 .Include(t => t.StockValue)
                 .Where(t => isin == null || t.Stock.Isin == isin)
-                .Where(t => viewMode != TransactionViewMode.CurrentYear || isin != null || t.StockValue.TimeStamp.Date >= DateTime.Today.AddYears(-1))
+                .Where(t => viewMode != TransactionViewMode.LastTwelveMonths || isin != null || t.StockValue.TimeStamp.Date >= DateTime.Today.AddYears(-1))
                 .OrderByDescending(t => t.StockValue.TimeStamp).ToList();
 
             var list = new List<TransactionViewModel>(transactions.Count());
@@ -56,7 +56,7 @@ namespace Services.Ui
                 monthlyTransactions.Add(transaction);
                 annualTransactions.Add(transaction);
 
-                if (viewMode == TransactionViewMode.CurrentYear || isin != null)
+                if (viewMode == TransactionViewMode.LastTwelveMonths || isin.HasValue())
                 {
                     var transactionPrice = transaction.StockValue.NativePrice;
                     var currentPrice = transaction.Stock.LastKnownStockValue.StockValue.NativePrice;
@@ -86,7 +86,8 @@ namespace Services.Ui
             }
             if (viewMode != TransactionViewMode.GroupedByYear)
                 AddMonthlySubTotal();
-            AddAnnualSubTotal();
+            if (viewMode != TransactionViewMode.LastTwelveMonths || isin.HasValue())
+                AddAnnualSubTotal();
 
             return list;
 
@@ -99,7 +100,7 @@ namespace Services.Ui
 
             void AddMonthlySubTotal()
             {
-                if (monthlyTransactions.Count == 0 || isin != null) return;
+                if (monthlyTransactions.Count == 0 || isin.HasValue()) return;
                 list.Add(new TransactionViewModel
                 {
                     Name = $"{TransactionViewModel.SumOf} {new DateTime(2000, month, 1):MMMM} {year}",
@@ -111,7 +112,7 @@ namespace Services.Ui
 
             void AddAnnualSubTotal()
             {
-                if (annualTransactions.Count == 0 || (isin != null && viewMode != TransactionViewMode.GroupedByYear) || viewMode == TransactionViewMode.CurrentYear) return;
+                if (annualTransactions.Count == 0 || (isin.HasValue() && viewMode != TransactionViewMode.GroupedByYear) || viewMode == TransactionViewMode.LastTwelveMonths) return;
                 list.Add(new TransactionViewModel
                 {
                     Name = $"{TransactionViewModel.AnnualSumOf} {year}",
@@ -130,7 +131,7 @@ namespace Services.Ui
 
     public enum TransactionViewMode
     {
-        CurrentYear,
+        LastTwelveMonths,
         GroupedByYear,
         GroupedByMonth,
     }

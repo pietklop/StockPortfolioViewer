@@ -24,10 +24,10 @@ namespace Dashboard
             InitializeComponent();
         }
 
-        private void frmTransactions_Load(object sender, System.EventArgs e)
+        private void frmTransactions_Load(object sender, EventArgs e)
         {
             cmbViewMode.DataSource = Enum.GetValues(typeof(TransactionViewMode));
-            cmbViewMode.SelectedItem = TransactionViewMode.CurrentYear;
+            cmbViewMode.SelectedItem = TransactionViewMode.LastTwelveMonths;
 
             PopulateStockGrid();
             ShowCurrentPrice();

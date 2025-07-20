@@ -139,7 +139,7 @@ namespace Dashboard
             cmbViewMode.FormattingEnabled = true;
             cmbViewMode.Location = new System.Drawing.Point(641, 22);
             cmbViewMode.Name = "cmbViewMode";
-            cmbViewMode.Size = new System.Drawing.Size(118, 23);
+            cmbViewMode.Size = new System.Drawing.Size(123, 23);
             cmbViewMode.TabIndex = 8;
             cmbViewMode.SelectionChangeCommitted += cmbViewMode_SelectionChangeCommitted;
             // 
