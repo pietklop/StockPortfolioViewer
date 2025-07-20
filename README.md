@@ -1,7 +1,7 @@
 # StockPortfolioViewer
 
 Program to keep track of your stock portfolio
-Supports DeGiro imports
+Supports DeGiro and IBKR (custom) imports
 Supports various groupings like sector, area, currency
 Shows yield and performance (includes dividends)
 
