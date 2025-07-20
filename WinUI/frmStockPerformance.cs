@@ -52,7 +52,7 @@ namespace Dashboard
             //     dgvStocks.Visible = false;
             //     return;
             // }
-            var performanceInterval = PerformanceInterval.Year;
+            var performanceInterval = PerformanceInterval.Year; // TEMP
             dgvStocks.DataSource = stockPerformanceOverviewService.GetStockList(stockIsins, performanceInterval);
 
             // column configuration
@@ -65,15 +65,17 @@ namespace Dashboard
             var tMin2Column = dgvStocks.GetColumn(nameof(StockPerformanceOverviewModel.PerformanceFractionTMin2));
             var tMin3Column = dgvStocks.GetColumn(nameof(StockPerformanceOverviewModel.PerformanceFractionTMin3));
             var today = DateTime.Today;
-            switch (performanceInterval)
+            switch (performanceInterval) // todo, gebruik zelfde logica als in stockPerformanceOverviewService
             {
                 case PerformanceInterval.Month:
+                    // if (today.Day <= 10) today = today.AddDays(-10);
                     t0Column.HeaderText = today.GetMonthShort();
                     tMin1Column.HeaderText = today.AddMonths(-1).GetMonthShort();
                     tMin2Column.HeaderText = today.AddMonths(-2).GetMonthShort();
                     tMin3Column.HeaderText = today.AddMonths(-3).GetMonthShort();
                     break;
                 case PerformanceInterval.Quarter:
+                    // if (today.Month == 1) today = today.AddMonths(-1);
                     t0Column.HeaderText = today.GetQuarterShort();
                     tMin1Column.HeaderText = today.AddMonths(-3).GetQuarterShort();
                     tMin2Column.HeaderText = today.AddMonths(-6).GetQuarterShort();
@@ -152,7 +154,7 @@ namespace Dashboard
             else
                 chart.RemoveSeries("Dividend");
 
-            string percOfPortfolio = performanceDto.FractionOfTotalPortfolio == 1 ? "" : $"{performanceDto.FractionOfTotalPortfolio:P1} of (selected) portfolio";
+            string percOfPortfolio = performanceDto.FractionOfTotalPortfolio == 1 ? "" : $"{performanceDto.FractionOfTotalPortfolio.ToPercentage()} of (selected) portfolio";
             lblPeriod.Text = $"{PeriodText()}  ({interval} interval)  {percOfPortfolio}";
 
             List<ValuePointDto> CreateBaseLine()
