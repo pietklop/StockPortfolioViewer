@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Core;
 using Dashboard.Helpers;
 using Messages.UI.Overview;
 using Services.Ui;
@@ -21,12 +22,17 @@ namespace Dashboard
 
         private void frmDividends_Load(object sender, EventArgs e)
         {
+            cmbViewMode.Visible = stockIsin == null;
+            cmbViewMode.DataSource = Enum.GetValues(typeof(DividendViewMode));
+            cmbViewMode.SelectedItem = DividendViewMode.LastTwelveMonths;
+
             PopulateStockGrid();
         }
 
         private void PopulateStockGrid()
         {
-            var stockList = dividendOverviewService.GetStockList(stockIsin);
+            var viewMode = (DividendViewMode)cmbViewMode.SelectedItem;
+            var stockList = dividendOverviewService.GetStockList(viewMode, stockIsin);
             dgvDividends.DataSource = stockList;
 
             // column configuration
@@ -39,6 +45,8 @@ namespace Dashboard
             dgvDividends.SetVisualStyling();
         }
 
+        private void cmbViewMode_SelectionChangeCommitted(object sender, EventArgs e) => PopulateStockGrid();
+
         private void dgvDividends_SelectionChanged(object sender, EventArgs e) => dgvDividends.ClearSelection();
 
         private void dgvDividends_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -47,10 +55,12 @@ namespace Dashboard
 
             if (dateColumnIndex == e.ColumnIndex)
                 dgvDividends[dateColumnIndex, e.RowIndex].Style.ForeColor = ((string)e.Value).EndsWith("*") ? Color.Red : Color.Gainsboro;
-            
+
+            var viewMode = (DividendViewMode)cmbViewMode.SelectedItem;
+
             var nameColumnIndex = dgvDividends.GetColumn(nameof(DividendViewModel.Name)).Index;
-            if (nameColumnIndex == e.ColumnIndex && ((string)e.Value).StartsWith(DividendViewModel.AnnualSumOf))
-                dgvDividends.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.DarkRed;
+            if ((viewMode == DividendViewMode.LastTwelveMonths || stockIsin.HasValue()) && nameColumnIndex == e.ColumnIndex && ((string)e.Value).StartsWith(DividendViewModel.AnnualSumOf))
+                dgvDividends.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.DarkBlue;
         }
     }
 }

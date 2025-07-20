@@ -21,20 +21,21 @@ namespace Services.Ui
             this.db = db;
         }
 
-        public List<DividendViewModel> GetStockList(string isin = null)
+        public List<DividendViewModel> GetStockList(DividendViewMode viewMode, string isin = null)
         {
             var dividends = db.Dividends
                 .Include(t => t.Stock.Currency)
                 .Include(t => t.Stock.StockValues)
                 .Include(t => t.Stock.Transactions).ThenInclude(t => t.StockValue)
                 .Where(t => isin == null || t.Stock.Isin == isin)
+                .Where(t => viewMode != DividendViewMode.LastTwelveMonths || isin.HasValue() || t.TimeStamp.Date >= DateTime.Today.AddYears(-1))
                 .OrderByDescending(t => t.TimeStamp).ToList();
 
             var list = new List<DividendViewModel>(dividends.Count());
 
-            int nDaysDivExDiff = 14; // payout is always later then ex-div date
+            int nDaysDivExDiff = 14; // payout is always later than ex-div date
 
-            int year = dividends.FirstOrDefault()?.Created.Year ?? 2022;
+            int year = dividends.FirstOrDefault()?.Created.Year ?? DateTime.Now.Year;
             var annualDividends = new List<DividendViewModel>();
 
             foreach (var dividend in dividends)
@@ -75,11 +76,13 @@ namespace Services.Ui
                     DTax = dividend.IsCapitalReturn() ? 0 : dividend.UserTax,
                     DCosts = dividend.UserCosts,
                 };
-                list.Add(divViewModels);
+                if (viewMode == DividendViewMode.LastTwelveMonths || isin.HasValue())
+                    list.Add(divViewModels);
                 annualDividends.Add(divViewModels);
             }
 
-            AddAnnualSubTotal();
+            if (viewMode == DividendViewMode.GroupedByYear || isin.HasValue())
+                AddAnnualSubTotal();
 
             return list;
 
@@ -114,6 +117,11 @@ namespace Services.Ui
                 annualDividends.Clear();
             }
         }
+    }
 
+    public enum DividendViewMode
+    {
+        LastTwelveMonths,
+        GroupedByYear,
     }
 }

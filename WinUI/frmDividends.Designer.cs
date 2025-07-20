@@ -29,45 +29,55 @@ namespace Dashboard
         /// </summary>
         private void InitializeComponent()
         {
-            this.dgvDividends = new System.Windows.Forms.DataGridView();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvDividends)).BeginInit();
-            this.SuspendLayout();
+            dgvDividends = new System.Windows.Forms.DataGridView();
+            cmbViewMode = new System.Windows.Forms.ComboBox();
+            ((System.ComponentModel.ISupportInitialize)dgvDividends).BeginInit();
+            SuspendLayout();
             // 
             // dgvDividends
             // 
-            this.dgvDividends.AllowUserToAddRows = false;
-            this.dgvDividends.AllowUserToDeleteRows = false;
-            this.dgvDividends.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgvDividends.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvDividends.Location = new System.Drawing.Point(104, 52);
-            this.dgvDividends.Name = "dgvDividends";
-            this.dgvDividends.ReadOnly = true;
-            this.dgvDividends.RowTemplate.Height = 25;
-            this.dgvDividends.Size = new System.Drawing.Size(741, 584);
-            this.dgvDividends.TabIndex = 2;
-            this.dgvDividends.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvDividends_CellFormatting);
-            this.dgvDividends.SelectionChanged += new System.EventHandler(this.dgvDividends_SelectionChanged);
+            dgvDividends.AllowUserToAddRows = false;
+            dgvDividends.AllowUserToDeleteRows = false;
+            dgvDividends.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            dgvDividends.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvDividends.Location = new System.Drawing.Point(104, 52);
+            dgvDividends.Name = "dgvDividends";
+            dgvDividends.ReadOnly = true;
+            dgvDividends.Size = new System.Drawing.Size(741, 584);
+            dgvDividends.TabIndex = 2;
+            dgvDividends.CellFormatting += dgvDividends_CellFormatting;
+            dgvDividends.SelectionChanged += dgvDividends_SelectionChanged;
+            // 
+            // cmbViewMode
+            // 
+            cmbViewMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cmbViewMode.FormattingEnabled = true;
+            cmbViewMode.Location = new System.Drawing.Point(104, 23);
+            cmbViewMode.Name = "cmbViewMode";
+            cmbViewMode.Size = new System.Drawing.Size(131, 23);
+            cmbViewMode.TabIndex = 9;
+            cmbViewMode.SelectionChangeCommitted += cmbViewMode_SelectionChangeCommitted;
             // 
             // frmDividends
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(51)))), ((int)(((byte)(73)))));
-            this.ClientSize = new System.Drawing.Size(932, 671);
-            this.Controls.Add(this.dgvDividends);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "frmDividends";
-            this.Text = "frmDividends";
-            this.Load += new System.EventHandler(this.frmDividends_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvDividends)).EndInit();
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            BackColor = System.Drawing.Color.FromArgb(46, 51, 73);
+            ClientSize = new System.Drawing.Size(932, 671);
+            Controls.Add(cmbViewMode);
+            Controls.Add(dgvDividends);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            Name = "frmDividends";
+            Text = "frmDividends";
+            Load += frmDividends_Load;
+            ((System.ComponentModel.ISupportInitialize)dgvDividends).EndInit();
+            ResumeLayout(false);
 
         }
 
         #endregion
 
         private System.Windows.Forms.DataGridView dgvDividends;
+        private System.Windows.Forms.ComboBox cmbViewMode;
     }
 }
