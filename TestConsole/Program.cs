@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Castle.MicroKernel;
+using Core;
 using DAL;
 using DAL.Entities;
 using Imports;
@@ -78,6 +79,7 @@ namespace TestConsole
         {
             string symbol = "NVDA";
             double ratio = 10;
+            string newIsin = "";
 
             using var db = StockDbContextHelper.CreateDbContext();
             var stock = db.Stocks
@@ -85,6 +87,8 @@ namespace TestConsole
                 .Include(s => s.StockValues)
                 .Include(s => s.LastKnownStockValue.StockValue)
                 .Single(s => s.Symbol == symbol);
+
+            if (newIsin.HasValue()) stock.Isin = newIsin;
 
             foreach (var sValue in stock.StockValues)
             {
