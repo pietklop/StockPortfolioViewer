@@ -41,9 +41,11 @@ namespace Services.Ui
             var currentUserValue = stock.LastKnownUserPrice * nStocks;
             var userDividendValue = stock.Dividends.Sum(d => d.UserValue - d.UserCosts);
             var profit = currentUserValue + userSalesValue - userBuyValue - userTransactionCosts + userDividendValue;
-            var alarmCondition = stock.AlarmCondition.ToString();
-            if (stock.AlarmCondition != AlarmCondition.None)
-                alarmCondition += $" {stock.AlarmThreshold}";
+            var alarmCondition = String.Empty;
+            if (stock.AlarmLowerThreshold.HasValue)
+                alarmCondition += $"<{stock.AlarmLowerThreshold}  ";
+            if (stock.AlarmUpperThreshold.HasValue)
+                alarmCondition += $">{stock.AlarmUpperThreshold}";
 
             return new List<PropertyViewModel>
             {

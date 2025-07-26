@@ -1,36 +1,38 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Forms;
-using DAL.Entities;
+using Core;
 
 namespace Dashboard.Input
 {
     public partial class frmAlarmConditionInput : Form
     {
-        private readonly double lastTransactionNativePrice;
-        public AlarmCondition AlarmCondition { get; private set; }
-        public double Threshold { get; private set; }
+        private const float minPercent = 10;
+        private const float plusPercent = 10;
+        private readonly double currentNativeStockPrice;
+        public double? LowerThreshold { get; private set; }
+        public double? UpperThreshold { get; private set; }
         public string Remarks { get; private set; }
 
-        public frmAlarmConditionInput(AlarmCondition alarmCondition, double stockAlarmThreshold, string stockRemarks, double lastTransactionNativePrice)
+        public frmAlarmConditionInput(double? stockAlarmLowerThreshold, double? stockAlarmUpperThreshold, string stockRemarks, double currentNativeStockPrice)
         {
-            this.lastTransactionNativePrice = lastTransactionNativePrice;
+            this.currentNativeStockPrice = currentNativeStockPrice;
             InitializeComponent();
-            cmbConditionAction.DataSource = Enum.GetValues(typeof(AlarmCondition));
-            cmbConditionAction.SelectedIndex = (int)alarmCondition;
-            txtThreshold.Text = stockAlarmThreshold.ToString();
+            txtLowerThreshold.Text = stockAlarmLowerThreshold.ToString();
+            txtUpperThreshold.Text = stockAlarmUpperThreshold.ToString();
             txtRemarks.Text = stockRemarks;
+            btnMinPercent.Text = $"-{minPercent:N0}%";
+            btnPlusPercent.Text = $"+{minPercent:N0}%";
         }
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            AlarmCondition = (AlarmCondition)cmbConditionAction.SelectedValue;
             Remarks = txtRemarks.Text;
 
             try
             {
-                if (AlarmCondition != AlarmCondition.None)
-                    Threshold = double.Parse(txtThreshold.Text.Replace(",", "."), CultureInfo.InvariantCulture);
+                LowerThreshold = txtLowerThreshold.Text.HasValue() ? double.Parse(txtLowerThreshold.Text.Replace(",", "."), CultureInfo.InvariantCulture): null;
+                UpperThreshold = txtUpperThreshold.Text.HasValue() ? double.Parse(txtUpperThreshold.Text.Replace(",", "."), CultureInfo.InvariantCulture): null;
             }
             catch (Exception)
             { return; }
@@ -39,11 +41,16 @@ namespace Dashboard.Input
             Close();
         }
 
-        private void btnMin10Procent_Click(object sender, EventArgs e)
+        private void btnMinPercent_Click(object sender, EventArgs e)
         {
-            cmbConditionAction.SelectedIndex = (int)AlarmCondition.LowerThan;
-            var digits = Math.Max(2 - (int)Math.Round(Math.Log10(lastTransactionNativePrice)), 0);
-            txtThreshold.Text = $"{Math.Round(lastTransactionNativePrice * 0.9, digits)}";
+            var digits = Math.Max(2 - (int)Math.Round(Math.Log10(currentNativeStockPrice)), 0);
+            txtLowerThreshold.Text = $"{Math.Round(currentNativeStockPrice * (1 - minPercent / 100), digits)}";
+        }
+
+        private void btnPlusPercent_Click(object sender, EventArgs e)
+        {
+            var digits = Math.Max(2 - (int)Math.Round(Math.Log10(currentNativeStockPrice)), 0);
+            txtUpperThreshold.Text = $"{Math.Round(currentNativeStockPrice * (1 + plusPercent / 100), digits)}";
         }
 
         private void btnClose_Click(object sender, EventArgs e)

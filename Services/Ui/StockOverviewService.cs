@@ -122,13 +122,15 @@ namespace Services.Ui
 
             string Remark(Stock stock)
             {
-                if (stock.AlarmCondition == AlarmCondition.None)
-                    return stock.Remarks;
-                if (stock.AlarmCondition == AlarmCondition.LowerThan)
-                    return $"<{stock.AlarmThreshold} {stock.Remarks}";
-                if (stock.AlarmCondition == AlarmCondition.HigherThan)
-                    return $">{stock.AlarmThreshold} {stock.Remarks}";
-                return stock.Remarks;
+                string prefix = string.Empty;
+                if (stock.AlarmLowerThreshold.HasValue)
+                    prefix = $"<{stock.AlarmLowerThreshold}";
+                if (stock.AlarmUpperThreshold.HasValue)
+                {
+                    if (prefix.HasValue()) prefix += "  ";
+                    prefix += $">{stock.AlarmUpperThreshold}";
+                }
+                return $"{prefix} {stock.Remarks}";
             }
 
             int DaysBackForWeek()
@@ -149,17 +151,11 @@ namespace Services.Ui
 
         private string AlarmSuffix(Stock stock)
         {
-            switch (stock.AlarmCondition)
-            {
-                case AlarmCondition.None:
-                    return "";
-                case AlarmCondition.LowerThan:
-                    return stock.LastKnownStockValue.StockValue.NativePrice <= stock.AlarmThreshold ? "-" : "";
-                case AlarmCondition.HigherThan:
-                    return stock.LastKnownStockValue.StockValue.NativePrice >= stock.AlarmThreshold ? "+" : "";
-                default:
-                    throw new ArgumentOutOfRangeException($"Invalid {nameof(AlarmCondition)} {stock.AlarmCondition}");
-            }
+            if (stock.AlarmLowerThreshold.HasValue && stock.LastKnownStockValue.StockValue.NativePrice <= stock.AlarmLowerThreshold)
+                return  "-";
+            if (stock.AlarmUpperThreshold.HasValue && stock.LastKnownStockValue.StockValue.NativePrice >= stock.AlarmUpperThreshold)
+                return "+";
+            return "";
         }
     }
 }

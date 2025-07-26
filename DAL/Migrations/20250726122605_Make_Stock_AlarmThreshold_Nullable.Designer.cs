@@ -3,6 +3,7 @@ using System;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(StockDbContext))]
-    partial class StockDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250726122605_Make_Stock_AlarmThreshold_Nullable")]
+    partial class Make_Stock_AlarmThreshold_Nullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.3");
@@ -276,10 +279,10 @@ namespace DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double?>("AlarmLowerThreshold")
-                        .HasColumnType("REAL");
+                    b.Property<int>("AlarmCondition")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<double?>("AlarmUpperThreshold")
+                    b.Property<double?>("AlarmLowerThreshold")
                         .HasColumnType("REAL");
 
                     b.Property<string>("CurrencyKey")

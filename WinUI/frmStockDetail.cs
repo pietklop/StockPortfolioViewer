@@ -245,15 +245,15 @@ namespace Dashboard
             void ChangeAlarmCondition()
             {
                 var stock = db.Stocks
-                    .Include(s => s.Transactions).ThenInclude(t => t.StockValue)
+                    .Include(s => s.LastKnownStockValue.StockValue)
                     .Single(s => s.Isin == stockIsin);
 
-                using var alarmConditionInputForm = new frmAlarmConditionInput(stock.AlarmCondition, stock.AlarmThreshold, stock.Remarks, stock.Transactions.Last().StockValue.NativePrice);
+                using var alarmConditionInputForm = new frmAlarmConditionInput(stock.AlarmLowerThreshold, stock.AlarmUpperThreshold, stock.Remarks, stock.LastKnownStockValue.StockValue.NativePrice);
                 alarmConditionInputForm.ShowDialog(this);
                 if (alarmConditionInputForm.DialogResult != DialogResult.OK) return;
 
-                stock.AlarmCondition = alarmConditionInputForm.AlarmCondition;
-                stock.AlarmThreshold = alarmConditionInputForm.Threshold;
+                stock.AlarmLowerThreshold = alarmConditionInputForm.LowerThreshold;
+                stock.AlarmUpperThreshold = alarmConditionInputForm.UpperThreshold;
                 stock.Remarks = alarmConditionInputForm.Remarks;
                 db.SaveChanges();
             }
