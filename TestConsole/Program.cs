@@ -90,6 +90,10 @@ namespace TestConsole
 
             if (newIsin.HasValue()) stock.Isin = newIsin;
 
+            if (stock.AlarmUpperThreshold.HasValue)
+                stock.AlarmUpperThreshold /= ratio;
+            if (stock.AlarmLowerThreshold.HasValue)
+                stock.AlarmLowerThreshold /= ratio;
             foreach (var sValue in stock.StockValues)
             {
                 sValue.NativePrice /= ratio;
