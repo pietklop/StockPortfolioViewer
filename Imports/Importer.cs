@@ -21,7 +21,7 @@ namespace Imports
             {
                 case "Datum,Tijd,Valutadatum,Product,ISIN,Omschrijving,FX,Mutatie,,Saldo,,Order Id":
                     return ImportType.DeGiroTransactionsAndDividends;
-                case "Product,Symbool/ISIN,Aantal,Slotkoers,Lokale waarde,Waarde in EUR":
+                case "Product,Symbool/ISIN,Aantal,Slotkoers,Lokale waarde,,Waarde in EUR":
                     return ImportType.DeGiroStockValues;
                 case "CurrencyPrimary|Symbol|Description|ISIN|ExDate|PayDate|Quantity|Tax|Fee|GrossRate|GrossAmount|NetAmount|ActionID|Code":
                     return ImportType.IbkrDividend;

@@ -10,8 +10,9 @@ namespace Imports.DeGiro
         private const int nameColIndex = 0;
         private const int isinColIndex = 1;
         private const int priceColIndex = 3;
-        private const int valueColIndex = 4;
-        private const int valueInUserCurrColIndex = 5;
+        private const int currColIndex = 4;
+        private const int valueColIndex = 5;
+        private const int valueInUserCurrColIndex = 6;
 
         public static StockValueImportDto Import(string[] lines)
         {
@@ -28,11 +29,11 @@ namespace Imports.DeGiro
                 stockVal.Isin = fields[isinColIndex];
                 stockVal.TimeStamp = DateTime.Today.AddDays(-1).AddHours(20); // end of yesterday
                 stockVal.ClosePrice = fields[priceColIndex].ToDouble();
-                stockVal.Currency = fields[valueColIndex].Substring(0, 3);
+                stockVal.Currency = fields[currColIndex];
                 if (stockVal.Currency == "GBX") 
                     stockVal.Currency = "GBP";
 
-                var valueUsd = fields[valueColIndex].Substring(4).ToDouble();
+                var valueUsd = fields[valueColIndex].ToDouble();
                 var valueUserCurr = fields[valueInUserCurrColIndex].ReplaceComma().ToDouble();
 
                 stockVal.CurrencyRatio = valueUsd / valueUserCurr;
