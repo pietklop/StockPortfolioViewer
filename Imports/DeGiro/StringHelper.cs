@@ -31,8 +31,12 @@ namespace Imports.DeGiro
 
         public static string ReplaceComma(this string text) => text.Replace(",", ".");
 
-        public static double ToDouble(this string text) => 
-            double.Parse(text.Replace(",", "."), CultureInfo.InvariantCulture);
+        public static double ToDouble(this string text)
+        {
+            if (text.Contains('.') && text.Contains(',')) // . is used for x-thousand
+                text = text.Replace(".", "");
+            return double.Parse(text.ReplaceComma(), CultureInfo.InvariantCulture);
+        }
 
         private static string RemoveQuotes(this string text)
         {
