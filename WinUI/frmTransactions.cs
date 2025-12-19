@@ -92,7 +92,7 @@ namespace Dashboard
             {
                 var negative = ((string)e.Value)?.IndexOf('-') >= 0;
                 var quantityColIndex = dgvTransactions.GetColumn(nameof(TransactionViewModel.Quantity)).Index;
-                var sell = int.Parse(dgvTransactions[quantityColIndex, e.RowIndex].Value.ToString()) < 0;
+                var sell = double.Parse(dgvTransactions[quantityColIndex, e.RowIndex].Value.ToString()) < 0;
                 if (sell)
                     e.CellStyle.ForeColor = negative ? Color.DarkGreen : Color.Orange;
                 else
