@@ -35,38 +35,48 @@ namespace Imports.DeGiro
 
             foreach (var fields in fieldsList)
             {
-                var lineType = GetLineType(fields[actionColIndex], debugMode);
-                switch (lineType)
+                if (fields[nameColIndex].StartsWith("APPLE INC"))
+                    ;
+                try
                 {
-                    case LineType.Buy:
-                    case LineType.Sell:
-                        ProcessBuySell(lineType, fields, ref transactions);
-                        break;
-                    case LineType.CurrencyConversion:
-                        ProcessCurrencyConversion(fields, ref transactions, ref currConversions);
-                        break;
-                    case LineType.CapitalReturn:
-                    case LineType.Dividend:
-                        dividends.Add(ProcessDividend(fields, lineType == LineType.CapitalReturn));
-                        break;
-                    case LineType.DividendTax:
-                        ProcessDividendTax(fields, ref dividends);
-                        break;
-                    case LineType.CorporateActionCosts:
-                        // not used by now, dividend costs are calculated and not extracted
-                        break;
-                    case LineType.TransactionCosts:
-                        ProcessTransactionCosts(fields, ref transactions);
-                        break;
-                    case LineType.Na:
-                        break;
-                    default:
-                        var msg = $"Not supported LineType: {lineType}";
-                        if (debugMode)
-                            throw new ArgumentOutOfRangeException(msg);
-                        else
-                            log.Warn(msg);
-                        break;
+                    var lineType = GetLineType(fields[actionColIndex], debugMode);
+                    switch (lineType)
+                    {
+                        case LineType.Buy:
+                        case LineType.Sell:
+                            ProcessBuySell(lineType, fields, ref transactions);
+                            break;
+                        case LineType.CurrencyConversion:
+                            ProcessCurrencyConversion(fields, ref transactions, ref currConversions);
+                            break;
+                        case LineType.CapitalReturn:
+                        case LineType.Dividend:
+                            dividends.Add(ProcessDividend(fields, lineType == LineType.CapitalReturn));
+                            break;
+                        case LineType.DividendTax:
+                            ProcessDividendTax(fields, ref dividends);
+                            break;
+                        case LineType.CorporateActionCosts:
+                            // not used by now, dividend costs are calculated and not extracted
+                            break;
+                        case LineType.TransactionCosts:
+                            ProcessTransactionCosts(fields, ref transactions);
+                            break;
+                        case LineType.Na:
+                            break;
+                        default:
+                            var msg = $"Not supported LineType: {lineType}";
+                            if (debugMode)
+                                throw new ArgumentOutOfRangeException(msg);
+                            else
+                                log.Warn(msg);
+                            break;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Exception {ex.Message} during processing of fields: {string.Join(",", fields)}");
                 }
             }
 
@@ -80,27 +90,28 @@ namespace Imports.DeGiro
         /// </summary>
         private static void MakeSureTaxFollowsDividend(List<string[]> fieldsList)
         {
-            var divTaxDict = new Dictionary<string, int>(); // <isin, index>
+            Tuple<string, int> divTaxDict = new Tuple<string, int>("#", -1); // <isin, index>
             for (int i = 0; i < fieldsList.Count; i++)
             {
                 var lineType = GetLineType(fieldsList[i][actionColIndex], false);
                 var isin = fieldsList[i][isinColIndex];
                 if (lineType == LineType.DividendTax)
                 {
-                    divTaxDict[isin] = i;
+                    divTaxDict = new Tuple<string,int>(isin, i);
                     continue;
                 }
                 if (lineType != LineType.Dividend)
                     continue;
-                if (!divTaxDict.ContainsKey(isin)) continue;
+                if (divTaxDict.Item1 != isin) continue;
                 // div tax is already listed => wrong order
-                var divTaxIndex = divTaxDict[isin];
-                // swap te order
+                var divTaxIndex = divTaxDict.Item2;
+                // swap the order
                 (fieldsList[i], fieldsList[divTaxIndex]) = (fieldsList[divTaxIndex], fieldsList[i]);
+                divTaxDict = new Tuple<string, int>("#", -1);
             }
         }
 
-        private static void EnrichDividendData(ref List<DividendDto> dividends, List<CurrencyConvert> currConversions) => 
+        private static void EnrichDividendData(ref List<DividendDto> dividends, List<CurrencyConvert> currConversions) =>
             dividends.ForEach(d => DividendCostsCalc.EnrichDividend(d, currConversions));
 
         private static void ProcessDividendTax(string[] fields, ref List<DividendDto> dividends)
@@ -212,7 +223,7 @@ namespace Imports.DeGiro
                 return LineType.Na;
             if (actionField == "Processed Flatex Withdrawal")
                 return LineType.Na;
-            if (actionField == "Reservation iDEAL / Sofort Deposit")
+            if (actionField == "Reservation iDEAL")
                 return LineType.Na;
             if (actionField == "Rente")
                 return LineType.Na;
@@ -241,7 +252,7 @@ namespace Imports.DeGiro
 
             if (debugMode)
                 throw new Exception($"Unknown action: '{actionField}'");
-            
+
             return LineType.Unknown;
         }
     }
