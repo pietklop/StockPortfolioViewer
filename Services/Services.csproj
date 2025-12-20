@@ -7,7 +7,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj" />
     <ProjectReference Include="..\Imports\Imports.csproj" />
-    <ProjectReference Include="..\StockDataApi\StockDataApi.csproj" />
   </ItemGroup>
 
 </Project>

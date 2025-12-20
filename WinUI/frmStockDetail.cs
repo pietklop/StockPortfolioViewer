@@ -2,20 +2,16 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Castle.MicroKernel;
 using Core;
 using DAL;
 using DAL.Entities;
 using Dashboard.Helpers;
 using Dashboard.Input;
 using log4net;
-using Messages.Dtos;
 using Messages.UI;
 using Microsoft.EntityFrameworkCore;
 using Services;
-using Services.DI;
 using Services.Ui;
-using StockDataApi.IexCloud;
 
 namespace Dashboard
 {
@@ -94,7 +90,6 @@ namespace Dashboard
                     ChangeCurrentPrice();
                     break;
                 case StockDetailProperties.LastPriceUpdate:
-                    TryAutoPriceUpdate();
                     break;
                 case StockDetailProperties.Area:
                     ChangeArea();
@@ -147,30 +142,6 @@ namespace Dashboard
                 if (input == null) return;
                 var stock = stockService.UpdateStockPrice(stockIsin, input.Value);
                 SaveAndUpdate($"{stock.Currency.Symbol}{input:F2}");
-            }
-
-            void TryAutoPriceUpdate()
-            {
-                try
-                {
-                    var stock = db.Stocks.Single(s => s.Isin == stockIsin);
-                    if (string.IsNullOrEmpty(stock.Symbol)) throw new Exception($"Symbol can not be empty");
-
-                    var frmDr = CastleContainer.Instance.Resolve<frmStockRetrievers>(new Arguments { { "Stock", new StockDto{ Name = stock.Name, Isin = stock.Isin, Symbol = stock.Symbol} } });
-                    frmDr.Show(this);
-                    return;
-
-                    if (!InputHelper.GetConfirmation(this, $"Auto price update?")) return;
-                    var dr = CastleContainer.Resolve<IexDataRetriever>();
-                    var priceDto = dr.GetStockQuote(stock.Symbol);
-                    stockService.UpdateStockPrice(stockIsin, priceDto.Price);
-                    SaveAndUpdate($"{stock.Currency.Symbol}{priceDto.Price:F2}");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Something went wrong. Msg: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    log.Error($"Error during StockPrice data request", ex);
-                }
             }
 
             void ChangeArea()

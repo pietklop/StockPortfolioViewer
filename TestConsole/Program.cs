@@ -1,32 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Castle.MicroKernel;
 using Core;
 using DAL;
 using DAL.Entities;
 using Imports;
-using Imports.DeGiro;
 using log4net;
 using log4net.Config;
 using Messages.Dtos;
-using Messages.StockDataApi;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Newtonsoft.Json.Linq;
 using Services;
 using Services.DI;
-using Services.Helpers;
-using StockDataApi.AlphaVantage;
-using StockDataApi.General;
-using StockDataApi.IexCloud;
-using StockDataApi.MarketStack;
-using StockDataApi.TwelveData;
 using TestConsole.Infrastructure;
 
 namespace TestConsole
@@ -261,16 +250,13 @@ namespace TestConsole
                 if (db.Areas.Any())
                     throw new Exception($"Seems that de db already contains data!");
 
-                DataRetrieverSetup.AddRetrievers(db);
                 AreaSetup.AddContinents(db);
                 CurrencySetup.AddCurrencies(db);
                 SectorSetup.AddSectors(db);
 
                 db.SaveChanges();
             }
-
         }
-
     }
 }
 

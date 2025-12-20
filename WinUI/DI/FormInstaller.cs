@@ -11,14 +11,11 @@ namespace Dashboard.DI
         {
             container.Register(Component.For<frmMain>().LifestyleSingleton());
 
-            container.Register(Component.For<frmDataRetriever>().LifestyleTransient());
-            container.Register(Component.For<frmDataRetrievers>().LifestyleTransient());
             container.Register(Component.For<frmDividends>().LifestyleTransient());
             container.Register(Component.For<frmOverview>().LifestyleTransient());
             container.Register(Component.For<frmStockDetail>().LifestyleTransient());
             container.Register(Component.For<frmStockHistoryOverview>().LifestyleTransient());
             container.Register(Component.For<frmStockPerformance>().LifestyleTransient());
-            container.Register(Component.For<frmStockRetrievers>().LifestyleTransient());
             container.Register(Component.For<frmStockSelection>().LifestyleTransient());
             container.Register(Component.For<frmTransactions>().LifestyleTransient());
         }

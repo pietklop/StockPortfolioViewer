@@ -2,12 +2,9 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using Castle.MicroKernel;
-using Core;
 using Dashboard.DI;
 using log4net;
 using log4net.Config;
-using Services.DataCollection;
 using Services.DI;
 
 namespace Dashboard
@@ -33,27 +30,10 @@ namespace Dashboard
             var installer = DependencyInstaller.CreateInstaller(new FormInstaller());
             container.AddFacilities().Install(installer);
 
-            DoStartupActions();
+            //DoStartupActions();
 
-            var mainForm = CastleContainer.Instance.Resolve<frmMain>(); 
+            var mainForm = CastleContainer.Instance.Resolve<frmMain>();
             Application.Run(mainForm);
-        }
-
-        private static void DoStartupActions()
-        {
-            try
-            {
-                var drMan = CastleContainer.Resolve<DataRetrieverManager>();
-                drMan.TryUpdateCurrencies();
-                eurInUsd = drMan.EuroPrice();
-                var settings = CastleContainer.Resolve<Settings>();
-                if (settings.RetrieveStockValuesAtStartup)
-                    drMan.TryUpdateStocks();
-            }
-            catch (Exception ex)
-            {
-                log.Error($"Error during {nameof(DoStartupActions)}", ex);
-            }
         }
     }
 }

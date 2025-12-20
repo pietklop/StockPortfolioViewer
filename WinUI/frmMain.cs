@@ -131,9 +131,6 @@ namespace Dashboard
             EnableStockDetails(stockName, isin);
         }
 
-        public void ShowDataRetriever(string name) =>
-            LoadForm(name, CastleContainer.Instance.Resolve<frmDataRetriever>(new Arguments{{"dataRetrieverName", name}}));
-
         private void btnMainOverview_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmOverview>());
         private void btnTransactions_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmTransactions>());
         private void btnDividends_Click(object sender, EventArgs e) => HandleMenuButtonClick((Button)sender, CastleContainer.Resolve<frmDividends>());
