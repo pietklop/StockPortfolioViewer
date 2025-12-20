@@ -5,13 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="log4net" Version="3.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj" />
     <ProjectReference Include="..\Imports\Imports.csproj" />
-    <ProjectReference Include="..\Messages\Messages.csproj" />
     <ProjectReference Include="..\StockDataApi\StockDataApi.csproj" />
   </ItemGroup>
 
