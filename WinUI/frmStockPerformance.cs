@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -20,6 +19,7 @@ namespace Dashboard
         private readonly StockPerformanceOverviewService stockPerformanceOverviewService;
         private List<string> stockIsins;
         private List<string> stockNames = null;
+        private bool showValues = true;
 
         public frmStockPerformance(Settings settings, StockPerformanceService stockPerformanceService, StockPerformanceOverviewService stockPerformanceOverviewService) : this(settings, stockPerformanceService, stockPerformanceOverviewService, (List<string>)null)
         {
@@ -54,7 +54,9 @@ namespace Dashboard
             // }
             var performanceInterval = PerformanceInterval.Year; // TEMP
             var stockList = stockPerformanceOverviewService.GetStockList(stockIsins, performanceInterval);
-            dgvStocks.DataSource = SortByValue(ShowCurrentOnly(stockList));
+            var list = SortByValue(ShowCurrentOnly(stockList));
+            if (!showValues) list = list.Take(1).Concat(list.Skip(6)).ToList();
+            dgvStocks.DataSource = list;
 
             // column configuration
             dgvStocks.ApplyColumnDisplayFormatAttributes();
@@ -225,7 +227,7 @@ namespace Dashboard
 
         private void dgvStocks_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            var currencyRowIndexes = new []{1, 2, 3, 4, 5};
+            var currencyRowIndexes = showValues ? new []{1, 2, 3, 4, 5} : Array.Empty<int>();
             if (e.ColumnIndex >= 3 && e.ColumnIndex <= 6 && currencyRowIndexes.Contains(e.RowIndex))
                 dgvStocks[e.ColumnIndex, e.RowIndex].Style.Format = "C0";
             if (dgvStocks.Columns[e.ColumnIndex].Name == nameof(StockPerformanceOverviewModel.PerformanceFractionT0))

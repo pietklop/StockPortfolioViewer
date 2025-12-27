@@ -114,7 +114,7 @@ namespace Services.Ui
                 var valEnd = stockList.Sum(s => s.UserValueEndOfPeriod);
                 var div = stockList.Sum(s => s.UserDividend);
                 var gainedValue = valEnd - valStart - bought + sold + div; // including dividend
-                var baseVal = valStart + Math.Max(0, (bought - sold) / 2); // when more bought during the year, take average over the year
+                var baseVal = valStart + Math.Max(0, (bought - sold) / 2); // when more bought during the year, take average over the year. On average a random buy will perform over half a year
 
                 var svmTot = list.Single(x => x.Name == Constants.Total);
                 svmTot.SetPerformance(i, gainedValue / baseVal);
