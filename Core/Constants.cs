@@ -3,7 +3,7 @@
     public static class Constants
     {
         public const string Bought = "Bought";
-        public const string ValueGain = "Value gained";
+        public const string ValueGain = "Value gained (incl div)";
         public const string Sold = "Sold";
         public const string Total = "Total";
         public const string TotalValue = "Total value";
