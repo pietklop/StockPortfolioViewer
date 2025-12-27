@@ -54,7 +54,7 @@ namespace Dashboard
             // }
             var performanceInterval = PerformanceInterval.Year; // TEMP
             var stockList = stockPerformanceOverviewService.GetStockList(stockIsins, performanceInterval);
-            dgvStocks.DataSource = ShowCurrentOnly(stockList);
+            dgvStocks.DataSource = SortByValue(ShowCurrentOnly(stockList));
 
             // column configuration
             dgvStocks.ApplyColumnDisplayFormatAttributes();
@@ -98,6 +98,13 @@ namespace Dashboard
             dgvStocks.Visible = true;
 
             List<StockPerformanceOverviewModel> ShowCurrentOnly(List<StockPerformanceOverviewModel> list) => list.Where(s => !double.IsNaN(s.PerformanceFractionT0)).ToList();
+
+            List<StockPerformanceOverviewModel> SortByValue(List<StockPerformanceOverviewModel> list)
+            {
+                var topRowsToSkip = 6;
+                var toSort = list.Skip(topRowsToSkip).OrderByDescending(l => l.Value);
+                return list.Take(topRowsToSkip).Concat(toSort).ToList();
+            }
         }
 
         private bool MultipleStocks() => stockIsins?.Count != 1;
