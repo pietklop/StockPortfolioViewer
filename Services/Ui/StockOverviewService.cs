@@ -54,10 +54,11 @@ namespace Services.Ui
             {
                 var avgBuyPrice = stock.Transactions.DetermineAvgBuyUserPrice();
                 var nStocks = stock.Transactions.Sum(t => t.Quantity);
-                var currentValue = stock.LastKnownUserPrice * nStocks + stock.Dividends.Sum(d => d.UserValue - d.UserCosts);
+                var currentValue = stock.LastKnownUserPrice * nStocks;
+                var currentValuePlusDiv = currentValue + stock.Dividends.Sum(d => d.UserValue - d.UserCosts);
                 var virtualBuyValue = avgBuyPrice * nStocks;
                 totVirtualBuyValue += virtualBuyValue;
-                var profit = stock.Transactions.Sum(t => -t.Quantity * t.StockValue.UserPrice) + currentValue;
+                var profit = stock.Transactions.Sum(t => -t.Quantity * t.StockValue.UserPrice) + currentValuePlusDiv;
                 var svm = new StockViewModel
                 {
                     Name = $"{StockName(stock)}{AlarmSuffix(stock)}",
