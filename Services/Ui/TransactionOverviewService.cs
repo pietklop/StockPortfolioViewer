@@ -67,8 +67,7 @@ namespace Services.Ui
                         var annualPerformance = GrowthHelper.AnnualPerformance(currentPrice / transactionPrice, date) - 1;
                         annualPerformanceString = $" ({annualPerformance.ToPercentage()})";
                     }
-                    var haveAnyStock = transactions.Where(t => t.StockId == transaction.StockId).Sum(t => t.Quantity) > 0;
-                    var performanceString = haveAnyStock ? $"{performance.ToPercentage()}{annualPerformanceString}" : "";
+                    var performanceString = $"{performance.ToPercentage()}{annualPerformanceString}";
                     list.Add(new TransactionViewModel
                     {
                         Name = transaction.Stock.Name,
