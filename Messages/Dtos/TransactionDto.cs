@@ -20,6 +20,10 @@ namespace Messages.Dtos
         /// </summary>
         public double Costs { get; set; }
         /// <summary>
+        /// Costs of the transaction [stock native currency]
+        /// </summary>
+        public double NativeCosts { get; set; }
+        /// <summary>
         /// ratio = stock native / user currency
         /// </summary>
         public double CurrencyRatio { get; set; }

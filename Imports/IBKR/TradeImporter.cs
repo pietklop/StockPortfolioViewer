@@ -24,7 +24,6 @@ namespace Imports.IBKR
 
         public static TransactionImportDto Import(string[] lines)
         {
-
             var transactions = new List<TransactionDto>();
 
             var fieldsList = new List<string[]>(lines.Length - 1);
@@ -55,6 +54,7 @@ namespace Imports.IBKR
                 if (transaction.Currency == Constants.UserCurrency)
                 {
                     transaction.CurrencyRatio = 1;
+                    transaction.Costs = transaction.NativeCosts;
                     continue;
                 }
 
@@ -62,7 +62,7 @@ namespace Imports.IBKR
                            ?? throw new Exception($"Could not find matching currency for trade(Id): {transaction.Guid}");
 
                 transaction.CurrencyRatio = curr.RatioPerUserCurr;
-                transaction.Costs *= curr.RatioPerUserCurr; // to user currency
+                transaction.Costs = transaction.NativeCosts / curr.RatioPerUserCurr; // to user currency
             }
         }
 
@@ -78,7 +78,7 @@ namespace Imports.IBKR
             var price = fields[priceColIndex].ToDouble();
             var quantity = fields[quantityColIndex].ToDouble();
             var isBuy = IsBuy();
-            if (isBuy == (quantity < 0)) throw new Exception($"Unexpected sign in quantity. TradeId: {fields[tradeIdColIndex]}");
+            if (isBuy == quantity < 0) throw new Exception($"Unexpected sign in quantity. TradeId: {fields[tradeIdColIndex]}");
             var costs = -fields[commissionColIndex].ToDouble();
 
             var transactionSameStockSameDate = transactions.SingleOrDefault(t => t.Isin == isin && t.TimeStamp.Date == date);
@@ -88,7 +88,7 @@ namespace Imports.IBKR
                 if (isBuy == transactionSameStockSameDate.Quantity < 0) throw new Exception($"Can not buy and sell the same stock on the same date. TradeId: {fields[tradeIdColIndex]}");
                 var newCombinedPrice = (transactionSameStockSameDate.Price * transactionSameStockSameDate.Quantity + price * quantity) / (quantity + transactionSameStockSameDate.Quantity);
                 transactionSameStockSameDate.Quantity += quantity;
-                transactionSameStockSameDate.Costs += costs;
+                transactionSameStockSameDate.NativeCosts += costs;
                 transactionSameStockSameDate.Price = newCombinedPrice;
                 return;
             }
@@ -102,7 +102,7 @@ namespace Imports.IBKR
                 Isin = isin,
                 Currency = fields[currencyColIndex],
                 Quantity = quantity,
-                Costs = costs, // needs to be converted to UserCurrency!
+                NativeCosts = costs,
                 Price = price,
                 TimeStamp = date,
                 Guid = fields[tradeIdColIndex]

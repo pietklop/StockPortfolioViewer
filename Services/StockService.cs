@@ -144,7 +144,7 @@ namespace Services
                 StockValue = pitStockValue,
                 Created = DateTime.Now,
                 Quantity = dto.Quantity,
-                UserCosts = dto.Costs.ToUserCurrency(dto.CurrencyRatio, dto.Currency) + currConvCosts,
+                UserCosts = dto.Costs + currConvCosts,
                 ExtRef = dto.Guid,
             };
 
