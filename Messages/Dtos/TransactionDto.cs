@@ -28,5 +28,7 @@ namespace Messages.Dtos
         /// </summary>
         public double CurrencyRatio { get; set; }
         public string Guid { get; set; }
+
+        public override string ToString() => $"{Name} Qt:{Quantity:F0} Price:{Price:F2}";
     }
 }

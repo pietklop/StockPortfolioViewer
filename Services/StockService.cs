@@ -37,14 +37,17 @@ namespace Services
                 .SingleOrDefault(s => s.Isin == isin);
         }
 
-        public Stock GetOrCreateStock(string name, string isin, string currency)
+        public Stock GetOrCreateStock(TransactionDto transactionDto)
         {
+            var isin = transactionDto.Isin;
+            var name = transactionDto.Name;
             var stock = GetStock(isin);
 
             if (stock == null)
             {
                 log.Info($"Create stock: {name} - {isin}");
-                var curr = db.Currencies.SingleOrDefault(c => c.Key == currency) ?? new Currency {Key = currency};
+                var curr = db.Currencies.SingleOrDefault(c => c.Key == transactionDto.Currency)
+                           ?? new Currency {Key = transactionDto.Currency ,LastUpdate = transactionDto.TimeStamp, Ratio = transactionDto.CurrencyRatio};
                 stock = new Stock { Name = name, Isin = isin, Currency = curr };
                 var sector = db.Sectors.SingleOrDefault(s => s.Name == Constants.Unknown) ?? throw new Exception($"Could not find sector: {Constants.Unknown}");
                 stock.SectorShares ??= new List<SectorShare>();
@@ -122,7 +125,7 @@ namespace Services
         public bool AddTransaction(TransactionDto dto)
         {
             log.Info($"Create transaction: {dto.Name} Quantity: {dto.Quantity} on {dto.TimeStamp.ToShortDateString()}");
-            var stock = GetOrCreateStock(dto.Name, dto.Isin, dto.Currency);
+            var stock = GetOrCreateStock(dto);
 
             if (stock.Currency.Key != dto.Currency)
                 throw new Exception($"Stock ({stock}) currency ('{stock.Currency.Key}') should be equal to transaction currency ('{dto.Currency}')");
