@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 using DAL;
+using DAL.Entities;
 using Messages.Dtos;
 using PresentationControls;
 
@@ -60,7 +61,10 @@ namespace Dashboard.Input
         {
             var sectorFields = GetCheckedFields(cmbSector);
             if (sectorFields.Any())
-                IntersectSelection(db.Stocks.Where(s => s.SectorShares.All(ss => sectorFields.Contains(ss.Sector.Name))).Select(st => new StockDto{ Isin = st.Isin, Name = st.Name}).ToList());
+                IntersectSelection(db.Stocks
+                    .WhereSingleStock()
+                    .Where(s => s.SectorShares.Any(ss => sectorFields.Contains(ss.Sector.Name)))
+                    .Select(st => new StockDto{ Isin = st.Isin, Name = st.Name}).ToList());
             
             var continentFields = GetCheckedFields(cmbContinents);
             var areaStocks = new List<StockDto>();
