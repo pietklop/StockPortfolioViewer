@@ -29,111 +29,103 @@ namespace Dashboard.Input
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnClose = new System.Windows.Forms.Button();
-            this.btnOk = new System.Windows.Forms.Button();
-            this.lblInputT = new System.Windows.Forms.Label();
-            this.numPercentage = new System.Windows.Forms.NumericUpDown();
-            this.cmbMember = new System.Windows.Forms.ComboBox();
-            this.cmbCountry = new System.Windows.Forms.ComboBox();
-            ((System.ComponentModel.ISupportInitialize)(this.numPercentage)).BeginInit();
-            this.SuspendLayout();
+            btnClose = new System.Windows.Forms.Button();
+            btnOk = new System.Windows.Forms.Button();
+            lblInputT = new System.Windows.Forms.Label();
+            numPercentage = new System.Windows.Forms.NumericUpDown();
+            cmbMember = new System.Windows.Forms.ComboBox();
+            cmbCountry = new System.Windows.Forms.ComboBox();
+            ((System.ComponentModel.ISupportInitialize)numPercentage).BeginInit();
+            SuspendLayout();
             // 
             // btnClose
             // 
-            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.FlatAppearance.BorderSize = 0;
-            this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClose.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.btnClose.ForeColor = System.Drawing.Color.White;
-            this.btnClose.Location = new System.Drawing.Point(220, 4);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(24, 23);
-            this.btnClose.TabIndex = 5;
-            this.btnClose.Text = "X";
-            this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            btnClose.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            btnClose.FlatAppearance.BorderSize = 0;
+            btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnClose.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            btnClose.ForeColor = System.Drawing.Color.White;
+            btnClose.Location = new System.Drawing.Point(220, 4);
+            btnClose.Name = "btnClose";
+            btnClose.Size = new System.Drawing.Size(24, 23);
+            btnClose.TabIndex = 5;
+            btnClose.Text = "X";
+            btnClose.UseVisualStyleBackColor = true;
+            btnClose.Click += btnClose_Click;
             // 
             // btnOk
             // 
-            this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOk.BackColor = System.Drawing.Color.Gainsboro;
-            this.btnOk.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnOk.Location = new System.Drawing.Point(199, 33);
-            this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(35, 23);
-            this.btnOk.TabIndex = 2;
-            this.btnOk.Text = "Ok";
-            this.btnOk.UseVisualStyleBackColor = false;
-            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+            btnOk.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            btnOk.BackColor = System.Drawing.Color.Gainsboro;
+            btnOk.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnOk.Location = new System.Drawing.Point(199, 33);
+            btnOk.Name = "btnOk";
+            btnOk.Size = new System.Drawing.Size(35, 23);
+            btnOk.TabIndex = 2;
+            btnOk.Text = "Ok";
+            btnOk.UseVisualStyleBackColor = false;
+            btnOk.Click += btnOk_Click;
             // 
             // lblInputT
             // 
-            this.lblInputT.AutoSize = true;
-            this.lblInputT.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblInputT.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblInputT.Location = new System.Drawing.Point(12, 9);
-            this.lblInputT.Name = "lblInputT";
-            this.lblInputT.Size = new System.Drawing.Size(59, 21);
-            this.lblInputT.TabIndex = 6;
-            this.lblInputT.Text = "Enter ...";
+            lblInputT.AutoSize = true;
+            lblInputT.Font = new System.Drawing.Font("Segoe UI", 12F);
+            lblInputT.ForeColor = System.Drawing.Color.Gainsboro;
+            lblInputT.Location = new System.Drawing.Point(12, 9);
+            lblInputT.Name = "lblInputT";
+            lblInputT.Size = new System.Drawing.Size(59, 21);
+            lblInputT.TabIndex = 6;
+            lblInputT.Text = "Enter ...";
             // 
             // numPercentage
             // 
-            this.numPercentage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numPercentage.Location = new System.Drawing.Point(144, 33);
-            this.numPercentage.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numPercentage.Name = "numPercentage";
-            this.numPercentage.Size = new System.Drawing.Size(40, 23);
-            this.numPercentage.TabIndex = 1;
-            this.numPercentage.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numPercentage.Enter += new System.EventHandler(this.numPercentage_Enter);
+            numPercentage.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            numPercentage.Location = new System.Drawing.Point(144, 33);
+            numPercentage.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            numPercentage.Name = "numPercentage";
+            numPercentage.Size = new System.Drawing.Size(40, 23);
+            numPercentage.TabIndex = 1;
+            numPercentage.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            numPercentage.Enter += numPercentage_Enter;
             // 
             // cmbMember
             // 
-            this.cmbMember.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbMember.FormattingEnabled = true;
-            this.cmbMember.Location = new System.Drawing.Point(12, 33);
-            this.cmbMember.Name = "cmbMember";
-            this.cmbMember.Size = new System.Drawing.Size(121, 23);
-            this.cmbMember.TabIndex = 0;
-            this.cmbMember.MouseUp += new System.Windows.Forms.MouseEventHandler(this.cmbMember_MouseUp);
+            cmbMember.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cmbMember.FormattingEnabled = true;
+            cmbMember.Location = new System.Drawing.Point(12, 33);
+            cmbMember.Name = "cmbMember";
+            cmbMember.Size = new System.Drawing.Size(121, 23);
+            cmbMember.TabIndex = 0;
+            cmbMember.SelectedIndexChanged += cmbMember_SelectedIndexChanged;
             // 
             // cmbCountry
             // 
-            this.cmbCountry.FormattingEnabled = true;
-            this.cmbCountry.Location = new System.Drawing.Point(12, 34);
-            this.cmbCountry.Name = "cmbCountry";
-            this.cmbCountry.Size = new System.Drawing.Size(121, 23);
-            this.cmbCountry.TabIndex = 7;
-            this.cmbCountry.Visible = false;
+            cmbCountry.FormattingEnabled = true;
+            cmbCountry.Location = new System.Drawing.Point(12, 34);
+            cmbCountry.Name = "cmbCountry";
+            cmbCountry.Size = new System.Drawing.Size(121, 23);
+            cmbCountry.TabIndex = 7;
+            cmbCountry.Visible = false;
             // 
             // frmDistributionInput
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
-            this.ClientSize = new System.Drawing.Size(246, 68);
-            this.Controls.Add(this.cmbCountry);
-            this.Controls.Add(this.cmbMember);
-            this.Controls.Add(this.numPercentage);
-            this.Controls.Add(this.lblInputT);
-            this.Controls.Add(this.btnClose);
-            this.Controls.Add(this.btnOk);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "frmDistributionInput";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "frmDistributionInput";
-            ((System.ComponentModel.ISupportInitialize)(this.numPercentage)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            BackColor = System.Drawing.Color.FromArgb(24, 30, 54);
+            ClientSize = new System.Drawing.Size(246, 68);
+            Controls.Add(cmbCountry);
+            Controls.Add(cmbMember);
+            Controls.Add(numPercentage);
+            Controls.Add(lblInputT);
+            Controls.Add(btnClose);
+            Controls.Add(btnOk);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            Name = "frmDistributionInput";
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            Text = "frmDistributionInput";
+            ((System.ComponentModel.ISupportInitialize)numPercentage).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

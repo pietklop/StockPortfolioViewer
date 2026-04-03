@@ -34,7 +34,7 @@ namespace Dashboard.StockDetails
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.btnClose = new System.Windows.Forms.Button();
-            this.btnReset = new System.Windows.Forms.Button();
+            this.btnEdit = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // chart
@@ -70,18 +70,18 @@ namespace Dashboard.StockDetails
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
-            // btnReset
+            // btnEdit
             // 
-            this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReset.BackColor = System.Drawing.Color.Gainsboro;
-            this.btnReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnReset.Location = new System.Drawing.Point(448, 260);
-            this.btnReset.Name = "btnReset";
-            this.btnReset.Size = new System.Drawing.Size(60, 23);
-            this.btnReset.TabIndex = 5;
-            this.btnReset.Text = "Reset";
-            this.btnReset.UseVisualStyleBackColor = false;
-            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+            this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEdit.BackColor = System.Drawing.Color.Gainsboro;
+            this.btnEdit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnEdit.Location = new System.Drawing.Point(448, 260);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(60, 23);
+            this.btnEdit.TabIndex = 5;
+            this.btnEdit.Text = "Edit";
+            this.btnEdit.UseVisualStyleBackColor = false;
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // frmDistribution
             // 
@@ -90,7 +90,7 @@ namespace Dashboard.StockDetails
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
             this.Controls.Add(this.chart);
             this.ClientSize = new System.Drawing.Size(545, 307);
-            this.Controls.Add(this.btnReset);
+            this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnClose);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Margin = new System.Windows.Forms.Padding(1);
@@ -106,6 +106,6 @@ namespace Dashboard.StockDetails
 
         private System.Windows.Forms.DataVisualization.Charting.Chart chart;
         private System.Windows.Forms.Button btnClose;
-        private System.Windows.Forms.Button btnReset;
+        private System.Windows.Forms.Button btnEdit;
     }
 }

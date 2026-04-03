@@ -49,7 +49,7 @@ namespace Dashboard
         }
 
         private void PopulatePieChart(PortfolioDistributionDto dto) =>
-            chart.PopulatePieChart(dto.Labels, dto.Fractions);
+            chart.PopulatePieChart(dto.LabelsWithFractions, dto.Fractions);
 
         private void PopulateStockGrid(bool reload = false, List<string> isins = null)
         {

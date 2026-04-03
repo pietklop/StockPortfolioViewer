@@ -143,49 +143,59 @@ public partial class frmStockDetail : Form
 
         void ChangeArea()
         {
-            using var distributionForm = new frmDistribution(portfolioDistributionService.GetAreaDistribution(stockIsin));
+            var currentDistribution = portfolioDistributionService.GetAreaDistribution(stockIsin);
+            using var distributionForm = new frmDistribution(currentDistribution);
             distributionForm.ShowDialog(this);
-            if (!distributionForm.ResetRequest) return;
+            if (!distributionForm.EditRequest) return;
 
             var areas = db.Areas.Include(a => a.Continent).ToList();
-            var input = DistributionInputHelper.GetDistribution(this, "Enter area share", areas.Where(a => a.IsContinent).Select(a => a.Name).ToList(), areas.Where(a => !a.IsContinent).Select(a => new AreaCountryInputDto(a.Continent.Name, a.Name)).ToList());
-            if (input == null) return;
+            using var distributionEditForm = new frmDistributionEdit(currentDistribution, areas.Where(a => !a.IsContinent).Select(a => new AreaCountryInputDto(a.Continent!.Name, a.Name)).ToList());
+            distributionEditForm.ShowDialog(this);
+            if (!distributionEditForm.SaveRequest) return;
+
             var stock = db.Stocks.Include(s => s.AreaShares).Single(s => s.Isin == stockIsin);
             db.AreaShares.RemoveRange(stock.AreaShares);
 
-            foreach (var newCountry in input.NewCountries)
+            foreach (var newCountry in distributionEditForm.Countries)
             {
                 if (areas.Any(a => a.Name == newCountry.Country)) continue;
                 areas.Add(new Area {Continent = areas.Single(a => a.Name == newCountry.Continent), Name = newCountry.Country});
             }
 
-            for (int i = 0; i < input.Keys.Length; i++)
-                stock.AreaShares.Add(new AreaShare {Area = areas.Single(a => a.Name == input.Keys[i]), Fraction = input.Fractions[i]});
+            var newDistribution = distributionEditForm.Distribution;
+
+            foreach (var d in newDistribution)
+                stock.AreaShares.Add(new AreaShare {Area = areas.Single(a => a.Name == d.Key), Fraction = d.Fraction});
 
             stock.LastSectorUpdate = DateTime.Now;
 
-            SaveAndUpdate(input.Keys.Length == 1 ? input.Keys[0] : "(Multiple)");
+            SaveAndUpdate(newDistribution.Count == 1 ? newDistribution[0].Key : "(Multiple)");
             if (stock.AreaShares.Count > 1) // user probably wants to see/check te result
                 ChangeArea();
         }
 
         void ChangeSector()
         {
-            using var distributionForm = new frmDistribution(portfolioDistributionService.GetSectorDistribution(stockIsin));
+            var currentDistribution = portfolioDistributionService.GetSectorDistribution(stockIsin);
+            using var distributionForm = new frmDistribution(currentDistribution);
             distributionForm.ShowDialog(this);
-            if (!distributionForm.ResetRequest) return;
+            if (!distributionForm.EditRequest) return;
 
             var sectors = db.Sectors.ToList();
-            var input = DistributionInputHelper.GetDistribution(this, "Enter sector share", sectors.Select(a => a.Name).ToList());
-            if (input == null) return;
+            using var distributionEditForm = new frmDistributionEdit(currentDistribution, sectors.Select(a => a.Name).ToList());
+            distributionEditForm.ShowDialog(this);
+            if (!distributionEditForm.SaveRequest) return;
+
+            var newDistribution = distributionEditForm.Distribution;
+
             var stock = db.Stocks.Include(s => s.SectorShares).Single(s => s.Isin == stockIsin);
             db.SectorShares.RemoveRange(stock.SectorShares);
-            for (int i = 0; i < input.Keys.Length; i++)
-                stock.SectorShares.Add(new SectorShare {Sector = sectors.Single(a => a.Name == input.Keys[i]), Fraction = input.Fractions[i]});
+            for (int i = 0; i < newDistribution.Count; i++)
+                stock.SectorShares.Add(new SectorShare {Sector = sectors.Single(a => a.Name == newDistribution[i].Key), Fraction = newDistribution[i].Fraction});
 
             stock.LastSectorUpdate = DateTime.Now;
 
-            SaveAndUpdate(input.Keys.Length == 1 ? input.Keys[0] : "(Multiple)");
+            SaveAndUpdate(newDistribution.Count == 1 ? newDistribution[0].Key : "(Multiple)");
             if (stock.SectorShares.Count > 1) // user probably wants to see/check te result
                 ChangeSector();
         }

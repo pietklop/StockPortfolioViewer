@@ -11,6 +11,8 @@ namespace Dashboard.Input
         public int MemberPercentage { get; private set; }
         public AreaCountryInputDto Country { get; private set; }
         private bool countryInput = false;
+        private bool AreaInput() => countries != null;
+        private bool isFormLoading = true;
 
         public frmDistributionInput(string caption, List<string> listMembers, int assignedPercentage, List<AreaCountryInputDto> countries)
         {
@@ -21,6 +23,8 @@ namespace Dashboard.Input
             cmbMember.SelectedIndex = -1;
             numPercentage.Maximum = 100 - assignedPercentage;
             numPercentage.Value = numPercentage.Maximum;
+
+            isFormLoading = false;
         }
 
         private void btnOk_Click(object sender, System.EventArgs e)
@@ -53,9 +57,9 @@ namespace Dashboard.Input
             numPercentage.Select(0, numPercentage.Value.ToString().Length);
         }
 
-        private void cmbMember_MouseUp(object sender, MouseEventArgs e)
+        private void cmbMember_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            if (e.Button != MouseButtons.Right || countries == null || cmbMember.SelectedIndex < 0) return;
+            if (isFormLoading || cmbMember.SelectedIndex < 0 || !AreaInput()) return;
             cmbMember.Visible = false;
             cmbCountry.DataSource = countries.Where(c => c.Continent == cmbMember.Text).OrderBy(c => c.Country).Select(c => c.Country).ToList();
             cmbCountry.SelectedIndex = -1;

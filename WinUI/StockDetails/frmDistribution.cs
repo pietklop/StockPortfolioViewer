@@ -8,7 +8,7 @@ namespace Dashboard.StockDetails;
 public partial class frmDistribution : Form
 {
     private readonly PortfolioDistributionDto distribution;
-    public bool ResetRequest { get; private set; }
+    public bool EditRequest { get; private set; }
 
     public frmDistribution(PortfolioDistributionDto distribution)
     {
@@ -23,7 +23,7 @@ public partial class frmDistribution : Form
     }
 
     private void PopulatePieChart(PortfolioDistributionDto dto) =>
-        ChartHelper.PopulatePieChart(chart, dto.Labels, dto.Fractions);
+        ChartHelper.PopulatePieChart(chart, dto.LabelsWithFractions, dto.Fractions);
 
     private void btnClose_Click(object sender, EventArgs e)
     {
@@ -31,9 +31,9 @@ public partial class frmDistribution : Form
         Close();
     }
 
-    private void btnReset_Click(object sender, EventArgs e)
+    private void btnEdit_Click(object sender, EventArgs e)
     {
-        ResetRequest = true;
+        EditRequest = true;
         DialogResult = DialogResult.OK;
         Close();
     }
