@@ -9,6 +9,7 @@ using Castle.MicroKernel;
 using Core;
 using DAL;
 using Dashboard.Input;
+using Dashboard.StockDetails;
 using Imports;
 using log4net;
 using Microsoft.EntityFrameworkCore;

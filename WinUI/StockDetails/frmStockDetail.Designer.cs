@@ -1,5 +1,5 @@
 ﻿
-namespace Dashboard
+namespace Dashboard.StockDetails
 {
     partial class frmStockDetail
     {

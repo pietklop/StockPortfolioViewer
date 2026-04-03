@@ -2,6 +2,7 @@
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Dashboard.Input;
+using Dashboard.StockDetails;
 
 namespace Dashboard.DI
 {
