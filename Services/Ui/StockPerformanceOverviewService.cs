@@ -27,7 +27,6 @@ namespace Services.Ui
         public List<StockPerformanceOverviewModel> GetStockList(List<string> isins, PerformanceInterval interval)
         {
             var intervals = new List<Interval>();
-            if (interval == PerformanceInterval.Year && dateTo.Month <= 3) dateTo = dateTo.AddMonths(-dateTo.Month);
             dateTo = DetermineEndOfPeriod(interval, dateTo);
             var span = interval.ToTimeSpan();
 
