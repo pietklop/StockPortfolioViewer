@@ -51,6 +51,29 @@ namespace Dashboard.Helpers
             throw new Exception($"Could not find column: '{columnName}'");
         }
 
+        public static bool ColumnExists(this DataGridView dgv, string columnName)
+        {
+            foreach (DataGridViewColumn column in dgv.Columns)
+                if (column.Name == columnName)
+                    return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// All buttons will show same text
+        /// </summary>
+        public static void AddButtonColumn(this DataGridView dgv, string colName, string btnText, string columnHeaderText = null)
+        {
+            DataGridViewButtonColumn buttonColumn = new DataGridViewButtonColumn();
+            buttonColumn.Name = colName;
+            buttonColumn.Text = btnText;
+            buttonColumn.UseColumnTextForButtonValue = true;
+            buttonColumn.HeaderText = columnHeaderText ?? colName;
+
+            dgv.Columns.Insert(dgv.ColumnCount, buttonColumn);
+        }
+
         public static void SetReadOnly(this DataGridView dgv)
         {
             dgv.AllowUserToAddRows = false;
@@ -66,7 +89,7 @@ namespace Dashboard.Helpers
             dgv.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
         }
 
-        public static void SetVisualStyling(this DataGridView dgv)
+        public static void SetVisualStyling(this DataGridView dgv, bool showColumnHeader = true, Color? backgroundColor = null)
         {
             dgv.RowHeadersVisible = false; // hides most left 'column'
 
@@ -85,10 +108,15 @@ namespace Dashboard.Helpers
             dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.Black;
 
             // column header color
-            dgv.ColumnHeadersDefaultCellStyle.Font = new Font(dgv.ColumnHeadersDefaultCellStyle.Font, FontStyle.Bold);
-            dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(0, 0, 0);
-            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(0, 126, 249);
-            dgv.EnableHeadersVisualStyles = false;
+            if (showColumnHeader)
+            {
+                dgv.ColumnHeadersDefaultCellStyle.Font = new Font(dgv.ColumnHeadersDefaultCellStyle.Font, FontStyle.Bold);
+                dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(0, 0, 0);
+                dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(0, 126, 249);
+                dgv.EnableHeadersVisualStyles = false;
+            }
+            else
+                dgv.ColumnHeadersVisible = false;
         }
 
         public static void DoColumnOrdering<T>(this DataGridView dgv, List<T> dataSourceList, int columnIndex, SortOrder sortOrder = SortOrder.None)
