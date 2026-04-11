@@ -55,8 +55,9 @@ namespace Services.Ui
                 list.Add(new StockPerformanceOverviewModel { Name = Constants.Total });
                 list.Add(new StockPerformanceOverviewModel { Name = Constants.Bought });
                 list.Add(new StockPerformanceOverviewModel { Name = Constants.Sold });
-                list.Add(new StockPerformanceOverviewModel { Name = Constants.ValueGain });
+                list.Add(new StockPerformanceOverviewModel { Name = Constants.NetBought });
                 list.Add(new StockPerformanceOverviewModel { Name = StockDetailProperties.Dividend });
+                list.Add(new StockPerformanceOverviewModel { Name = Constants.ValueGain });
             }
             list.Add(new StockPerformanceOverviewModel { Name = Constants.TotalValue });
 
@@ -121,6 +122,8 @@ namespace Services.Ui
                 svmBought.SetPerformance(i, bought);
                 var svmSold = list.Single(x => x.Name == Constants.Sold);
                 svmSold.SetPerformance(i, sold);
+                var svmNetBought = list.Single(x => x.Name == Constants.NetBought);
+                svmNetBought.SetPerformance(i, bought - sold);
                 var svmDiv = list.Single(x => x.Name == StockDetailProperties.Dividend);
                 svmDiv.SetPerformance(i, div);
                 var svmIncrease = list.Single(x => x.Name == Constants.ValueGain);

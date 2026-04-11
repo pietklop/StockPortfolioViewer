@@ -3,13 +3,14 @@
     public static class Constants
     {
         public const string Bought = "Bought";
-        public const string ValueGain = "Value gained (incl div)";
+        public const string NetBought = "Net Bought";
         public const string Sold = "Sold";
         public const string Total = "Total";
         public const string TotalValue = "Total value";
         public const string UserCurrency = "EUR";
         public const string UserCurrencySymbol = "€";
         public const string Unknown = "Unknown";
+        public const string ValueGain = "Value gained (incl div)";
     }
 
     public static class StockDetailProperties

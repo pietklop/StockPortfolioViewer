@@ -45,6 +45,7 @@ namespace Dashboard
             PopulateGraph();
         }
 
+        private const int nFixedRows = 7; // Total, Bought etc.
         private void PopulateStockGrid()
         {
             // if (stockNames == null)
@@ -55,7 +56,7 @@ namespace Dashboard
             var performanceInterval = PerformanceInterval.Year; // TEMP
             var stockList = stockPerformanceOverviewService.GetStockList(stockIsins, performanceInterval);
             var list = SortByValue(ShowCurrentOnly(stockList));
-            if (!showValues) list = list.Take(1).Concat(list.Skip(6)).ToList();
+            if (!showValues) list = list.Take(1).Concat(list.Skip(nFixedRows)).ToList();
             dgvStocks.DataSource = list;
 
             // column configuration
@@ -102,9 +103,8 @@ namespace Dashboard
 
             List<StockPerformanceOverviewModel> SortByValue(List<StockPerformanceOverviewModel> list)
             {
-                var topRowsToSkip = 6;
-                var toSort = list.Skip(topRowsToSkip).OrderByDescending(l => l.Value);
-                return list.Take(topRowsToSkip).Concat(toSort).ToList();
+                var toSort = list.Skip(nFixedRows).OrderByDescending(l => l.Value);
+                return list.Take(nFixedRows).Concat(toSort).ToList();
             }
         }
 
@@ -226,7 +226,7 @@ namespace Dashboard
 
         private void dgvStocks_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            var currencyRowIndexes = showValues ? new []{1, 2, 3, 4, 5} : Array.Empty<int>();
+            var currencyRowIndexes = showValues ? Enumerable.Range(1, nFixedRows - 1).ToArray() : Array.Empty<int>();
             if (e.ColumnIndex >= 3 && e.ColumnIndex <= 6 && currencyRowIndexes.Contains(e.RowIndex))
                 dgvStocks[e.ColumnIndex, e.RowIndex].Style.Format = "C0";
             if (dgvStocks.Columns[e.ColumnIndex].Name == nameof(StockPerformanceOverviewModel.PerformanceFractionT0))
