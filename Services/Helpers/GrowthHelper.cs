@@ -47,6 +47,20 @@ namespace Services.Helpers
             return Math.Pow(dailyGrowth, (dateEnd.Date - dateStart.Date).Days);
         }
 
+        /// <summary>
+        /// Calculates the annual performance. The formula assumes that on average, any buys or sells occur halfway through the year,
+        /// thus adjusting the starting value accordingly to reflect the average invested amount over the period.
+        /// </summary>
+        public static double GlobalAnnualPerformance(double startValue, double gainedInclDiv, double bought, double sold)
+        {
+            if (startValue == 0)
+                return gainedInclDiv / (startValue + bought - sold);
+
+            var avgBought = Math.Max(0, (bought - sold) / 2);
+            // when net bought during the year, take average over the year. On average a random buy will perform over half a year
+            return gainedInclDiv / (startValue + avgBought);
+        }
+
         public static double PastPrice(double price, double dailyGrowth, int nDaysBack) => price / Math.Pow(dailyGrowth, nDaysBack);
         public static double FuturePrice(double price, double dailyGrowth, int nDays) => price * Math.Pow(dailyGrowth, Math.Max(nDays, 1));
     }
