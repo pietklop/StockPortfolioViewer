@@ -57,7 +57,7 @@ namespace Services.Ui
                 if (!dividend.IsCapitalReturn() && CurrentlyOwned(stock) && LastDividendOfStock(dividend) && ExpectedNextDividendOrUnknown(stock.DividendPayoutInterval, dividend.TimeStamp))
                     dateString += "*";
 
-                if (dividend.TimeStamp.Year != year)
+                if (viewMode == DividendViewMode.GroupedByYear && dividend.TimeStamp.Year != year)
                 {
                     AddAnnualSubTotal();
                     year = dividend.TimeStamp.Year;
@@ -81,7 +81,7 @@ namespace Services.Ui
                 annualDividends.Add(divViewModels);
             }
 
-            if (viewMode == DividendViewMode.GroupedByYear || isin.HasValue())
+            if (viewMode == DividendViewMode.GroupedByYear)
                 AddAnnualSubTotal();
 
             return list;
@@ -105,7 +105,7 @@ namespace Services.Ui
 
             void AddAnnualSubTotal()
             {
-                if (annualDividends.Count == 0 || isin != null) return;
+                if (annualDividends.Count == 0) return;
                 list.Add(new DividendViewModel
                 {
                     Name = $"{DividendViewModel.AnnualSumOf} {year}",
@@ -121,6 +121,9 @@ namespace Services.Ui
 
     public enum DividendViewMode
     {
+        /// <summary>
+        /// In case of single stock, show all
+        /// </summary>
         LastTwelveMonths,
         GroupedByYear,
     }

@@ -22,7 +22,6 @@ namespace Dashboard
 
         private void frmDividends_Load(object sender, EventArgs e)
         {
-            cmbViewMode.Visible = stockIsin == null;
             cmbViewMode.DataSource = Enum.GetValues(typeof(DividendViewMode));
             cmbViewMode.SelectedItem = DividendViewMode.LastTwelveMonths;
 
