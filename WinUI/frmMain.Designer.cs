@@ -47,7 +47,6 @@ namespace Dashboard
             lblSpv = new System.Windows.Forms.Label();
             lblVersion = new System.Windows.Forms.Label();
             pnlFormLoader = new System.Windows.Forms.Panel();
-            metroStyleFormManager = new MetroFramework.Components.MetroStyleManager(components);
             pnlTitle = new System.Windows.Forms.Panel();
             lblEuroInDollars = new System.Windows.Forms.Label();
             lblViewName = new System.Windows.Forms.Label();
@@ -55,7 +54,6 @@ namespace Dashboard
             pnlMenu.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             pnlInfo.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)metroStyleFormManager).BeginInit();
             pnlTitle.SuspendLayout();
             SuspendLayout();
             // 
@@ -309,12 +307,6 @@ namespace Dashboard
             pnlFormLoader.Size = new System.Drawing.Size(960, 671);
             pnlFormLoader.TabIndex = 2;
             // 
-            // metroStyleFormManager
-            // 
-            metroStyleFormManager.Owner = this;
-            metroStyleFormManager.Style = MetroFramework.MetroColorStyle.Black;
-            metroStyleFormManager.Theme = MetroFramework.MetroThemeStyle.Dark;
-            // 
             // pnlTitle
             // 
             pnlTitle.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
@@ -362,7 +354,6 @@ namespace Dashboard
             Controls.Add(pnlTitle);
             Controls.Add(pnlFormLoader);
             Controls.Add(pnlMenu);
-            DisplayHeader = false;
             Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             Margin = new System.Windows.Forms.Padding(1);
             Name = "frmMain";
@@ -374,7 +365,6 @@ namespace Dashboard
             tableLayoutPanel1.ResumeLayout(false);
             pnlInfo.ResumeLayout(false);
             pnlInfo.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)metroStyleFormManager).EndInit();
             pnlTitle.ResumeLayout(false);
             pnlTitle.PerformLayout();
             ResumeLayout(false);
@@ -390,7 +380,6 @@ namespace Dashboard
         private System.Windows.Forms.Button btnBackup;
         private System.Windows.Forms.Button btnDividends;
         private System.Windows.Forms.Button btnPerformance;
-        private MetroFramework.Components.MetroStyleManager metroStyleFormManager;
         private System.Windows.Forms.Panel pnlTitle;
         private System.Windows.Forms.Label lblViewName;
         private System.Windows.Forms.Label lblVersion;

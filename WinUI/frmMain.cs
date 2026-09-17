@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Castle.MicroKernel;
 using Core;
 using DAL;
+using Dashboard.Infrastructure;
 using Dashboard.Input;
 using Dashboard.StockDetails;
 using Imports;
@@ -21,7 +22,7 @@ using Syroot.Windows.IO;
 
 namespace Dashboard
 {
-    public partial class frmMain : MetroFramework.Forms.MetroForm
+    public partial class frmMain : MainBaseForm
     {
         private readonly ILog log;
         private readonly Settings settings;
