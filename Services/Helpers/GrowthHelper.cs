@@ -54,7 +54,13 @@ namespace Services.Helpers
         public static double GlobalAnnualPerformance(double startValue, double gainedInclDiv, double bought, double sold)
         {
             if (startValue == 0)
-                return gainedInclDiv / (startValue + bought - sold);
+            {
+                // Nothing owned at the start, so whatever is sold during the period was bought within it as well:
+                // the invested amount is what is bought. Subtracting the proceeds would turn the divisor negative
+                // (or zero when sold at cost) and mirror the performance of a stock bought and sold in the same period.
+                if (bought == 0) return 0; // no position at all during this period
+                return gainedInclDiv / bought;
+            }
 
             var avgBought = Math.Max(0, (bought - sold) / 2);
             // when net bought during the year, take average over the year. On average a random buy will perform over half a year
