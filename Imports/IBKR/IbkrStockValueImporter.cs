@@ -33,8 +33,8 @@ namespace Imports.IBKR
                 var fields = fieldsList[lineNr];
 
                 var name = fields[nameColIndex];
-                if (name.Contains("DIVIDEND RIGHTS"))
-                    continue; // skip, is not really a position
+                if (name.Contains("- RIGHTS"))
+                    continue; // skip, is not really a position but related to dividend
 
                 if (fields[0] == TradeImporter.currencyFirstColumnHeader)
                     break;
