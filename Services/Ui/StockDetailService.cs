@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
-using DAL;
 using DAL.Entities;
 using log4net;
 using Messages.UI;
-using Microsoft.EntityFrameworkCore;
 using Services.Helpers;
 
 namespace Services.Ui
@@ -14,24 +12,17 @@ namespace Services.Ui
     public class StockDetailService
     {
         private readonly ILog log;
-        private readonly StockDbContext db;
+        private readonly StockCacheService _stockCacheService;
 
-        public StockDetailService(ILog log, StockDbContext db)
+        public StockDetailService(ILog log, StockCacheService stockCacheService)
         {
             this.log = log;
-            this.db = db;
+            this._stockCacheService = stockCacheService;
         }
 
         public List<PropertyViewModel> GetDetails(string stockIsin)
         {
-            var stock = db.Stocks
-                            .Include(s => s.AreaShares).ThenInclude(a => a.Area)
-                            .Include(s => s.Currency)
-                            .Include(s => s.Dividends)
-                            .Include(s => s.LastKnownStockValue.StockValue)
-                            .Include(s => s.SectorShares).ThenInclude(a => a.Sector)
-                            .Include(s => s.Transactions).ThenInclude(t => t.StockValue)
-                            .SingleOrDefault(s => s.Isin == stockIsin) ?? throw new Exception($"Could not find stock with Isin: '{stockIsin}'");
+            var stock = _stockCacheService.GetStockOrThrow(stockIsin);
 
             var transactions = stock.Transactions;
             var nStocks = transactions.Sum(t => t.Quantity);

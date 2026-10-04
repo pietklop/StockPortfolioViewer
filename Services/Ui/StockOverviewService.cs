@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
-using DAL;
 using DAL.Entities;
 using log4net;
 using Messages.UI.Overview;
-using Microsoft.EntityFrameworkCore;
 using Services.Helpers;
 
 namespace Services.Ui
@@ -14,13 +12,13 @@ namespace Services.Ui
     public class StockOverviewService
     {
         private readonly ILog log;
-        private readonly StockDbContext db;
+        private readonly StockCacheService _stockCacheService;
         private static List<StockViewModel> cachedStockList;
 
-        public StockOverviewService(ILog log, StockDbContext db)
+        public StockOverviewService(ILog log, StockCacheService stockCacheService)
         {
             this.log = log;
-            this.db = db;
+            this._stockCacheService = stockCacheService;
         }
 
         public static double TotalPortfolioValue { get; private set; }
@@ -31,18 +29,9 @@ namespace Services.Ui
                 return cachedStockList;
 
             int days30Back = 30;
-            var profitDateFrom = DateTime.Now.AddDays(-days30Back).Date;
 
-            var stocks = db.Stocks
-                .Include(s => s.AreaShares).ThenInclude(a => a.Area)
-                //.Include(s => s.StockRetrieverCompatibilities).ThenInclude(c => c.DataRetriever)
-                .Include(s => s.Dividends)
-                .Include(s => s.LastKnownStockValue.StockValue)
-                .Include(s => s.SectorShares).ThenInclude(ss => ss.Sector)
-                .Include(s => s.StockValues.Where(sv => sv.TimeStamp > profitDateFrom))
-                .Include(s => s.Transactions).ThenInclude(t => t.StockValue)
+            var stocks = _stockCacheService.GetStocks(isins)
                 .Where(s => s.Transactions.Sum(t => t.Quantity) > 0)
-                .Where(s => isins == null || isins.Contains(s.Isin))
                 .ToList();
 
             var list = new List<StockViewModel>(stocks.Count());
@@ -115,7 +104,7 @@ namespace Services.Ui
             double ProfitFraction(Stock stock, int nDays, double nStocks)
             {
                 var dateFrom = DateTime.Now.AddDays(-nDays).Date;
-                var historicValue = stock.StockValues.OrderBy(v => v.TimeStamp).FirstOrDefault(v => v.TimeStamp > dateFrom)?.UserPrice ?? 0;
+                var historicValue = stock.StockValues.Where(v => v.TimeStamp > dateFrom).MinBy(v => v.TimeStamp)?.UserPrice ?? 0;
                 if (historicValue <= 0) return 0;
                 var divPerShare = stock.Dividends.Where(d => d.TimeStamp > dateFrom).Sum(d => d.UserValue - d.UserCosts) / nStocks;
                 return (stock.LastKnownUserPrice + divPerShare - historicValue) / historicValue;

@@ -2,31 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
-using DAL;
 using DAL.Entities;
 using log4net;
 using Messages.UI.Overview;
-using Microsoft.EntityFrameworkCore;
 
 namespace Services.Ui
 {
     public class DividendOverviewService
     {
         private readonly ILog log;
-        private readonly StockDbContext db;
+        private readonly StockCacheService _stockCacheService;
 
-        public DividendOverviewService(ILog log, StockDbContext db)
+        public DividendOverviewService(ILog log, StockCacheService stockCacheService)
         {
             this.log = log;
-            this.db = db;
+            this._stockCacheService = stockCacheService;
         }
 
         public List<DividendViewModel> GetStockList(DividendViewMode viewMode, string isin = null)
         {
-            var dividends = db.Dividends
-                .Include(t => t.Stock.Currency)
-                .Include(t => t.Stock.StockValues)
-                .Include(t => t.Stock.Transactions).ThenInclude(t => t.StockValue)
+            var dividends = _stockCacheService.Dividends
                 .Where(t => isin == null || t.Stock.Isin == isin)
                 .Where(t => viewMode != DividendViewMode.LastTwelveMonths || isin.HasValue() || t.TimeStamp.Date >= DateTime.Today.AddYears(-1))
                 .OrderByDescending(t => t.TimeStamp).ToList();

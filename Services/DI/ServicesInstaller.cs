@@ -19,6 +19,7 @@ namespace Services.DI
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(Component.For<Settings>().Instance(settings));
+            container.Register(Component.For<StockCacheService>().LifestyleSingleton());
 
             container.Register(Component.For<DividendOverviewService>().LifestyleTransient());
             container.Register(Component.For<Importer>().LifestyleTransient());

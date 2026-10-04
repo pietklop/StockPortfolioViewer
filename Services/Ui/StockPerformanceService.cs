@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DAL;
 using DAL.Entities;
 using log4net;
-using Microsoft.EntityFrameworkCore;
 using Services.Helpers;
 
 namespace Services.Ui
@@ -12,12 +10,12 @@ namespace Services.Ui
     public class StockPerformanceService
     {
         private readonly ILog log;
-        private readonly StockDbContext db;
+        private readonly StockCacheService _stockCacheService;
 
-        public StockPerformanceService(ILog log, StockDbContext db)
+        public StockPerformanceService(ILog log, StockCacheService stockCacheService)
         {
             this.log = log;
-            this.db = db;
+            this._stockCacheService = stockCacheService;
         }
 
         private PerformanceDto GetValues(DateTime dateFrom, DateTime dateTo, out PerformanceInterval interval, List<string> isins)
@@ -151,10 +149,8 @@ namespace Services.Ui
 
         private List<PitStockValue> GetAllPitStockValues(DateTime dateFrom, DateTime dateTo, string[] isins = null)
         {
-            var allPitValues = db.PitStockValues
-                .Include(p => p.Stock).ThenInclude(s => s.Dividends)
-                .Include(p => p.Stock).ThenInclude(s => s.Transactions).ThenInclude(t => t.StockValue)
-                .Where(p => isins == null || isins.Contains(p.Stock.Isin))
+            var allPitValues = _stockCacheService.GetStocks(isins)
+                .SelectMany(s => s.StockValues)
                 .Where(p => p.TimeStamp > dateFrom.Date && p.TimeStamp.Date <= dateTo.Date)
                 .OrderBy(p => p.TimeStamp).ToList();
 

@@ -23,6 +23,10 @@ namespace Services.DI
                 .ImplementedBy<StockDbContext>()
             .UsingFactoryMethod(() =>
                     new StockDbContext(new DbContextOptionsBuilder<StockDbContext>().UseSqlite(StockDbContext.Connection(settings.DbFileNamePath)).Options)));
+
+            // connection string (instead of connection) so every created context uses its own connection
+            container.Register(Component.For<StockDbContextFactory>()
+                .Instance(new StockDbContextFactory(new DbContextOptionsBuilder<StockDbContext>().UseSqlite(StockDbContext.ConnectionString(settings.DbFileNamePath)).Options)));
         }
     }
 }

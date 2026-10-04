@@ -1,28 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DAL;
 using DAL.Entities;
 using Messages.UI.Overview;
-using Microsoft.EntityFrameworkCore;
 
 namespace Services.Ui
 {
     public class StockHistoryOverviewService
     {
-        private readonly StockDbContext db;
+        private readonly StockCacheService _stockCacheService;
 
-        public StockHistoryOverviewService(StockDbContext db)
+        public StockHistoryOverviewService(StockCacheService stockCacheService)
         {
-            this.db = db;
+            this._stockCacheService = stockCacheService;
         }
 
         public List<StockHistoryViewModel> GetStockList()
         {
-            var stocks = db.Stocks
-                .Include(s => s.Dividends)
-                .Include(s => s.LastKnownStockValue.StockValue)
-                .Include(s => s.StockValues)
-                .Include(s => s.Transactions).ThenInclude(t => t.StockValue)
+            var stocks = _stockCacheService.Stocks
                 .Where(s => s.Transactions.Sum(t => t.Quantity) <= 0)
                 .ToList();
 

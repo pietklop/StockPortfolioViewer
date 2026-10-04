@@ -5,22 +5,20 @@ using System;
 using System.Linq;
 using Core;
 using Services.Helpers;
-using DAL;
 using log4net;
-using Microsoft.EntityFrameworkCore;
 
 namespace Services.Ui
 {
     public class StockPerformanceOverviewService
     {
         private readonly ILog log;
-        private readonly StockDbContext db;
+        private readonly StockCacheService _stockCacheService;
         private DateTime dateTo;
 
-        public StockPerformanceOverviewService(ILog log, StockDbContext db, DateTime? dateTo = null)
+        public StockPerformanceOverviewService(ILog log, StockCacheService stockCacheService, DateTime? dateTo = null)
         {
             this.log = log;
-            this.db = db;
+            this._stockCacheService = stockCacheService;
             this.dateTo = dateTo ?? DateTime.Today;
         }
 
@@ -40,13 +38,12 @@ namespace Services.Ui
 
             var dateFrom = intervals.Last().DateFrom;
 
-            var stocks = db.Stocks
-                .Include(s => s.Dividends)
-                .Include(s => s.LastKnownStockValue.StockValue)
-                .Include(s => s.StockValues.Where(sv => sv.TimeStamp > dateFrom.AddDays(-14) && sv.TimeStamp < dateTo.AddDays(14))) // take 14 days margin
-                .Include(s => s.Transactions).ThenInclude(t => t.StockValue)
-                .Where(p => isins == null && (p.Transactions.Sum(t => t.Quantity) > 0 || p.Transactions.OrderByDescending(t => t.Id).First().StockValue.TimeStamp >= dateFrom) || isins != null && isins.Contains(p.Isin))
+            var stocks = _stockCacheService.Stocks
+                .Where(p => isins == null && (p.Transactions.Sum(t => t.Quantity) > 0 || p.Transactions.MaxBy(t => t.Id)?.StockValue.TimeStamp >= dateFrom) || isins != null && isins.Contains(p.Isin))
                 .ToList();
+            var stockValuesInRange = stocks.ToDictionary(s => s, s => s.StockValues
+                .Where(sv => sv.TimeStamp > dateFrom.AddDays(-14) && sv.TimeStamp < dateTo.AddDays(14)) // take 14 days margin
+                .OrderByDescending(sv => sv.TimeStamp).ToList());
 
             var nTotalValueFields = 5;
             var list = new List<StockPerformanceOverviewModel>(stocks.Count()+nTotalValueFields);
@@ -67,7 +64,7 @@ namespace Services.Ui
                 {
 
                     var startPrice = startPrices.TryGetValue(stock, out var price) ? price : (double?)null;
-                    var pp = CalculatePerformancePeriod(stock, intervals[i], startPrice);
+                    var pp = CalculatePerformancePeriod(stock, stockValuesInRange[stock], intervals[i], startPrice);
                     startPrices[stock] = pp.UserPriceStartOfPeriod!.Value;
                     stockList.Add(pp);
 
@@ -142,16 +139,17 @@ namespace Services.Ui
             }
         }
 
-        private PerformancePeriod CalculatePerformancePeriod(Stock stock, Interval interval, double? startPricePrevious)
+        /// <param name="stockValuesDescending">Stock values ordered by descending time stamp</param>
+        private PerformancePeriod CalculatePerformancePeriod(Stock stock, List<PitStockValue> stockValuesDescending, Interval interval, double? startPricePrevious)
         {
             DateTime dateFrom = interval.DateFrom;
             DateTime dateTo = interval.DateTo;
 
-            var startPrice = stock.StockValues.OrderByDescending(v => v.TimeStamp).FirstOrDefault(v => v.TimeStamp <= dateFrom)?.UserPrice ?? 0;
+            var startPrice = stockValuesDescending.FirstOrDefault(v => v.TimeStamp <= dateFrom)?.UserPrice ?? 0;
             var initStockQt = stock.Transactions.Where(t => t.StockValue.TimeStamp <= dateFrom).Sum(t => t.Quantity);
             var startValue = initStockQt * startPrice;
 
-            var endPrice = startPricePrevious ?? stock.StockValues.OrderByDescending(v => v.TimeStamp).FirstOrDefault(v => v.TimeStamp <= dateTo)?.UserPrice ?? 0;
+            var endPrice = startPricePrevious ?? stockValuesDescending.FirstOrDefault(v => v.TimeStamp <= dateTo)?.UserPrice ?? 0;
             var transactions = stock.Transactions.Where(t => t.StockValue.TimeStamp > dateFrom && t.StockValue.TimeStamp <= dateTo).ToList();
             var endValue = (initStockQt + transactions.Sum(t => t.Quantity)) * endPrice;
             var valueBought = transactions.Where(t => t.Quantity > 0).Sum(t => t.Quantity * t.StockValue.UserPrice);

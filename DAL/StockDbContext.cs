@@ -36,11 +36,9 @@ namespace DAL
                 .HasKey(ur => new { ur.StockId, ur.DataRetrieverId });
         }
 
-        public static DbConnection Connection(string dbFileNamePath)
-        {
-            var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = dbFileNamePath };
-            var connectionString = connectionStringBuilder.ToString();
-            return new SqliteConnection(connectionString);
-        }
+        public static DbConnection Connection(string dbFileNamePath) => new SqliteConnection(ConnectionString(dbFileNamePath));
+
+        public static string ConnectionString(string dbFileNamePath) =>
+            new SqliteConnectionStringBuilder { DataSource = dbFileNamePath }.ToString();
     }
 }

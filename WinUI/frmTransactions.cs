@@ -12,14 +12,14 @@ namespace Dashboard
     public partial class frmTransactions : Form
     {
         private readonly TransactionOverviewService transactionOverviewService;
-        private readonly StockService stockService;
+        private readonly StockCacheService _stockCacheService;
         private readonly string stockIsin;
         private double currentPrice;
 
-        public frmTransactions(TransactionOverviewService transactionOverviewService, StockService stockService, string stockIsin = null)
+        public frmTransactions(TransactionOverviewService transactionOverviewService, StockCacheService stockCacheService, string stockIsin = null)
         {
             this.transactionOverviewService = transactionOverviewService;
-            this.stockService = stockService;
+            this._stockCacheService = stockCacheService;
             this.stockIsin = stockIsin;
             InitializeComponent();
         }
@@ -37,7 +37,7 @@ namespace Dashboard
         {
             if (stockIsin == null) return;
 
-            var stock = stockService.GetStockOrThrow(stockIsin);
+            var stock = _stockCacheService.GetStockOrThrow(stockIsin);
             currentPrice = stock.LastKnownStockValue.StockValue.NativePrice;
             lblCurrentPrice.Text = currentPrice.FormatCurrency(stock.Currency.Symbol, false);
             lblCurrentPriceT.Visible = true;

@@ -21,16 +21,18 @@ public partial class frmStockDetail : Form
     private readonly StockDbContext db;
     private readonly frmMain frmMain;
     private readonly StockService stockService;
+    private readonly StockCacheService _stockCacheService;
     private readonly StockDetailService stockDetailService;
     private readonly PortfolioDistributionService portfolioDistributionService;
     private readonly string stockIsin;
 
-    public frmStockDetail(ILog log, StockDbContext db, frmMain frmMain, StockService stockService, StockDetailService stockDetailService, PortfolioDistributionService portfolioDistributionService, string stockIsin)
+    public frmStockDetail(ILog log, StockDbContext db, frmMain frmMain, StockService stockService, StockCacheService stockCacheService, StockDetailService stockDetailService, PortfolioDistributionService portfolioDistributionService, string stockIsin)
     {
         this.log = log;
         this.db = db;
         this.frmMain = frmMain;
         this.stockService = stockService;
+        this._stockCacheService = stockCacheService;
         this.stockDetailService = stockDetailService;
         this.portfolioDistributionService = portfolioDistributionService;
         this.stockIsin = stockIsin;
@@ -233,13 +235,19 @@ public partial class frmStockDetail : Form
             stock.AlarmLowerThreshold = alarmConditionInputForm.LowerThreshold;
             stock.AlarmUpperThreshold = alarmConditionInputForm.UpperThreshold;
             stock.Remarks = alarmConditionInputForm.Remarks;
-            db.SaveChanges();
+            SaveChanges();
         }
 
         void SaveAndUpdate(object newValue)
         {
-            db.SaveChanges();
+            SaveChanges();
             dgvStockDetails[valueColumnIndex, e.RowIndex].Value = newValue;
+        }
+
+        void SaveChanges()
+        {
+            db.SaveChanges();
+            _stockCacheService.ReloadStock(stockIsin);
         }
     }
 }

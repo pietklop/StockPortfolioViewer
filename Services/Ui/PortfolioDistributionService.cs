@@ -1,27 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DAL;
+using DAL.Entities;
 using Messages.UI.Overview;
-using Microsoft.EntityFrameworkCore;
 
 namespace Services.Ui
 {
     public class PortfolioDistributionService
     {
-        private readonly StockDbContext db;
-        private static PortfolioDistributionDto cachedFullPortfolio;
-        private static int nStocks;
+        private readonly StockCacheService _stockCacheService;
 
-        public PortfolioDistributionService(StockDbContext db)
+        public PortfolioDistributionService(StockCacheService stockCacheService)
         {
-            this.db = db;
+            this._stockCacheService = stockCacheService;
         }
 
         public PortfolioDistributionDto GetCurrencyDistribution(List<string> isins = null)
         {
-            var data = db.Stocks
-                .Where(s => isins == null || isins.Contains(s.Isin))
-                .Where(s => s.Transactions.Sum(t => t.Quantity) > 0)
+            var data = OwnedStocks(isins)
                 .Select(s => new
                 {
                     currency = s.Currency.Key,
@@ -43,16 +38,7 @@ namespace Services.Ui
         public PortfolioDistributionDto GetAreaDistribution(string isin) => GetAreaDistribution(new List<string> { isin });
         public PortfolioDistributionDto GetAreaDistribution(List<string> isins = null, bool groupByContinent = false)
         {
-            if (isins == null && cachedFullPortfolio != null && !groupByContinent) return cachedFullPortfolio;
-
-            var data = db.Stocks
-                .Include(s => s.LastKnownStockValue.StockValue)
-                .Include(s => s.StockValues)
-                .Include(s => s.Transactions)
-                .Include(s => s.AreaShares).ThenInclude(a => a.Area.Continent)
-                .Where(s => isins == null || isins.Contains(s.Isin))
-                .Where(s => s.Transactions.Sum(t => t.Quantity) > 0)
-                .ToList();
+            var data = OwnedStocks(isins).ToList();
 
             var areaValueDict = new Dictionary<string, double>();
 
@@ -75,23 +61,13 @@ namespace Services.Ui
                 d.Value,
             }).ToList();
 
-            var port = new PortfolioDistributionDto("Area distribution", sorted.Select(d => d.Key).ToArray(), sorted.Select(g => g.Value).ToArray(), true);
-            cachedFullPortfolio ??= port;
-
-            return port;
+            return new PortfolioDistributionDto("Area distribution", sorted.Select(d => d.Key).ToArray(), sorted.Select(g => g.Value).ToArray(), true);
         }
 
         public PortfolioDistributionDto GetSectorDistribution(string isin) => GetSectorDistribution(new List<string> { isin });
         public PortfolioDistributionDto GetSectorDistribution(List<string> isins = null)
         {
-            var data = db.Stocks
-                .Include(s => s.LastKnownStockValue.StockValue)
-                .Include(s => s.StockValues)
-                .Include(s => s.Transactions)
-                .Include(s => s.SectorShares).ThenInclude(a => a.Sector)
-                .Where(s => isins == null || isins.Contains(s.Isin))
-                .Where(s => s.Transactions.Sum(t => t.Quantity) > 0)
-                .ToList();
+            var data = OwnedStocks(isins).ToList();
 
             var sectorValueDict = new Dictionary<string, double>();
 
@@ -115,5 +91,8 @@ namespace Services.Ui
 
             return new PortfolioDistributionDto("Sector distribution", sorted.Select(d => d.Key).ToArray(), sorted.Select(g => g.Value).ToArray());
         }
+
+        private IEnumerable<Stock> OwnedStocks(List<string> isins) =>
+            _stockCacheService.GetStocks(isins).Where(s => s.Transactions.Sum(t => t.Quantity) > 0);
     }
 }

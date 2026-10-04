@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Dashboard.DI;
 using log4net;
 using log4net.Config;
+using Services;
 using Services.DI;
 
 namespace Dashboard
@@ -31,6 +32,9 @@ namespace Dashboard
             container.AddFacilities().Install(installer);
 
             //DoStartupActions();
+
+            // load all stock data in memory once, so the views do not need to query the database
+            CastleContainer.Resolve<StockCacheService>().Reload();
 
             var mainForm = CastleContainer.Instance.Resolve<frmMain>();
             Application.Run(mainForm);

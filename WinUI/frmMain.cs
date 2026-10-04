@@ -26,6 +26,7 @@ namespace Dashboard
     {
         private readonly ILog log;
         private readonly Settings settings;
+        private readonly StockCacheService _stockCacheService;
         public int nTotalStocks;
 
         public string SelectedStockName;
@@ -42,10 +43,11 @@ namespace Dashboard
             }
         }
 
-        public frmMain(ILog log, Settings settings)
+        public frmMain(ILog log, Settings settings, StockCacheService stockCacheService)
         {
             this.log = log;
             this.settings = settings;
+            this._stockCacheService = stockCacheService;
             InitializeComponent();
             HandleMenuButtonClick(btnMainOverview, CastleContainer.Instance.Resolve<frmOverview>(new Arguments { { nameof(frmMain), this } }));
 
@@ -267,11 +269,14 @@ namespace Dashboard
         private void ShowImportException(Exception ex)
         {
             log.Error($"Error during import", ex);
+            _stockCacheService.Reload(); // part of the import can already be saved
             MessageBox.Show($"Error occured during file import: '{ex.Message}'. See log for more details", "Import results", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void DoPostImportActions(int nAddedTransactions, int nAddedDividends, int nStockValueUpdates)
         {
+            _stockCacheService.Reload();
+
             if (nAddedTransactions == 0 && nAddedDividends == 0)
             {
                 if (nStockValueUpdates > 0)

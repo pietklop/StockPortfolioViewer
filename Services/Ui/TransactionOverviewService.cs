@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
-using DAL;
 using DAL.Entities;
 using log4net;
 using Messages.UI.Overview;
-using Microsoft.EntityFrameworkCore;
 using Services.Helpers;
 
 namespace Services.Ui
@@ -14,20 +12,17 @@ namespace Services.Ui
     public class TransactionOverviewService
     {
         private readonly ILog log;
-        private readonly StockDbContext db;
+        private readonly StockCacheService _stockCacheService;
 
-        public TransactionOverviewService(ILog log, StockDbContext db)
+        public TransactionOverviewService(ILog log, StockCacheService stockCacheService)
         {
             this.log = log;
-            this.db = db;
+            this._stockCacheService = stockCacheService;
         }
 
         public List<TransactionViewModel> GetStockList(TransactionViewMode viewMode, string isin = null)
         {
-            var transactions = db.Transactions
-                .Include(t => t.Stock.Currency)
-                .Include(t => t.Stock.LastKnownStockValue.StockValue)
-                .Include(t => t.StockValue)
+            var transactions = _stockCacheService.Transactions
                 .Where(t => isin == null || t.Stock.Isin == isin)
                 .Where(t => viewMode != TransactionViewMode.LastTwelveMonths || isin != null || t.StockValue.TimeStamp.Date >= DateTime.Today.AddYears(-1))
                 .OrderByDescending(t => t.StockValue.TimeStamp).ToList();
